@@ -3,6 +3,7 @@ uvicorn[standard]
 google-genai>=0.3.0
 langgraph
 pydantic
+pydantic-settings
 google-cloud-firestore
 google-cloud-secret-manager
 google-cloud-storage
