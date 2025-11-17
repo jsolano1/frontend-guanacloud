@@ -1,5 +1,5 @@
 import json
-from typing import Annotated, TypedDict, List, Optional, Any
+from typing import Annotated, TypedDict, List, Optional, Any, Dict
 from langgraph.graph import StateGraph, END
 from google import genai
 from google.genai import types
@@ -70,7 +70,7 @@ def tools_execution_node(state: AgentState):
                         card_json = json.loads(result)
                         if "cardsV2" in card_json:
                             card_found = card_json
-                            result = "Acción completada exitosamente. Se ha generado una tarjeta visual para el usuario."
+                            result = "Acción completada. Tarjeta generada."
                     except:
                         pass
 
