@@ -40,6 +40,26 @@ def get_db_connection() -> sqlalchemy.engine.base.Engine:
         log_structured("DBPoolInitError", error=str(e), traceback=traceback.format_exc())
         raise
 
+def get_dm_space_name_for_user(user_email: str) -> str | None:
+    """
+    Consulta la DB de Postgres para obtener el chat_user_id (space_name del DM 1:1).
+    Este ID (ej. spaces/AAAA...) es necesario para enviar mensajes privados via API.
+    """
+    if not user_email: return None
+    
+    engine = get_db_connection()
+    try:
+        with engine.connect() as conn:
+            query = text("SELECT chat_user_id FROM roles_usuarios WHERE lower(user_email) = lower(:email) LIMIT 1")
+            result = conn.execute(query, {"email": user_email.strip()}).scalar()
+            
+            if result and str(result).startswith("spaces/"):
+                return str(result)
+            return None
+    except Exception as e:
+        log_structured("GetDMSpaceError", error=str(e), user=user_email)
+        return None
+
 def check_dwh_permission(user_email: str) -> bool:
     """
     Verifica en la tabla roles_usuarios si el usuario tiene permiso 'can_query_dwh'.

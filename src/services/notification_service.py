@@ -60,3 +60,27 @@ def enviar_notificacion_chat(mensaje_dict_o_str, webhook_url=None):
         log_structured("ChatNotificationSent")
     except Exception as e:
         log_structured("ChatNotificationError", error=str(e))
+
+def enviar_mensaje_directo_chat(space_name: str, mensaje_text: str):
+    """
+    Envía un mensaje a un espacio específico (DM) usando la API de Google Chat.
+    Esto es SEGURO porque va dirigido a un space_name específico, no a un webhook público.
+    """
+    try:
+        creds, _ = google.auth.default(scopes=CHAT_API_SCOPE)
+        
+        service = build('chat', 'v1', credentials=creds)
+        
+        body = {"text": mensaje_text}
+        
+        service.spaces().messages().create(
+            parent=space_name,
+            body=body
+        ).execute()
+        
+        log_structured("DMSent", space=space_name)
+        return True
+        
+    except Exception as e:
+        log_structured("DMSendError", error=str(e), space=space_name)
+        return False
