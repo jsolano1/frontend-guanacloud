@@ -45,7 +45,7 @@ jobs:
             echo "APP_BASE_URL=https://kai-api-corev2-prod-537990588927.us-central1.run.app" >> $GITHUB_ENV
             echo "DB_INSTANCE_NAME=kai-postgres-prod" >> $GITHUB_ENV
             echo "DB_PASS_SECRET_NAME=kai-postgres-password-prod" >> $GITHUB_ENV
-            echo "FIRESTORE_DB_ID=agentkai-v2" >> $GITHUB_ENV
+            echo "FIRESTORE_DB_ID=agentkai-corev2" >> $GITHUB_ENV
             echo "FIRESTORE_SESSION_COLLECTION=kai_v2_graph_state_prod" >> $GITHUB_ENV
             
           else
@@ -55,7 +55,7 @@ jobs:
             echo "APP_BASE_URL=https://kai-api-corev2-dev-537990588927.us-central1.run.app" >> $GITHUB_ENV
             echo "DB_INSTANCE_NAME=kai-postgres-dev" >> $GITHUB_ENV
             echo "DB_PASS_SECRET_NAME=kai-postgres-password-dev" >> $GITHUB_ENV
-            echo "FIRESTORE_DB_ID=agentkai-v2-dev" >> $GITHUB_ENV
+            echo "FIRESTORE_DB_ID=agentkai-corev2-dev" >> $GITHUB_ENV
             echo "FIRESTORE_SESSION_COLLECTION=kai_v2_graph_state_dev" >> $GITHUB_ENV
           fi
 

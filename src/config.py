@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # --- Firestore (Persistencia de LangGraph) ---
     # Usamos una colección separada para la V2 para evitar conflictos
-    FIRESTORE_DATABASE_ID: str = "(default)" 
+    FIRESTORE_DATABASE_ID: str = "agentkai-corev2" 
     FIRESTORE_SESSION_COLLECTION: str = "kai_v2_graph_state"
 
     # --- Integraciones ---

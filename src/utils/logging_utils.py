@@ -1,6 +1,7 @@
 import json
 import time
 import functools
+import traceback
 from datetime import datetime, timezone
 
 def log_structured(log_name: str, **kwargs):
@@ -10,7 +11,12 @@ def log_structured(log_name: str, **kwargs):
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "severity": "INFO"
     }
+    
+    if "error" in kwargs or "traceback" in kwargs:
+        log_entry["severity"] = "ERROR"
+
     log_entry.update(kwargs)
+    
     for k, v in log_entry.items():
         if isinstance(v, Exception):
             log_entry[k] = str(v)
