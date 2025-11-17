@@ -13,7 +13,14 @@ class FirestoreSaver(BaseCheckpointSaver):
         self.client = firestore.Client(project=settings.GCP_PROJECT_ID, database=settings.FIRESTORE_DATABASE_ID)
         self.collection = self.client.collection(settings.FIRESTORE_SESSION_COLLECTION)
 
-    # --- Métodos Síncronos ---
+    def _sanitize_id(self, thread_id: str) -> str:
+        """
+        Convierte 'spaces/X/threads/Y' en 'spaces_X_threads_Y' para usarlo como ID de documento seguro.
+        Firestore no permite '/' en IDs de documentos si no apuntan a subcolecciones.
+        """
+        if not thread_id:
+            return "unknown_thread"
+        return thread_id.replace("/", "_")
 
     def get_tuple(self, config: Dict[str, Any]) -> Optional[CheckpointTuple]:
         thread_id = config["configurable"]["thread_id"]
@@ -65,7 +72,7 @@ class FirestoreSaver(BaseCheckpointSaver):
     def list(self, config: Optional[Dict[str, Any]], *, filter: Optional[Dict[str, Any]] = None, before: Optional[Dict[str, Any]] = None, limit: Optional[int] = None):
         return []
 
-    # --- Métodos Asíncronos ---
+    # --- Métodos Asíncronos (Requeridos por ainvoke) ---
 
     async def aget_tuple(self, config: Dict[str, Any]) -> Optional[CheckpointTuple]:
         return await asyncio.to_thread(self.get_tuple, config)
