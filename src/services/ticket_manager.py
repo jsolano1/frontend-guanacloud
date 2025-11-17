@@ -39,23 +39,20 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
     
     engine = get_db_connection()
     try:
-        with engine.connect() as conn:
-            with conn.begin():
-                conn.execute(text("""
-                    INSERT INTO tickets (TicketID, Solicitante, FechaCreacion, SLA_horas, equipo_asignado, titulo, ticket_status)
-                    VALUES (:id, :email, NOW(), 24, :equipo, :titulo, 'New')
-                """), {"id": ticket_id, "email": solicitante_email, "equipo": equipo_asignado, "titulo": titulo})
-                
-                detalles = json.dumps({"descripcion": descripcion, "prioridad": prioridad})
-                conn.execute(text("""
-                    INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, otros_detalles, Autor)
-                    VALUES (:id, 'CREADO', NOW(), :detalles, :autor)
-                """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
-        
-        # Notificación Email
+        with engine.begin() as conn:
+            conn.execute(text("""
+                INSERT INTO tickets (TicketID, Solicitante, FechaCreacion, SLA_horas, equipo_asignado, titulo, ticket_status)
+                VALUES (:id, :email, NOW(), 24, :equipo, :titulo, 'New')
+            """), {"id": ticket_id, "email": solicitante_email, "equipo": equipo_asignado, "titulo": titulo})
+            
+            detalles = json.dumps({"descripcion": descripcion, "prioridad": prioridad})
+            conn.execute(text("""
+                INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, otros_detalles, Autor)
+                VALUES (:id, 'CREADO', NOW(), :detalles, :autor)
+            """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
+            
         enviar_notificacion_email(solicitante_email, f"Tiquete Creado: {ticket_id}", f"Hola, tu tiquete {ticket_id} ha sido creado.")
 
-        # Card Response
         card = {
             "cardsV2": [{
                 "cardId": f"create_{ticket_id}",
@@ -81,21 +78,24 @@ def cerrar_tiquete(ticket_id: str, resolucion: str, solicitante_email: str) -> s
     
     engine = get_db_connection()
     try:
+        dueno_original = None
+        # Lectura previa (puede ser conexión simple)
         with engine.connect() as conn:
             check = conn.execute(text("SELECT Solicitante FROM tickets WHERE TicketID = :id"), {"id": ticket_id}).fetchone()
             if not check:
                 return f"⚠️ No encontré el tiquete {ticket_id}."
-            
             dueno_original = check[0]
 
-            with conn.begin():
-                conn.execute(text("UPDATE tickets SET ticket_status = 'Completed' WHERE TicketID = :id"), {"id": ticket_id})
-                detalles = json.dumps({"resolucion": resolucion, "cerrado_por": solicitante_email})
-                conn.execute(text("""
-                    INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, otros_detalles, Autor)
-                    VALUES (:id, 'CERRADO', NOW(), :detalles, :autor)
-                """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
+        # Escritura (Transaccional)
+        with engine.begin() as conn:
+            conn.execute(text("UPDATE tickets SET ticket_status = 'Completed' WHERE TicketID = :id"), {"id": ticket_id})
+            detalles = json.dumps({"resolucion": resolucion, "cerrado_por": solicitante_email})
+            conn.execute(text("""
+                INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, otros_detalles, Autor)
+                VALUES (:id, 'CERRADO', NOW(), :detalles, :autor)
+            """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
 
+        # Notificación
         enviar_notificacion_email(dueno_original, f"Tiquete Cerrado: {ticket_id}", f"Tu tiquete ha sido cerrado.<br><b>Resolución:</b> {resolucion}")
 
         card = {
@@ -120,18 +120,18 @@ def reasignar_tiquete(ticket_id: str, nuevo_responsable: str, solicitante_email:
     ticket_id = ticket_id.upper().strip()
     engine = get_db_connection()
     try:
-        with engine.connect() as conn:
-            with conn.begin():
-                detalles = json.dumps({"asignado_a": nuevo_responsable, "asignado_por": solicitante_email})
-                conn.execute(text("""
-                    INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, responsable, otros_detalles, Autor)
-                    VALUES (:id, 'REASIGNADO', NOW(), :resp, :detalles, :autor)
-                """), {"id": ticket_id, "resp": nuevo_responsable, "detalles": detalles, "autor": solicitante_email})
+        with engine.begin() as conn:
+            detalles = json.dumps({"asignado_a": nuevo_responsable, "asignado_por": solicitante_email})
+            conn.execute(text("""
+                INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, responsable, otros_detalles, Autor)
+                VALUES (:id, 'REASIGNADO', NOW(), :resp, :detalles, :autor)
+            """), {"id": ticket_id, "resp": nuevo_responsable, "detalles": detalles, "autor": solicitante_email})
 
         enviar_notificacion_email(nuevo_responsable, f"Tiquete Asignado: {ticket_id}", f"Se te ha asignado el tiquete {ticket_id}.")
         
         return f"✅ Tiquete {ticket_id} reasignado a {nuevo_responsable}."
     except Exception as e:
+        log_structured("DBReassignError", error=str(e))
         return f"Error reasignando: {str(e)}"
 
 def consultar_estado_tiquete(ticket_id: str) -> str:

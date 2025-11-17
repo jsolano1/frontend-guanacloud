@@ -4,11 +4,14 @@ from langgraph.graph import StateGraph, END
 from google import genai
 from google.genai import types
 from src.config import settings
-from src.tools.helpdesk_tools import tools_list, crear_tiquete_tool, cerrar_tiquete_tool, reasignar_tiquete_tool, consultar_estado_tool
+from src.tools.helpdesk_tools import tools_list as helpdesk_tools
+from src.tools.dwh_tools import dwh_tools_list, consultar_dwh_tool
 from src.services import ticket_manager
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
 from src.utils.prompt_loader import load_prompt
+
+all_tools = helpdesk_tools + dwh_tools_list
 
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
@@ -29,7 +32,7 @@ def agent_node(state: AgentState):
             model=settings.GEMINI_MODEL_ID,
             contents=messages,
             config=types.GenerateContentConfig(
-                tools=tools_list,
+                tools=all_tools,
                 system_instruction=system_prompt,
                 temperature=0.0
             )
@@ -56,15 +59,23 @@ def tools_execution_node(state: AgentState):
                 if "solicitante_email" in fn_args and fn_args["solicitante_email"] == "unknown":
                     fn_args["solicitante_email"] = state["user_email"]
 
+                
                 if fn_name == "crear_tiquete_tool":
+                    from src.tools.helpdesk_tools import crear_tiquete_tool
                     result = crear_tiquete_tool(**fn_args)
                 elif fn_name == "cerrar_tiquete_tool":
+                    from src.tools.helpdesk_tools import cerrar_tiquete_tool
                     result = cerrar_tiquete_tool(**fn_args)
                 elif fn_name == "reasignar_tiquete_tool":
+                    from src.tools.helpdesk_tools import reasignar_tiquete_tool
                     result = reasignar_tiquete_tool(**fn_args)
                 elif fn_name == "consultar_estado_tool":
+                    from src.tools.helpdesk_tools import consultar_estado_tool
                     result = str(consultar_estado_tool(**fn_args))
                 
+                elif fn_name == "consultar_dwh_tool":
+                    result = consultar_dwh_tool(**fn_args)
+
                 if isinstance(result, str):
                     clean_result = result.strip()
                     if '"cardsV2"' in clean_result:
@@ -76,12 +87,12 @@ def tools_execution_node(state: AgentState):
                                 card_data = json.loads(potential_json)
                                 if "cardsV2" in card_data:
                                     card_found = card_data
-                                    result = f"Acción '{fn_name}' completada. Tarjeta visual generada para el usuario."
-                        except json.JSONDecodeError:
-                            log_structured("CardParseError", raw_output=result[:200])
+                                    result = f"Acción '{fn_name}' completada. Tarjeta generada."
+                        except:
+                            pass
 
             except Exception as e:
-                result = f"Error ejecutando herramienta: {str(e)}"
+                result = f"Error en herramienta: {str(e)}"
                 log_structured("ToolException", tool=fn_name, error=str(e))
             
             tool_outputs.append(types.Part.from_function_response(name=fn_name, response={"result": result}))

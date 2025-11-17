@@ -40,6 +40,21 @@ def get_db_connection() -> sqlalchemy.engine.base.Engine:
         log_structured("DBPoolInitError", error=str(e), traceback=traceback.format_exc())
         raise
 
+def check_dwh_permission(user_email: str) -> bool:
+    """
+    Verifica en la tabla roles_usuarios si el usuario tiene permiso 'can_query_dwh'.
+    """
+    if not user_email: return False
+    engine = get_db_connection()
+    try:
+        with engine.connect() as conn:
+            query = text("SELECT can_query_dwh FROM roles_usuarios WHERE lower(user_email) = lower(:email) LIMIT 1")
+            result = conn.execute(query, {"email": user_email.strip()}).scalar()
+            return bool(result)
+    except Exception as e:
+        log_structured("CheckDwhPermissionError", error=str(e), user=user_email)
+        return False
+
 def get_all_departments():
     """Obtiene lista de departamentos."""
     engine = get_db_connection()
