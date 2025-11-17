@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+google-genai>=0.3.0
+langgraph
+pydantic
+google-cloud-firestore
+google-cloud-secret-manager
+google-cloud-storage
+sqlalchemy
+pg8000
+cloud-sql-python-connector[pg8000]
+google-auth
+google-api-python-client
+requests
+pytz
+python-dotenv

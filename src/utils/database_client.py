@@ -1,0 +1,63 @@
+import sqlalchemy
+from sqlalchemy.sql import text
+from google.cloud.sql.connector import Connector, IPTypes
+from src.config import settings
+from src.utils.logging_utils import log_structured
+import traceback
+
+db_pool = None
+
+def get_db_connection() -> sqlalchemy.engine.base.Engine:
+    """Inicializa y devuelve el pool de conexiones a Cloud SQL."""
+    global db_pool
+    if db_pool:
+        return db_pool
+
+    connector = Connector()
+
+    def getconn():
+        conn = connector.connect(
+            settings.DB_CONNECTION_NAME,
+            "pg8000",
+            user=settings.DB_USER,
+            password=settings.DB_PASS,
+            db=settings.DB_NAME,
+            ip_type=IPTypes.PRIVATE
+        )
+        return conn
+
+    try:
+        db_pool = sqlalchemy.create_engine(
+            "postgresql+pg8000://",
+            creator=getconn,
+            pool_size=settings.DB_POOL_SIZE,
+            max_overflow=settings.DB_MAX_OVERFLOW,
+            pool_timeout=settings.DB_POOL_TIMEOUT,
+        )
+        log_structured("DBPoolInitialized", pool_size=settings.DB_POOL_SIZE)
+        return db_pool
+    except Exception as e:
+        log_structured("DBPoolInitError", error=str(e), traceback=traceback.format_exc())
+        raise
+
+def get_all_departments():
+    """Obtiene lista de departamentos."""
+    engine = get_db_connection()
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT department_name FROM departments"))
+            return [row[0] for row in result]
+    except Exception as e:
+        log_structured("DBQueryError", query="get_all_departments", error=str(e))
+        return []
+
+def get_all_priorities():
+    """Obtiene lista de prioridades."""
+    engine = get_db_connection()
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT DISTINCT priority FROM sla_configuracion"))
+            return [row[0] for row in result]
+    except Exception as e:
+        log_structured("DBQueryError", query="get_all_priorities", error=str(e))
+        return ["alta", "media", "baja"]
