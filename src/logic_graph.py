@@ -37,9 +37,9 @@ def agent_node(state: AgentState):
         )
         return {"messages": [response.candidates[0].content]}
     except Exception as e:
-        log_structured("LLMError", error=str(e))
-        # Retorno seguro en caso de fallo de IA
-        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Lo siento, tuve un problema técnico.")])]}
+        import traceback
+        log_structured("LLMError", error=str(e), traceback=traceback.format_exc())
+        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Lo siento, tuve un problema técnico al conectar con mi cerebro digital. 🧠💥")])]}
 
 def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
