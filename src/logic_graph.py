@@ -65,14 +65,20 @@ def tools_execution_node(state: AgentState):
                 elif fn_name == "consultar_estado_tool":
                     result = str(consultar_estado_tool(**fn_args))
                 
-                if isinstance(result, str) and '"cardsV2":' in result:
-                    try:
-                        card_json = json.loads(result)
-                        if "cardsV2" in card_json:
-                            card_found = card_json
-                            result = "Acción completada. Tarjeta generada."
-                    except:
-                        pass
+                if isinstance(result, str):
+                    clean_result = result.strip()
+                    if '"cardsV2"' in clean_result:
+                        try:
+                            json_start = clean_result.find('{')
+                            json_end = clean_result.rfind('}') + 1
+                            if json_start >= 0 and json_end > json_start:
+                                potential_json = clean_result[json_start:json_end]
+                                card_data = json.loads(potential_json)
+                                if "cardsV2" in card_data:
+                                    card_found = card_data
+                                    result = f"Acción '{fn_name}' completada. Tarjeta visual generada para el usuario."
+                        except json.JSONDecodeError:
+                            log_structured("CardParseError", raw_output=result[:200])
 
             except Exception as e:
                 result = f"Error ejecutando herramienta: {str(e)}"
