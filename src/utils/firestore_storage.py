@@ -17,7 +17,8 @@ class FirestoreSaver(BaseCheckpointSaver):
 
     def get_tuple(self, config: Dict[str, Any]) -> Optional[CheckpointTuple]:
         thread_id = config["configurable"]["thread_id"]
-        doc_ref = self.collection.document(thread_id)
+        safe_thread_id = self._sanitize_id(thread_id)
+        doc_ref = self.collection.document(safe_thread_id)
         
         try:
             doc = doc_ref.get()
@@ -40,7 +41,8 @@ class FirestoreSaver(BaseCheckpointSaver):
 
     def put(self, config: Dict[str, Any], checkpoint: Checkpoint, metadata: CheckpointMetadata, new_versions: Dict[str, Any]) -> Dict[str, Any]:
         thread_id = config["configurable"]["thread_id"]
-        doc_ref = self.collection.document(thread_id)
+        safe_thread_id = self._sanitize_id(thread_id)
+        doc_ref = self.collection.document(safe_thread_id)
         
         try:
              save_data = {
