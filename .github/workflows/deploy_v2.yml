@@ -25,66 +25,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 1. Autenticación con Google Cloud (Igual que V1)
       - name: Authenticate to Google Cloud
         uses: 'google-github-actions/auth@v1'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-      # 2. Setup Cloud SDK
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v1'
 
-      # 3. Configurar Docker para Artifact Registry
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
 
-      # 4. Definir Variables Dinámicas (DEV vs PROD) - Lógica V1 replicada
       - name: Set Environment Variables
         run: |
           if [[ $GITHUB_REF_NAME == 'main' ]]; then
             echo "Ambiente: PRODUCCION 🚀"
             echo "SERVICE_NAME=kai-api-corev2-prod" >> $GITHUB_ENV
-            
-            # Flags de recursos para Prod
             echo "CLOUD_RUN_FLAGS=--allow-unauthenticated --memory=4Gi --cpu=4 --min-instances=1" >> $GITHUB_ENV
-            
-            # URLs y Bases de Datos de Prod (Reusando infraestructura existente)
             echo "APP_BASE_URL=https://kai-api-corev2-prod-537990588927.us-central1.run.app" >> $GITHUB_ENV
             echo "DB_INSTANCE_NAME=kai-postgres-prod" >> $GITHUB_ENV
             echo "DB_PASS_SECRET_NAME=kai-postgres-password-prod" >> $GITHUB_ENV
-            
-            # Firestore V2 Prod
             echo "FIRESTORE_DB_ID=agentkai-v2" >> $GITHUB_ENV
             echo "FIRESTORE_SESSION_COLLECTION=kai_v2_graph_state_prod" >> $GITHUB_ENV
             
           else
             echo "Ambiente: DESARROLLO 🛠️"
             echo "SERVICE_NAME=kai-api-corev2-dev" >> $GITHUB_ENV
-            
-            # Flags de recursos para Dev
             echo "CLOUD_RUN_FLAGS=--allow-unauthenticated --memory=4Gi --cpu=2" >> $GITHUB_ENV
-            
-            # URLs y Bases de Datos de Dev
             echo "APP_BASE_URL=https://kai-api-corev2-dev-537990588927.us-central1.run.app" >> $GITHUB_ENV
             echo "DB_INSTANCE_NAME=kai-postgres-dev" >> $GITHUB_ENV
             echo "DB_PASS_SECRET_NAME=kai-postgres-password-dev" >> $GITHUB_ENV
-            
-            # Firestore V2 Dev
             echo "FIRESTORE_DB_ID=agentkai-v2-dev" >> $GITHUB_ENV
             echo "FIRESTORE_SESSION_COLLECTION=kai_v2_graph_state_dev" >> $GITHUB_ENV
           fi
 
-      # 5. Construir y Subir Imagen Docker (Estrategia V1)
-      - name: Build and Push Docker Image
+      - name: Build Docker Image
         run: |
-          # Tag completo incluyendo REPO_NAME y SERVICE_NAME para evitar colisiones
           IMAGE_TAG=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-          
           docker build -f Dockerfile -t $IMAGE_TAG .
+
+      - name: Push Docker Image
+        run: |
+          IMAGE_TAG=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
           docker push $IMAGE_TAG
 
-      # 6. Desplegar a Cloud Run
       - name: Deploy to Cloud Run
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
@@ -93,43 +77,26 @@ jobs:
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
           flags: ${{ env.CLOUD_RUN_FLAGS }}
           
-          # Mapeo de Variables de Entorno
           env_vars: |-
             GCP_PROJECT_ID=${{ env.PROJECT_ID }}
             LOCATION=${{ env.REGION }}
-            
-            # --- STACK V2 (IA & Memoria) ---
-            GEMINI_MODEL_ID=gemini-2.5-flash
+            GEMINI_MODEL_ID=gemini-1.5-flash
             FIRESTORE_DATABASE_ID=${{ env.FIRESTORE_DB_ID }}
             FIRESTORE_SESSION_COLLECTION=${{ env.FIRESTORE_SESSION_COLLECTION }}
-            
-            # --- BASE DE DATOS (Postgres) ---
             DB_USER=postgres
             DB_NAME=postgres
             DB_CONNECTION_NAME=${{ env.PROJECT_ID }}:${{ env.REGION }}:${{ env.DB_INSTANCE_NAME }}
             DB_POOL_SIZE=5
-            
-            # --- CONFIGURACIÓN GENERAL ---
             APP_BASE_URL=${{ env.APP_BASE_URL }}
             GCS_ATTACHMENT_BUCKET=kai-tiquete-attachments
             APP_EMAIL_SENDER_IDENTITY=helpdesk@connect.inc
             
-            # --- WEBHOOKS (Inyectados desde Secrets para seguridad) ---
-            # Nota: Usamos secretos directos aquí para no quemar URLs en el repo
-            
-          # Mapeo de Secretos (Igual que V1)
           secrets: |-
             DB_PASS=${{ env.DB_PASS_SECRET_NAME }}:latest
-            
-            # APIs Externas
             ASANA_PERSONAL_ACCESS_TOKEN=asana-pat:latest
             GITHUB_PAT=GITHUB_PAT:latest
             GITHUB_WEBHOOK_SECRET=GITHUB_WEBHOOK_SECRET:latest
-            
-            # Integraciones Looker
             LOOKERSDK_CLIENT_ID=LOOKERSDK_CLIENT_ID:latest
             LOOKERSDK_CLIENT_SECRET=LOOKERSDK_CLIENT_SECRET:latest
-            
-            # Webhooks de Chat (Mismo nombre de secreto que V1)
             GOOGLE_CHAT_WEBHOOK_URL=GOOGLE_CHAT_WEBHOOK_URL:latest
             TI_GOOGLE_CHAT_WEBHOOK_URL=TI_GOOGLE_CHAT_WEBHOOK_URL:latest
