@@ -13,16 +13,18 @@ from src.utils.prompt_loader import load_prompt
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
 def _get_ai_classification(descripcion: str) -> dict:
-    """Clasifica el tiquete usando Gemini con prompt externo."""
+    """Clasifica el tiquete usando Gemini y prompt externo."""
     
     prompt_template = load_prompt("classify_ticket.md")
-    
-    prompt_final = prompt_template.format(descripcion=descripcion)
+    if not prompt_template:
+        prompt_template = "Clasifica esto en JSON {titulo, tipo_solicitud}: " + descripcion
+
+    prompt = prompt_template.replace("{descripcion}", descripcion)
     
     try:
         response = client.models.generate_content(
             model=settings.GEMINI_MODEL_ID,
-            contents=prompt_final,
+            contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"
             )
@@ -36,14 +38,11 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
     """Lógica de negocio pura para crear el tiquete."""
     log_structured("CrearTiqueteLogic", user=solicitante_email, equipo=equipo_asignado)
     
-    # 1. Clasificación IA
     ai_data = _get_ai_classification(descripcion)
     titulo = ai_data.get("titulo", "Tiquete de Soporte")
     
-    # 2. Generar ID
     ticket_id = f"KAI-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4().hex)[:4].upper()}"
     
-    # 3. Guardar en DB
     engine = get_db_connection()
     try:
         with engine.connect() as conn:
@@ -62,7 +61,6 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
                     VALUES (:id, 'CREADO', NOW(), :detalles, :autor)
                 """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
                 
-        # 4. Notificar
         msg = f"✅ Tiquete Creado: *{ticket_id}*\n*Título:* {titulo}\n*Equipo:* {equipo_asignado}\n*Prioridad:* {prioridad}"
         enviar_notificacion_chat(msg)
         
@@ -77,13 +75,12 @@ def consultar_estado_tiquete(ticket_id: str) -> str:
     try:
         with engine.connect() as conn:
             ticket_id = ticket_id.upper().strip()
-            
             result = conn.execute(text(
                 "SELECT ticket_status, titulo, equipo_asignado FROM tickets WHERE TicketID = :id"
             ), {"id": ticket_id}).fetchone()
             
             if not result:
-                return f"No encontré el tiquete {ticket_id}. Por favor verifica el ID."
+                return f"No encontré el tiquete {ticket_id}."
             
             return f"📋 Estado del tiquete *{ticket_id}*:\n- Estado: {result[0]}\n- Título: {result[1]}\n- Equipo: {result[2]}"
     except Exception as e:
