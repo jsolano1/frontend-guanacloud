@@ -1,12 +1,13 @@
 from typing import Annotated, TypedDict, List
 from langgraph.graph import StateGraph, END
-from langgraph.prebuilt import ToolNode
 from google import genai
 from google.genai import types
 from src.config import settings
 from src.tools.helpdesk_tools import tools_list, crear_tiquete_tool
+from src.services import ticket_manager
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
+from src.utils.prompt_loader import load_prompt
 
 # --- 1. Configuración del Cliente GenAI ---
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
@@ -21,30 +22,25 @@ def agent_node(state: AgentState):
     messages = state["messages"]
     user_email = state.get("user_email", "usuario@connect.inc")
     
-    # System Instruction dinámica
-    system_prompt = f"""Eres KAI, el asistente de Helpdesk de Connect.
-    Tu usuario actual es: {user_email}.
-    
-    REGLAS:
-    1. Si el usuario quiere crear un tiquete, obtén descripción, prioridad y equipo.
-    2. Si falta información, PREGUNTA antes de llamar a la herramienta.
-    3. Sé amable y profesional.
-    """
+    prompt_template = load_prompt("system_prompt_helpdesk.md")
+    system_prompt = prompt_template.format(user_email=user_email)
 
-    response = client.models.generate_content(
-        model=settings.GEMINI_MODEL_ID,
-        contents=messages,
-        config=types.GenerateContentConfig(
-            tools=tools_list,
-            system_instruction=system_prompt,
-            temperature=0.0
+    try:
+        response = client.models.generate_content(
+            model=settings.GEMINI_MODEL_ID,
+            contents=messages,
+            config=types.GenerateContentConfig(
+                tools=tools_list,
+                system_instruction=system_prompt,
+                temperature=0.0
+            )
         )
-    )
-    
-    return {"messages": [response.candidates[0].content]}
+        return {"messages": [response.candidates[0].content]}
+    except Exception as e:
+        log_structured("LLMGenerationError", error=str(e))
+        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Lo siento, tuve un error técnico al pensar mi respuesta.")])]}
 
 # --- 4. Nodo: Herramientas (Custom Execution) ---
-
 def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_outputs = []
@@ -58,13 +54,17 @@ def tools_execution_node(state: AgentState):
             
             result = "Error: Herramienta desconocida"
             
-            if fn_name == "crear_tiquete_tool":
-                if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
-                    fn_args["solicitante_email"] = state["user_email"]
-                result = crear_tiquete_tool(**fn_args)
-                
-            elif fn_name == "consultar_estado_tool":
-                result = str(ticket_manager.consultar_estado_tiquete(**fn_args))
+            try:
+                if fn_name == "crear_tiquete_tool":
+                    if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
+                        fn_args["solicitante_email"] = state.get("user_email")
+                    result = crear_tiquete_tool(**fn_args)
+                    
+                elif fn_name == "consultar_estado_tool":
+                    result = str(ticket_manager.consultar_estado_tiquete(**fn_args))
+            except Exception as e:
+                result = f"Error ejecutando herramienta: {str(e)}"
+                log_structured("ToolExecutionException", tool=fn_name, error=str(e))
             
             tool_outputs.append(
                 types.Part.from_function_response(
@@ -78,9 +78,10 @@ def tools_execution_node(state: AgentState):
 # --- 5. Lógica de Transición ---
 def should_continue(state: AgentState):
     last_message = state["messages"][-1]
-    for part in last_message.parts:
-        if part.function_call:
-            return "tools"
+    if last_message.parts:
+        for part in last_message.parts:
+            if part.function_call:
+                return "tools"
     return END
 
 # --- 6. Ensamblaje del Grafo ---

@@ -1,32 +1,28 @@
 import json
 import uuid
-import re
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 from sqlalchemy.sql import text
 from google import genai
 from google.genai import types
 from src.config import settings
 from src.utils.database_client import get_db_connection
 from src.utils.logging_utils import log_structured
-from src.services.notification_service import enviar_notificacion_chat, enviar_notificacion_email
+from src.services.notification_service import enviar_notificacion_chat
+from src.utils.prompt_loader import load_prompt
 
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
 def _get_ai_classification(descripcion: str) -> dict:
-    """Clasifica el tiquete usando Gemini (Nuevo SDK)."""
-    prompt = f"""
-    Analiza la descripción del problema y devuelve un JSON con:
-    - 'titulo': Resumen de 4-5 palabras.
-    - 'tipo_solicitud': Una categoría de: [Reporte de Bugs, Accesos, Redes, Hardware, Datos, Otro].
+    """Clasifica el tiquete usando Gemini con prompt externo."""
     
-    Descripción: {descripcion}
+    prompt_template = load_prompt("classify_ticket.md")
     
-    Responder SOLO JSON.
-    """
+    prompt_final = prompt_template.format(descripcion=descripcion)
+    
     try:
         response = client.models.generate_content(
             model=settings.GEMINI_MODEL_ID,
-            contents=prompt,
+            contents=prompt_final,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"
             )
@@ -42,8 +38,7 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
     
     # 1. Clasificación IA
     ai_data = _get_ai_classification(descripcion)
-    titulo = ai_data.get("titulo")
-    tipo = ai_data.get("tipo_solicitud")
+    titulo = ai_data.get("titulo", "Tiquete de Soporte")
     
     # 2. Generar ID
     ticket_id = f"KAI-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4().hex)[:4].upper()}"
@@ -67,7 +62,7 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
                     VALUES (:id, 'CREADO', NOW(), :detalles, :autor)
                 """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
                 
-        # 4. Notificar (Simplificado)
+        # 4. Notificar
         msg = f"✅ Tiquete Creado: *{ticket_id}*\n*Título:* {titulo}\n*Equipo:* {equipo_asignado}\n*Prioridad:* {prioridad}"
         enviar_notificacion_chat(msg)
         
@@ -81,12 +76,14 @@ def consultar_estado_tiquete(ticket_id: str) -> str:
     engine = get_db_connection()
     try:
         with engine.connect() as conn:
+            ticket_id = ticket_id.upper().strip()
+            
             result = conn.execute(text(
                 "SELECT ticket_status, titulo, equipo_asignado FROM tickets WHERE TicketID = :id"
             ), {"id": ticket_id}).fetchone()
             
             if not result:
-                return f"No encontré el tiquete {ticket_id}."
+                return f"No encontré el tiquete {ticket_id}. Por favor verifica el ID."
             
             return f"📋 Estado del tiquete *{ticket_id}*:\n- Estado: {result[0]}\n- Título: {result[1]}\n- Equipo: {result[2]}"
     except Exception as e:

@@ -43,7 +43,7 @@ jobs:
       # 4. Construir y Subir Imagen (Usando commit SHA como tag)
       - name: 'Build and Push Container'
         run: |
-          gcloud builds submit --tag gcr.io/$PROJECT_ID/$REPO_NAME:${{ github.sha }}
+          gcloud builds submit --tag gcr.io/$PROJECT_ID/$REPO_NAME:${{ github.sha }} .
 
       # ==================================================================
       # DESPLIEGUE A DESARROLLO (Rama: develop)
