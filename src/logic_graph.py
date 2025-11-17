@@ -1,9 +1,10 @@
-from typing import Annotated, TypedDict, List
+import json
+from typing import Annotated, TypedDict, List, Optional, Any
 from langgraph.graph import StateGraph, END
 from google import genai
 from google.genai import types
 from src.config import settings
-from src.tools.helpdesk_tools import tools_list, crear_tiquete_tool
+from src.tools.helpdesk_tools import tools_list, crear_tiquete_tool, cerrar_tiquete_tool, reasignar_tiquete_tool, consultar_estado_tool
 from src.services import ticket_manager
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
@@ -13,17 +14,15 @@ client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=s
 
 class AgentState(TypedDict):
     messages: List[types.Content]
-    user_email: str 
+    user_email: str
+    generated_card: Optional[Dict[str, Any]]
 
 def agent_node(state: AgentState):
     messages = state["messages"]
     user_email = state.get("user_email", "usuario@connect.inc")
     
     prompt_template = load_prompt("system_prompt_helpdesk.md")
-    if not prompt_template:
-        system_prompt = f"Eres KAI. Usuario: {user_email}. Gestiona tiquetes."
-    else:
-        system_prompt = prompt_template.replace("{user_email}", user_email)
+    system_prompt = prompt_template.format(user_email=user_email) if prompt_template else f"Eres KAI. Usuario: {user_email}."
 
     try:
         response = client.models.generate_content(
@@ -37,13 +36,13 @@ def agent_node(state: AgentState):
         )
         return {"messages": [response.candidates[0].content]}
     except Exception as e:
-        import traceback
-        log_structured("LLMError", error=str(e), traceback=traceback.format_exc())
-        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Lo siento, tuve un problema técnico al conectar con mi cerebro digital. 🧠💥")])]}
+        log_structured("LLMError", error=str(e))
+        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Tuve un problema técnico. 😵‍💫")])]}
 
 def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_outputs = []
+    card_found = None
     
     for part in last_message.parts:
         if part.function_call:
@@ -54,23 +53,37 @@ def tools_execution_node(state: AgentState):
             result = "Error: Herramienta desconocida"
             
             try:
+                if "solicitante_email" in fn_args and fn_args["solicitante_email"] == "unknown":
+                    fn_args["solicitante_email"] = state["user_email"]
+
                 if fn_name == "crear_tiquete_tool":
-                    if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
-                        fn_args["solicitante_email"] = state["user_email"]
                     result = crear_tiquete_tool(**fn_args)
+                elif fn_name == "cerrar_tiquete_tool":
+                    result = cerrar_tiquete_tool(**fn_args)
+                elif fn_name == "reasignar_tiquete_tool":
+                    result = reasignar_tiquete_tool(**fn_args)
                 elif fn_name == "consultar_estado_tool":
-                    result = str(ticket_manager.consultar_estado_tiquete(**fn_args))
+                    result = str(consultar_estado_tool(**fn_args))
+                
+                if isinstance(result, str) and '"cardsV2":' in result:
+                    try:
+                        card_json = json.loads(result)
+                        if "cardsV2" in card_json:
+                            card_found = card_json
+                            result = "Acción completada exitosamente. Se ha generado una tarjeta visual para el usuario."
+                    except:
+                        pass
+
             except Exception as e:
                 result = f"Error ejecutando herramienta: {str(e)}"
+                log_structured("ToolException", tool=fn_name, error=str(e))
             
-            tool_outputs.append(
-                types.Part.from_function_response(
-                    name=fn_name,
-                    response={"result": result}
-                )
-            )
+            tool_outputs.append(types.Part.from_function_response(name=fn_name, response={"result": result}))
             
-    return {"messages": [types.Content(role="tool", parts=tool_outputs)]}
+    return {
+        "messages": [types.Content(role="tool", parts=tool_outputs)],
+        "generated_card": card_found
+    }
 
 def should_continue(state: AgentState):
     last_message = state["messages"][-1]
