@@ -4,14 +4,15 @@ from langgraph.graph import StateGraph, END
 from google import genai
 from google.genai import types
 from src.config import settings
-from src.tools.helpdesk_tools import tools_list as helpdesk_tools
+from src.tools.helpdesk_tools import tools_list, crear_tiquete_tool, cerrar_tiquete_tool, reasignar_tiquete_tool, consultar_estado_tool
 from src.tools.dwh_tools import dwh_tools_list, consultar_dwh_tool
 from src.services import ticket_manager
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
 from src.utils.prompt_loader import load_prompt
 
-all_tools = helpdesk_tools + dwh_tools_list
+# Combinar herramientas
+all_tools = tools_list + dwh_tools_list
 
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
@@ -46,9 +47,9 @@ def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_outputs = []
     card_found = None
-
-    user_email = state.get("user_email", "unknown")
     
+    user_email = state.get("user_email", "unknown")
+
     for part in last_message.parts:
         if part.function_call:
             fn_name = part.function_call.name
@@ -57,14 +58,11 @@ def tools_execution_node(state: AgentState):
             if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
                 fn_args["solicitante_email"] = user_email
 
-            log_structured("ToolExecution", tool=fn_name, args=fn_args, user=user_email)
+            log_structured("ToolExecution", tool=fn_name, args=fn_args)
             result = "Error: Herramienta desconocida"
             
             try:
-                if "solicitante_email" in fn_args and fn_args["solicitante_email"] == "unknown":
-                    fn_args["solicitante_email"] = state["user_email"]
-
-                
+                # Dispatcher Manual
                 if fn_name == "crear_tiquete_tool":
                     from src.tools.helpdesk_tools import crear_tiquete_tool
                     result = crear_tiquete_tool(**fn_args)
@@ -77,28 +75,29 @@ def tools_execution_node(state: AgentState):
                 elif fn_name == "consultar_estado_tool":
                     from src.tools.helpdesk_tools import consultar_estado_tool
                     result = str(consultar_estado_tool(**fn_args))
-                
                 elif fn_name == "consultar_dwh_tool":
                     from src.tools.dwh_tools import consultar_dwh_tool
                     result = consultar_dwh_tool(**fn_args)
 
-                if isinstance(result, str):
-                    clean_result = result.strip()
-                    if '"cardsV2"' in clean_result:
-                        try:
-                            json_start = clean_result.find('{')
-                            json_end = clean_result.rfind('}') + 1
-                            if json_start >= 0 and json_end > json_start:
-                                potential_json = clean_result[json_start:json_end]
-                                card_data = json.loads(potential_json)
-                                if "cardsV2" in card_data:
-                                    card_found = card_data
-                                    result = f"Acción '{fn_name}' completada. Tarjeta generada."
-                        except:
-                            pass
+                # --- Detección de Cards (JSON) ---
+                if isinstance(result, str) and "cardsV2" in result:
+                    try:
+                        # Buscar estructura JSON válida
+                        start_idx = result.find('{')
+                        end_idx = result.rfind('}') + 1
+                        if start_idx != -1 and end_idx != -1:
+                            json_candidate = result[start_idx:end_idx]
+                            data = json.loads(json_candidate)
+                            if "cardsV2" in data:
+                                card_found = data
+                                # Mensaje limpio para el historial del LLM
+                                result = f"Acción '{fn_name}' completada. Tarjeta visual generada."
+                    except Exception as parse_err:
+                        log_structured("CardParseWarning", error=str(parse_err), raw=result[:100])
+                # ---------------------------------
 
             except Exception as e:
-                result = f"Error en herramienta: {str(e)}"
+                result = f"Error ejecutando herramienta: {str(e)}"
                 log_structured("ToolException", tool=fn_name, error=str(e))
             
             tool_outputs.append(types.Part.from_function_response(name=fn_name, response={"result": result}))

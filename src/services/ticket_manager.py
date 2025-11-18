@@ -13,10 +13,10 @@ from src.utils.prompt_loader import load_prompt
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
 def _get_ai_classification(descripcion: str) -> dict:
-    """Clasifica el tiquete usando Gemini."""
     prompt_template = load_prompt("classify_ticket.md")
     if not prompt_template:
         prompt_template = "Clasifica esto en JSON {titulo, tipo_solicitud}: " + descripcion
+    
     prompt = prompt_template.replace("{descripcion}", descripcion)
     
     try:
@@ -39,6 +39,7 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
     
     engine = get_db_connection()
     try:
+        # Transacción atómica
         with engine.begin() as conn:
             conn.execute(text("""
                 INSERT INTO tickets (TicketID, Solicitante, FechaCreacion, SLA_horas, equipo_asignado, titulo, ticket_status)
@@ -50,9 +51,11 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
                 INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, otros_detalles, Autor)
                 VALUES (:id, 'CREADO', NOW(), :detalles, :autor)
             """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
-            
-        enviar_notificacion_email(solicitante_email, f"Tiquete Creado: {ticket_id}", f"Hola, tu tiquete {ticket_id} ha sido creado.")
 
+        # Notificaciones (Fuera de transacción DB)
+        enviar_notificacion_email(solicitante_email, f"Tiquete Creado: {ticket_id}", f"Hola, tu tiquete {ticket_id} ha sido creado.")
+        
+        # Card V2 Response
         card = {
             "cardsV2": [{
                 "cardId": f"create_{ticket_id}",
@@ -67,7 +70,6 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
             }]
         }
         return json.dumps(card)
-        
     except Exception as e:
         log_structured("DBInsertError", error=str(e))
         return f"❌ Error creando el tiquete: {str(e)}"
@@ -75,20 +77,22 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
 def cerrar_tiquete(ticket_id: str, resolucion: str, solicitante_email: str) -> str:
     log_structured("CerrarTiqueteLogic", ticket_id=ticket_id, resolucion=resolucion)
     ticket_id = ticket_id.upper().strip()
-    
     engine = get_db_connection()
+    
     try:
         dueno_original = None
-        # Lectura previa (puede ser conexión simple)
+        
+        # Paso 1: Lectura (Conexión simple, sin transacción de escritura)
         with engine.connect() as conn:
             check = conn.execute(text("SELECT Solicitante FROM tickets WHERE TicketID = :id"), {"id": ticket_id}).fetchone()
             if not check:
                 return f"⚠️ No encontré el tiquete {ticket_id}."
             dueno_original = check[0]
 
-        # Escritura (Transaccional)
+        # Paso 2: Escritura (Transacción explícita)
         with engine.begin() as conn:
             conn.execute(text("UPDATE tickets SET ticket_status = 'Completed' WHERE TicketID = :id"), {"id": ticket_id})
+            
             detalles = json.dumps({"resolucion": resolucion, "cerrado_por": solicitante_email})
             conn.execute(text("""
                 INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, otros_detalles, Autor)
@@ -96,8 +100,10 @@ def cerrar_tiquete(ticket_id: str, resolucion: str, solicitante_email: str) -> s
             """), {"id": ticket_id, "detalles": detalles, "autor": solicitante_email})
 
         # Notificación
-        enviar_notificacion_email(dueno_original, f"Tiquete Cerrado: {ticket_id}", f"Tu tiquete ha sido cerrado.<br><b>Resolución:</b> {resolucion}")
+        if dueno_original:
+            enviar_notificacion_email(dueno_original, f"Tiquete Cerrado: {ticket_id}", f"Tu tiquete ha sido cerrado.<br><b>Resolución:</b> {resolucion}")
 
+        # Card Response
         card = {
             "cardsV2": [{
                 "cardId": f"close_{ticket_id}",
@@ -121,7 +127,7 @@ def reasignar_tiquete(ticket_id: str, nuevo_responsable: str, solicitante_email:
     engine = get_db_connection()
     try:
         with engine.begin() as conn:
-            detalles = json.dumps({"asignado_a": nuevo_responsable, "asignado_por": solicitante_email})
+            detalles = json.dumps({"asignado_a": nuevo_responsable, "por": solicitante_email})
             conn.execute(text("""
                 INSERT INTO eventos_tiquetes (TicketID, TipoEvento, FechaEvento, responsable, otros_detalles, Autor)
                 VALUES (:id, 'REASIGNADO', NOW(), :resp, :detalles, :autor)
@@ -129,7 +135,19 @@ def reasignar_tiquete(ticket_id: str, nuevo_responsable: str, solicitante_email:
 
         enviar_notificacion_email(nuevo_responsable, f"Tiquete Asignado: {ticket_id}", f"Se te ha asignado el tiquete {ticket_id}.")
         
-        return f"✅ Tiquete {ticket_id} reasignado a {nuevo_responsable}."
+        card = {
+            "cardsV2": [{
+                "cardId": f"reassign_{ticket_id}",
+                "card": {
+                    "header": {"title": f"🔄 Tiquete Reasignado: {ticket_id}"},
+                    "sections": [{"widgets": [
+                        {"decoratedText": {"topLabel": "Nuevo Responsable", "text": nuevo_responsable}},
+                        {"textParagraph": {"text": f"Reasignado por: {solicitante_email}"}}
+                    ]}]
+                }
+            }]
+        }
+        return json.dumps(card)
     except Exception as e:
         log_structured("DBReassignError", error=str(e))
         return f"Error reasignando: {str(e)}"
@@ -138,14 +156,11 @@ def consultar_estado_tiquete(ticket_id: str) -> str:
     engine = get_db_connection()
     try:
         with engine.connect() as conn:
-            ticket_id = ticket_id.upper().strip()
-            result = conn.execute(text(
-                "SELECT ticket_status, titulo, equipo_asignado FROM tickets WHERE TicketID = :id"
-            ), {"id": ticket_id}).fetchone()
+            res = conn.execute(text("SELECT ticket_status, titulo, equipo_asignado FROM tickets WHERE TicketID = :id"), {"id": ticket_id.upper()}).fetchone()
             
-            if not result:
-                return f"No encontré el tiquete {ticket_id}."
+            if not res: return f"No encontré el tiquete {ticket_id}."
             
-            return f"📋 Estado del tiquete *{ticket_id}*:\n- Estado: {result[0]}\n- Título: {result[1]}\n- Equipo: {result[2]}"
+            # Retornamos texto simple para estado, no card, es más rápido para lectura
+            return f"📋 *Estado del Tiquete {ticket_id}*\n- Estado: *{res[0]}*\n- Título: {res[1]}\n- Equipo: {res[2]}"
     except Exception as e:
         return f"Error consultando DB: {str(e)}"
