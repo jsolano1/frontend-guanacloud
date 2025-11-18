@@ -21,16 +21,16 @@ async def handle_chat_event(request: Request):
         log_structured("MessageReceived", user=user_email, text=message_text)
 
         config = {"configurable": {"thread_id": thread_id}}
-
-        compiled_graph = get_compiled_graph()
         
+        compiled_graph = get_compiled_graph() 
+
         initial_input = {
             "messages": [types.Content(role="user", parts=[types.Part.from_text(text=message_text)])],
             "user_email": user_email,
             "generated_card": None
         }
-
-        final_state = await graph.ainvoke(initial_input, config=config)
+        
+        final_state = await compiled_graph.ainvoke(initial_input, config=config)
         
         last_message = final_state["messages"][-1]
         response_text = last_message.parts[0].text if last_message.parts else "..."
