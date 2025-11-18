@@ -46,13 +46,18 @@ def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_outputs = []
     card_found = None
+
+    user_email = state.get("user_email", "unknown")
     
     for part in last_message.parts:
         if part.function_call:
             fn_name = part.function_call.name
             fn_args = part.function_call.args
             
-            log_structured("ToolExecution", tool=fn_name, args=fn_args)
+            if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
+                fn_args["solicitante_email"] = user_email
+
+            log_structured("ToolExecution", tool=fn_name, args=fn_args, user=user_email)
             result = "Error: Herramienta desconocida"
             
             try:
@@ -74,6 +79,7 @@ def tools_execution_node(state: AgentState):
                     result = str(consultar_estado_tool(**fn_args))
                 
                 elif fn_name == "consultar_dwh_tool":
+                    from src.tools.dwh_tools import consultar_dwh_tool
                     result = consultar_dwh_tool(**fn_args)
 
                 if isinstance(result, str):
