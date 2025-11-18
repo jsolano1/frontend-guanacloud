@@ -9,7 +9,6 @@ from src.config import settings
 from src.utils.prompt_loader import load_prompt
 from src.utils.logging_utils import log_structured
 
-genai_client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 bq_client = bigquery.Client(project=settings.GCP_PROJECT_ID)
 
 def _execute_sql(sql: str) -> list:
@@ -35,6 +34,8 @@ def _execute_sql(sql: str) -> list:
 def consultar_dwh(pregunta: str, user_email: str) -> str:
     """Orquesta el flujo de consulta de datos."""
     log_structured("DwhQueryStart", user=user_email, query=pregunta)
+
+    genai_client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
     prompt_template = load_prompt("generate_dwh_sql_from_nl.md")
     if not prompt_template:

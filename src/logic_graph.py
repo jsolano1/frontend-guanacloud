@@ -5,18 +5,28 @@ from google import genai
 from google.genai import types
 from src.config import settings
 from src.tools.helpdesk_tools import tools_list as helpdesk_tools
-from src.tools.dwh_tools import dwh_tools_list, consultar_dwh_tool 
+from src.tools.dwh_tools import dwh_tools_list
+from src.tools.knowledge_tools import search_knowledge_base_tool
 from src.services import ticket_manager
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
 from src.utils.prompt_loader import load_prompt
-from src.tools.knowledge_tools import search_knowledge_base_tool
 
+# --- Inicialización Perezosa para el Cliente Gemini ---
 knowledge_tools_list = [search_knowledge_base_tool]
+all_tools = helpdesk_tools + dwh_tools_list + knowledge_tools_list 
 
-all_tools = helpdesk_tools + dwh_tools_list + knowledge_tools_list
+_COMPILED_GRAPH = None
+_GEMINI_CLIENT = None
 
-client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
+def get_gemini_client():
+    """Inicializa el cliente de Gemini (Vertex AI) solo si aún no existe."""
+    global _GEMINI_CLIENT
+    if _GEMINI_CLIENT is None:
+        _GEMINI_CLIENT = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
+    return _GEMINI_CLIENT
+# ----------------------------------------------------
+
 
 class AgentState(TypedDict):
     messages: List[types.Content]
@@ -32,6 +42,8 @@ def agent_node(state: AgentState):
     system_prompt = prompt_template.format(user_email=user_email) if prompt_template else f"Eres KAI. Usuario: {user_email}."
 
     try:
+        client = get_gemini_client()
+        
         response = client.models.generate_content(
             model=settings.GEMINI_MODEL_ID,
             contents=messages,
@@ -124,9 +136,8 @@ builder.add_edge("tools", "agent")
 
 checkpointer = FirestoreSaver()
 def get_compiled_graph():
+    """Implementa la inicialización perezosa de la compilación del grafo."""
     global _COMPILED_GRAPH
     if _COMPILED_GRAPH is None:
-        log_structured("LangGraphCompilationStart")
         _COMPILED_GRAPH = builder.compile(checkpointer=checkpointer)
-        log_structured("LangGraphCompilationEnd")
     return _COMPILED_GRAPH
