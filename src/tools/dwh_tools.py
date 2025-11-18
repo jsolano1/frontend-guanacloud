@@ -10,7 +10,7 @@ from src.config import settings
 
 TARGET_PROJECT_ID = "connectdwh-367315"
 TARGET_DATASET_ID = "connect_dwh"
-TARGET_TABLE_ID = "fact_services"
+TARGET_TABLE_ID = "fact_services" 
 
 def _get_role(binding):
     """Helper seguro para obtener el rol de un binding (objeto o dict)."""
@@ -71,7 +71,6 @@ def _check_iam_permissions(user_email: str) -> bool:
                     return True
 
     except Exception as e:
-        # Agregamos traceback para depurar si sigue fallando
         import traceback
         log_structured("DwhTableIAMCheckError", error=str(e), traceback=traceback.format_exc(), user=user_email)
 
@@ -103,3 +102,5 @@ def consultar_dwh_tool(pregunta: str, solicitante_email: str = "unknown") -> str
     thread.start()
     
     return "⏳ Validando credenciales y consultando DWH... Resultados en breve por aquí."
+
+dwh_tools_list = [consultar_dwh_tool]
