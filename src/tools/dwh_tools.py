@@ -12,70 +12,73 @@ TARGET_PROJECT_ID = "connectdwh-367315"
 TARGET_DATASET_ID = "connect_dwh"
 TARGET_TABLE_ID = "fact_services"
 
+def _get_role(binding):
+    """Helper seguro para obtener el rol de un binding (objeto o dict)."""
+    if isinstance(binding, dict):
+        return binding.get('role')
+    return getattr(binding, 'role', None)
+
+def _get_members(binding):
+    """Helper seguro para obtener miembros."""
+    if isinstance(binding, dict):
+        return binding.get('members', [])
+    return getattr(binding, 'members', [])
+
 def _check_iam_permissions(user_email: str) -> bool:
-    """
-    Valida permisos en cascada:
-    1. Roles de alto nivel en el Proyecto (Owner, Editor).
-    2. Roles específicos en la Tabla (Data Viewer).
-    """
     if not user_email: return False
     user_member = f"user:{user_email.strip().lower()}"
     
-    # --- NIVEL 1: Permisos de Proyecto (Resource Manager API) ---
+    # --- NIVEL 1: Permisos de Proyecto ---
     try:
         creds, _ = google.auth.default()
         service = build('cloudresourcemanager', 'v1', credentials=creds)
-        
         policy = service.projects().getIamPolicy(resource=TARGET_PROJECT_ID).execute()
         
         high_privilege_roles = {
-            "roles/owner",
-            "roles/editor",
-            "roles/bigquery.admin",
-            "roles/bigquery.user",
-            "roles/bigquery.jobUser"
+            "roles/owner", "roles/editor", "roles/bigquery.admin",
+            "roles/bigquery.user", "roles/bigquery.jobUser"
         }
 
+        # La API REST de Resource Manager devuelve dicts
         for binding in policy.get('bindings', []):
-            if binding['role'] in high_privilege_roles:
-                members_lower = [m.lower() for m in binding.get('members', [])]
-                if user_member in members_lower:
-                    log_structured("DwhIAMCheckSuccess", level="Project", role=binding['role'], user=user_email)
+            role = binding.get('role')
+            if role in high_privilege_roles:
+                members = [m.lower() for m in binding.get('members', [])]
+                if user_member in members:
+                    log_structured("DwhIAMCheckSuccess", level="Project", role=role, user=user_email)
                     return True
-
     except Exception as e:
         log_structured("DwhProjectIAMCheckWarning", error=str(e), user=user_email)
 
-    # --- NIVEL 2: Permisos de Tabla (BigQuery API) ---
+    # --- NIVEL 2: Permisos de Tabla ---
     try:
         client = bigquery.Client(project=settings.GCP_PROJECT_ID)
         table_ref = f"{TARGET_PROJECT_ID}.{TARGET_DATASET_ID}.{TARGET_TABLE_ID}"
-        
         policy = client.get_iam_policy(table_ref)
         
         table_roles = {
-            "roles/bigquery.dataViewer",
-            "roles/bigquery.dataEditor",
-            "roles/bigquery.admin",
-            "roles/owner",
-            "roles/editor"
+            "roles/bigquery.dataViewer", "roles/bigquery.dataEditor",
+            "roles/bigquery.admin", "roles/owner", "roles/editor"
         }
 
+        # La librería de BigQuery puede devolver objetos Policy con bindings como objetos O dicts
         for binding in policy.bindings:
-            if binding.role in table_roles:
-                members_lower = [m.lower() for m in binding.members]
-                if user_member in members_lower:
-                    log_structured("DwhIAMCheckSuccess", level="Table", role=binding.role, user=user_email)
+            role = _get_role(binding)
+            if role in table_roles:
+                members = [m.lower() for m in _get_members(binding)]
+                if user_member in members:
+                    log_structured("DwhIAMCheckSuccess", level="Table", role=role, user=user_email)
                     return True
 
     except Exception as e:
-        log_structured("DwhTableIAMCheckError", error=str(e), user=user_email)
+        # Agregamos traceback para depurar si sigue fallando
+        import traceback
+        log_structured("DwhTableIAMCheckError", error=str(e), traceback=traceback.format_exc(), user=user_email)
 
-    log_structured("DwhIAMCheckDenied", user=user_email, reason="No matching roles found in Project or Table")
+    log_structured("DwhIAMCheckDenied", user=user_email, reason="No matching roles found")
     return False
 
 def _run_dwh_async_secure(pregunta, email, space_name):
-    """Worker asíncrono para la consulta."""
     log_structured("AsyncDWHStart", user=email, space=space_name)
     try:
         resultado = dwh_query_service.consultar_dwh(pregunta, email)
@@ -86,27 +89,17 @@ def _run_dwh_async_secure(pregunta, email, space_name):
         enviar_mensaje_directo_chat(space_name, error_msg)
 
 def consultar_dwh_tool(pregunta: str, solicitante_email: str = "unknown") -> str:
-    """
-    Consulta la base de datos analítica (DWH) validando permisos reales en GCP.
-    """
-    # 1. Validación de Permisos (Cascada: Proyecto -> Tabla)
     if not _check_iam_permissions(solicitante_email):
-        return "⛔ Acceso Denegado: Tu cuenta de Google no tiene permisos (Owner/Editor/Lector) sobre el proyecto o la tabla de datos en BigQuery."
+        return "⛔ Acceso Denegado: No tienes permisos en GCP (Proyecto o Tabla) para ver estos datos."
 
-    # 2. Obtener canal seguro (DM)
     dm_space_name = get_dm_space_name_for_user(solicitante_email)
-    
     if not dm_space_name:
-        log_structured("DwhNoDMBound", user=solicitante_email)
-        return "⚠️ No puedo procesar la solicitud porque no tengo un chat privado registrado contigo. Escríbeme por privado primero."
+        return "⚠️ No tengo un chat privado registrado contigo. Escríbeme por privado primero."
 
-    # 3. Ejecución Asíncrona
     thread = threading.Thread(
         target=_run_dwh_async_secure, 
         args=(pregunta, solicitante_email, dm_space_name)
     )
     thread.start()
     
-    return "⏳ Validando tus credenciales de GCP y analizando datos... Te enviaré los resultados por aquí en unos momentos."
-
-dwh_tools_list = [consultar_dwh_tool]
+    return "⏳ Validando credenciales y consultando DWH... Resultados en breve por aquí."
