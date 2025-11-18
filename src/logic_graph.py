@@ -37,6 +37,7 @@ def agent_node(state: AgentState):
 
     try:
         client = get_gemini_client()
+        log_structured("LLMRequest", user=user_email, message_count=len(messages))
         
         response = client.models.generate_content(
             model=settings.GEMINI_MODEL_ID,
@@ -47,17 +48,25 @@ def agent_node(state: AgentState):
                 temperature=0.0
             )
         )
-        return {"messages": [response.candidates[0].content]}
+        
+        ai_content = response.candidates[0].content
+        first_part = ai_content.parts[0]
+        
+        if first_part.text:
+            log_structured("LLMResponse_Text", text_snippet=first_part.text[:200])
+        elif first_part.function_call:
+            log_structured("LLMResponse_ToolCall", tool_name=first_part.function_call.name, args=first_part.function_call.args)
+
+        return {"messages": [ai_content]}
+        
     except Exception as e:
         log_structured("LLMError", error=str(e))
         return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Tuve un problema técnico. 😵‍💫")])]}
 
 def tools_execution_node(state: AgentState):
-    """Ejecuta herramientas y detecta si devuelven Tarjetas UI."""
     last_message = state["messages"][-1]
     tool_outputs = []
     card_found = None
-    
     user_email = state.get("user_email", "unknown")
 
     for part in last_message.parts:
@@ -68,7 +77,7 @@ def tools_execution_node(state: AgentState):
             if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
                 fn_args["solicitante_email"] = user_email
 
-            log_structured("ToolExecution", tool=fn_name, user=user_email)
+            log_structured("ToolExecutionStart", tool=fn_name, user=user_email)
             
             try:
                 result = "Error: Herramienta no encontrada"
@@ -86,17 +95,20 @@ def tools_execution_node(state: AgentState):
                      from src.tools import knowledge_tools
                      result = knowledge_tools.search_knowledge_base_tool(**fn_args)
 
-                if isinstance(result, str):
-                    clean_result = result.strip()
-                    if '"cardsV2"' in clean_result:
-                        try:
-                            card_data = json.loads(clean_result)
-                            
-                            if "cardsV2" in card_data:
-                                card_found = card_data
-                                result = f"Acción '{fn_name}' completada. Se ha mostrado una tarjeta interactiva al usuario."
-                        except json.JSONDecodeError:
-                            pass
+                log_structured("ToolExecutionResult", tool=fn_name, result_preview=str(result)[:200])
+
+                if isinstance(result, str) and '"cardsV2"' in result:
+                    try:
+                        json_str = result
+                        if result.startswith("```json"):
+                            json_str = result.replace("```json", "").replace("```", "")
+                        
+                        card_data = json.loads(json_str)
+                        if "cardsV2" in card_data:
+                            card_found = card_data
+                            result = "Acción completada. Tarjeta UI mostrada al usuario."
+                    except Exception as json_err:
+                        log_structured("CardParseError", error=str(json_err))
 
             except Exception as e:
                 result = f"Error ejecutando {fn_name}: {str(e)}"
@@ -117,7 +129,6 @@ def should_continue(state: AgentState):
                 return "tools"
     return END
 
-_COMPILED_GRAPH = None
 checkpointer = FirestoreSaver()
 
 def get_compiled_graph():

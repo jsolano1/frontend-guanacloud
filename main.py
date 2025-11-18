@@ -36,22 +36,18 @@ async def handle_chat_event(request: Request):
         
         final_state = await compiled_graph.ainvoke(initial_input, config=config)
         
-        last_message = final_state["messages"][-1]
-        response_text = "..."
-        if last_message.parts:
-             for part in last_message.parts:
-                  if part.text:
-                       response_text = part.text
-                       break
+        response_text = last_message.parts[0].text if last_message.parts and last_message.parts[0].text else " " 
         
         response_payload = {"text": response_text}
 
         if final_state.get("generated_card"):
-            log_structured("CardGenerated", user=user_email)
-            response_payload["cardsV2"] = final_state["generated_card"]["cardsV2"]
-
-            if response_text == "...":
-                 response_payload["text"] = "He procesado tu solicitud:"
+            card_data = final_state["generated_card"]
+            log_structured("CardRendered", user=user_email, card_keys=list(card_data.keys()))
+            
+            if "cardsV2" in card_data:
+                response_payload["cardsV2"] = card_data["cardsV2"]
+            elif "cards" in card_data:
+                 response_payload["cards"] = card_data["cards"]
 
         return response_payload
 

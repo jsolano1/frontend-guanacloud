@@ -41,6 +41,7 @@ def search_knowledge_base_tool(user_query: str, solicitante_email: str = "unknow
         query_vector = np.array(embed_response.embeddings[0].values)
     except Exception as e:
         return f"Error generando embeddings con el modelo {settings.EMBEDDING_MODEL_NAME}: {str(e)}"
+        log_structured("KBSearchStart", query=user_query)
 
     kb_data = _load_kb_cache()
     if not kb_data: return "La base de conocimiento está vacía."
@@ -60,8 +61,14 @@ def search_knowledge_base_tool(user_query: str, solicitante_email: str = "unknow
     
     best_chunk = all_candidates[0] if all_candidates else None
     
-    if not best_chunk or best_chunk['score'] < 0.55:
-        return "No encontré información específica en la base de conocimiento sobre eso."
+    if not best_chunk:
+        log_structured("KBSearchFailed", reason="No candidates found")
+        return "No encontré información en la base de conocimiento."
+
+    log_structured("KBSearchBestMatch", source=best_chunk['source_file'], score=best_chunk['score'])
+
+    if best_chunk['score'] < 0.55:
+        return "No encontré información suficientemente relevante en el KB."
 
     top_n_chunks = all_candidates[:3]
     
