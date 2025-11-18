@@ -9,6 +9,8 @@ import google.auth
 from src.config import settings
 from src.utils.logging_utils import log_structured
 
+CHAT_API_SCOPE = ['https://www.googleapis.com/auth/chat.bot']
+
 def _get_creds(subject_email, scopes):
     source_creds, _ = google.auth.default(scopes=scopes)
     return impersonated_credentials.Credentials(
