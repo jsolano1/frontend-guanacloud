@@ -91,6 +91,7 @@ jobs:
             GCS_ATTACHMENT_BUCKET=kai-tiquete-attachments
             APP_EMAIL_SENDER_IDENTITY=helpdesk@connect.inc
             EMBEDDING_MODEL_NAME=text-embedding-005
+            KNOWLEDGE_BASE_BUCKET=kai-knowledge-base
             
           secrets: |-
             DB_PASS=${{ env.DB_PASS_SECRET_NAME }}:latest

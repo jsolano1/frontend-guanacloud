@@ -12,6 +12,10 @@ app = FastAPI(title="KAI Core V2", version="2.1.0")
 async def handle_chat_event(request: Request):
     try:
         event = await request.json()
+        
+        if event.get('type') == 'CARD_CLICKED':
+             return {"text": "Funcionalidad de clic en tarjeta pendiente de migración completa a V2."}
+
         if event.get('type') != 'MESSAGE': return {}
 
         message_text = event['message']['text']
@@ -33,13 +37,21 @@ async def handle_chat_event(request: Request):
         final_state = await compiled_graph.ainvoke(initial_input, config=config)
         
         last_message = final_state["messages"][-1]
-        response_text = last_message.parts[0].text if last_message.parts else "..."
+        response_text = "..."
+        if last_message.parts:
+             for part in last_message.parts:
+                  if part.text:
+                       response_text = part.text
+                       break
         
         response_payload = {"text": response_text}
 
         if final_state.get("generated_card"):
             log_structured("CardGenerated", user=user_email)
             response_payload["cardsV2"] = final_state["generated_card"]["cardsV2"]
+
+            if response_text == "...":
+                 response_payload["text"] = "He procesado tu solicitud:"
 
         return response_payload
 
