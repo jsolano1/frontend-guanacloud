@@ -24,26 +24,33 @@ class FirestoreSaver(BaseCheckpointSaver):
         return thread_id.replace("/", "_")
 
     def get_tuple(self, config: Dict[str, Any]) -> Optional[CheckpointTuple]:
+        """
+        Recupera el estado del grafo (checkpoint) desde Firestore.
+        Si el documento no existe (por ser nuevo o haber sido borrado por TTL), retorna None.
+        """
         thread_id = config["configurable"]["thread_id"]
         safe_thread_id = self._sanitize_id(thread_id)
         doc_ref = self.collection.document(safe_thread_id)
         
         try:
             doc = doc_ref.get()
+            
             if not doc.exists:
                 return None
             
             data = doc.to_dict()
+
             checkpoint = json.loads(data["checkpoint"])
             metadata = json.loads(data["metadata"])
-            
             
             return CheckpointTuple(
                 config=config,
                 checkpoint=checkpoint,
                 metadata=metadata,
-                parent_config=None 
+                parent_config=None,
+                pending_writes=[]
             )
+            
         except Exception as e:
             log_structured("FirestoreGetCheckpointError", error=str(e), thread_id=thread_id)
             return None

@@ -7,10 +7,29 @@ from src.services.notification_service import enviar_mensaje_directo_chat
 from src.utils.database_client import get_dm_space_name_for_user
 from src.utils.logging_utils import log_structured
 from src.config import settings
+from src.utils.database_client import check_dwh_permission
 
 TARGET_PROJECT_ID = "connectdwh-367315"
 TARGET_DATASET_ID = "connect_dwh"
-TARGET_TABLE_ID = "fact_services" 
+TARGET_TABLE_ID = "fact_services"
+
+def _check_permission_hybrid(user_email: str) -> bool:
+    """
+    Verifica permisos en dos niveles:
+    1. IAM de GCP (Prioridad técnica).
+    2. Tabla roles_usuarios en Postgres (Prioridad de negocio/fallback).
+    """
+    if not user_email: return False
+    
+    if _check_iam_permissions(user_email):
+        return True
+        
+    log_structured("DwhIAMCheckFailed", user=user_email, action="Attempting DB Fallback")
+    if check_dwh_permission(user_email):
+        log_structured("DwhDBCheckSuccess", user=user_email)
+        return True
+        
+    return False
 
 def _get_role(binding):
     """Helper seguro para obtener el rol de un binding (objeto o dict)."""
@@ -88,8 +107,8 @@ def _run_dwh_async_secure(pregunta, email, space_name):
         enviar_mensaje_directo_chat(space_name, error_msg)
 
 def consultar_dwh_tool(pregunta: str, solicitante_email: str = "unknown") -> str:
-    if not _check_iam_permissions(solicitante_email):
-        return "⛔ Acceso Denegado: No tienes permisos en GCP (Proyecto o Tabla) para ver estos datos."
+    if not _check_permission_hybrid(solicitante_email):
+        return "⛔ Acceso Denegado: No tienes permisos registrados (ni en GCP IAM ni en la base de datos de usuarios) para consultar el Data Warehouse."
 
     dm_space_name = get_dm_space_name_for_user(solicitante_email)
     if not dm_space_name:

@@ -2,6 +2,8 @@ fastapi
 uvicorn[standard]
 google-genai>=0.3.0
 langgraph
+langchain-google-genai
+numpy
 pydantic
 pydantic-settings
 google-cloud-firestore

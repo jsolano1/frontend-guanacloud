@@ -10,7 +10,8 @@ class Settings(BaseSettings):
     
     # --- IA (Nuevo SDK) ---
     # Usamos el modelo Flash optimizado para latencia
-    GEMINI_MODEL_ID: str = "gemini-2.5-flash" 
+    GEMINI_MODEL_ID: str = "gemini-2.5-flash"
+    EMBEDDING_MODEL_NAME: str = "text-embedding-005"
     
     # --- Base de Datos (Cloud SQL) ---
     DB_USER: str = "postgres"
