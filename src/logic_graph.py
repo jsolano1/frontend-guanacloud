@@ -110,6 +110,8 @@ def should_continue(state: AgentState):
                 return "tools"
     return END
 
+_COMPILED_GRAPH = None
+
 builder = StateGraph(AgentState)
 builder.add_node("agent", agent_node)
 builder.add_node("tools", tools_execution_node)
@@ -118,4 +120,10 @@ builder.add_conditional_edges("agent", should_continue, {"tools": "tools", END: 
 builder.add_edge("tools", "agent")
 
 checkpointer = FirestoreSaver()
-graph = builder.compile(checkpointer=checkpointer)
+def get_compiled_graph():
+    global _COMPILED_GRAPH
+    if _COMPILED_GRAPH is None:
+        log_structured("LangGraphCompilationStart")
+        _COMPILED_GRAPH = builder.compile(checkpointer=checkpointer)
+        log_structured("LangGraphCompilationEnd")
+    return _COMPILED_GRAPH

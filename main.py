@@ -2,7 +2,7 @@ import os
 import uvicorn
 import traceback
 from fastapi import FastAPI, Request
-from src.logic_graph import graph
+from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from google.genai import types
 
@@ -21,6 +21,9 @@ async def handle_chat_event(request: Request):
         log_structured("MessageReceived", user=user_email, text=message_text)
 
         config = {"configurable": {"thread_id": thread_id}}
+
+        compiled_graph = get_compiled_graph()
+        
         initial_input = {
             "messages": [types.Content(role="user", parts=[types.Part.from_text(text=message_text)])],
             "user_email": user_email,
@@ -44,7 +47,3 @@ async def handle_chat_event(request: Request):
         tb = traceback.format_exc()
         log_structured("CriticalError", error=str(e), traceback=tb)
         return {"text": f"😵‍💫 KAI V2 Error: {str(e)}"}
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    uvicorn.run(app, host="0.0.0.0", port=port)
