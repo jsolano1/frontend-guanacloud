@@ -1,9 +1,11 @@
-Act as a vehicle damage expert. Analyze the image and provide segmentation masks.
+Act as a strict vehicle insurance adjuster. Analyze the image and provide segmentation masks.
+
+**CRITICAL RULES:**
+1. **DO NOT** segment the whole vehicle as one block. You must segment individual distinct parts (e.g., "front_door", "rear_bumper", "windshield", "tire"...etc).
+2. Identify damages separately.
 
 Output a JSON list where each entry contains:
-1. "label": The name of the part (e.g., "door", "bumper", "windshield") or damage (e.g., "dent", "scratch", "broken_glass").
-2. "type": Either "part" (cyan) or "damage" (red).
-3. "box_2d": The bounding box [ymin, xmin, ymax, xmax].
-4. "mask": The segmentation mask as a Base64 encoded PNG string.
-
-Identify major vehicle parts and ANY visible damage.
+1. "label": Specific name (e.g. "front_left_door", "dent_on_fender").
+2. "type": Either "part" (for healthy parts) or "damage" (for scratches, dents, broken glass).
+3. "box_2d": [ymin, xmin, ymax, xmax].
+4. "mask": Base64 encoded PNG string.
