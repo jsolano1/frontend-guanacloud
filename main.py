@@ -1,12 +1,15 @@
 import os
 import uvicorn
 import traceback
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from google.genai import types
+from src.tools.claims_tools import process_vehicle_claim_image
 
 app = FastAPI(title="KAI Core V2", version="2.1.0")
+
+claims_router = APIRouter(prefix="/api/v1/claims", tags=["claims"])
 
 @app.post("/")
 async def handle_chat_event(request: Request):
@@ -55,3 +58,34 @@ async def handle_chat_event(request: Request):
         tb = traceback.format_exc()
         log_structured("CriticalError", error=str(e), traceback=tb)
         return {"text": f"😵‍💫 KAI V2 Error: {str(e)}"}
+
+@claims_router.post("/upload")
+async def upload_claim_evidence(
+    service_number: str = Form(...),
+    image_type: str = Form(..., description="vehicle o document"),
+    file: UploadFile = File(...)
+):
+    """
+    Endpoint para recibir imágenes de reclamos (Simulación de WhatsApp).
+    """
+    log_structured("ClaimImageReceived", service=service_number, type=image_type, filename=file.filename)
+    
+    if image_type not in ['vehicle', 'document']:
+        raise HTTPException(status_code=400, detail="image_type inválido. Use 'vehicle' o 'document'")
+        
+    try:
+        image_bytes = await file.read()
+        
+        result_message = ""
+        if image_type == 'vehicle':
+            result_message = process_vehicle_claim_image(service_number, image_bytes, file.filename)
+        elif image_type == 'document':
+             result_message = "Procesamiento de documentos aún no implementado en prototipo."
+
+        return {"status": "success", "message": result_message, "service_number": service_number}
+        
+    except Exception as e:
+        log_structured("ClaimUploadError", error=str(e), traceback=traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Error procesando la imagen: {str(e)}")
+
+app.include_router(claims_router)

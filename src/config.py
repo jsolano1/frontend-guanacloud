@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     # --- Storage & Recursos (AGREGADOS) ---
     GCS_ATTACHMENT_BUCKET: str = "kai-tiquete-attachments"
     KNOWLEDGE_BASE_BUCKET: str = "kai-knowledge-base"
+    GCS_CLAIMS_BUCKET: str = os.getenv("GCS_CLAIMS_BUCKET", "kai-claims-dev")
     
     # --- Pool DB ---
     DB_POOL_SIZE: int = 5
