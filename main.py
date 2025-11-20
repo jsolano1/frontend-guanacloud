@@ -6,6 +6,7 @@ from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from google.genai import types
 from src.tools.claims_tools import process_vehicle_claim_image
+from typing import List
 
 app = FastAPI(title="KAI Core V2", version="2.1.0")
 
@@ -63,7 +64,7 @@ async def handle_chat_event(request: Request):
 async def upload_claim_evidence(
     service_number: str = Form(...),
     image_type: str = Form(..., description="vehicle o document"),
-    file: UploadFile = File(...)
+    files: List[UploadFile] = File(...)
 ):
     """
     Endpoint para recibir imágenes de reclamos (Simulación de WhatsApp).
