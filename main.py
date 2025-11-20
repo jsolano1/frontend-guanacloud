@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException, API
 from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from google.genai import types
-from src.tools.claims_tools import process_vehicle_claim_image
+from src.tools.claims_tools import process_claim_file
 from typing import List
 
 app = FastAPI(title="KAI Core V2", version="2.1.0")
