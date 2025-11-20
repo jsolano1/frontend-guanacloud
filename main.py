@@ -64,29 +64,32 @@ async def handle_chat_event(request: Request):
 async def upload_claim_evidence(
     service_number: str = Form(...),
     image_type: str = Form(..., description="vehicle o document"),
-    files: List[UploadFile] = File(...)
+    files: List[UploadFile] = File(...) 
 ):
     """
-    Endpoint para recibir imágenes de reclamos (Simulación de WhatsApp).
+    Procesa múltiples archivos de reclamos.
     """
-    log_structured("ClaimImageReceived", service=service_number, type=image_type, filename=file.filename)
+    log_structured("ClaimBatchReceived", service=service_number, type=image_type, file_count=len(files))
     
-    if image_type not in ['vehicle', 'document']:
-        raise HTTPException(status_code=400, detail="image_type inválido. Use 'vehicle' o 'document'")
-        
-    try:
-        image_bytes = await file.read()
-        
-        result_message = ""
-        if image_type == 'vehicle':
-            result_message = process_vehicle_claim_image(service_number, image_bytes, file.filename)
-        elif image_type == 'document':
-             result_message = "Procesamiento de documentos aún no implementado en prototipo."
-
-        return {"status": "success", "message": result_message, "service_number": service_number}
-        
-    except Exception as e:
-        log_structured("ClaimUploadError", error=str(e), traceback=traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Error procesando la imagen: {str(e)}")
+    results = []
+    
+    for file in files:
+        try:
+            log_structured("ProcessingFile", filename=file.filename)
+            
+            content = await file.read()
+            
+            if image_type == 'vehicle':
+                 msg = process_vehicle_claim_image(service_number, content, file.filename)
+                 results.append({"filename": file.filename, "status": "processed", "details": msg})
+            else:
+                 results.append({"filename": file.filename, "status": "saved", "details": "Documento almacenado (Simulación)"})
+                 
+        except Exception as e:
+            error_msg = f"Error en {file.filename}: {str(e)}"
+            log_structured("FileProcessingError", error=str(e))
+            results.append({"filename": file.filename, "status": "error", "details": str(e)})
+             
+    return {"status": "batch_complete", "service_number": service_number, "results": results}
 
 app.include_router(claims_router)
