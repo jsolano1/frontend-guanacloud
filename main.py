@@ -63,33 +63,16 @@ async def handle_chat_event(request: Request):
 @claims_router.post("/upload")
 async def upload_claim_evidence(
     service_number: str = Form(...),
-    image_type: str = Form(..., description="vehicle o document"),
     files: List[UploadFile] = File(...) 
 ):
-    """
-    Procesa múltiples archivos de reclamos.
-    """
-    log_structured("ClaimBatchReceived", service=service_number, type=image_type, file_count=len(files))
-    
+    log_structured("BatchStart", service=service_number, count=len(files))
     results = []
     
     for file in files:
-        try:
-            log_structured("ProcessingFile", filename=file.filename)
-            
-            content = await file.read()
-            
-            if image_type == 'vehicle':
-                 msg = process_vehicle_claim_image(service_number, content, file.filename)
-                 results.append({"filename": file.filename, "status": "processed", "details": msg})
-            else:
-                 results.append({"filename": file.filename, "status": "saved", "details": "Documento almacenado (Simulación)"})
-                 
-        except Exception as e:
-            error_msg = f"Error en {file.filename}: {str(e)}"
-            log_structured("FileProcessingError", error=str(e))
-            results.append({"filename": file.filename, "status": "error", "details": str(e)})
-             
-    return {"status": "batch_complete", "service_number": service_number, "results": results}
+        content = await file.read()
+        res = process_claim_file(service_number, content, file.filename)
+        results.append(res)
+        
+    return {"status": "success", "service": service_number, "data": results}
 
 app.include_router(claims_router)
