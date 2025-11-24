@@ -1,14 +1,15 @@
 import os
 import uvicorn
+import asyncio
 import traceback
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException, APIRouter
 from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from google.genai import types
-from src.tools.claims_tools import process_claim_file
+from src.tools.claims_tools import analyze_claim_image_async, save_batch_claim_data
 from typing import List
 
-app = FastAPI(title="KAI Core V2", version="2.1.0")
+app = FastAPI(title="KAI Core V2", version="2.2.0-batch-optimized")
 
 claims_router = APIRouter(prefix="/api/v1/claims", tags=["claims"])
 
@@ -40,7 +41,10 @@ async def handle_chat_event(request: Request):
         
         final_state = await compiled_graph.ainvoke(initial_input, config=config)
         
-        response_text = last_message.parts[0].text if last_message.parts and last_message.parts[0].text else " " 
+        last_message = final_state["messages"][-1]
+        response_text = " "
+        if last_message.parts and last_message.parts[0].text:
+             response_text = last_message.parts[0].text
         
         response_payload = {"text": response_text}
 
@@ -65,14 +69,50 @@ async def upload_claim_evidence(
     service_number: str = Form(...),
     files: List[UploadFile] = File(...) 
 ):
-    log_structured("BatchStart", service=service_number, count=len(files))
-    results = []
+    """
+    Endpoint optimizado para carga paralela de evidencias.
+    1. Lee todos los archivos.
+    2. Procesa (AI + GCS) todos en paralelo usando asyncio.gather.
+    3. Consolida y guarda en DB en una sola transacción.
+    """
+    count = len(files)
+    log_structured("BatchStart", service=service_number, count=count)
     
+    file_contents = []
     for file in files:
         content = await file.read()
-        res = process_claim_file(service_number, content, file.filename)
-        results.append(res)
+        file_contents.append((content, file.filename))
+    
+    tasks = [
+        analyze_claim_image_async(service_number, content, filename) 
+        for content, filename in file_contents
+    ]
+    
+    try:
+        raw_results = await asyncio.gather(*tasks)
         
-    return {"status": "success", "service": service_number, "data": results}
+        final_data = save_batch_claim_data(service_number, raw_results)
+        
+        failures = [r for r in raw_results if "error" in r]
+        status = "success"
+        if failures:
+            status = "partial_success" if len(failures) < count else "failure"
+        
+        processed_count = count - len(failures)
+        log_structured("BatchComplete", service=service_number, processed=processed_count, failed=len(failures))
+
+        return {
+            "status": status, 
+            "service": service_number, 
+            "total_files": count,
+            "processed_count": processed_count,
+            "failed_files": [f["filename"] for f in failures],
+            "data": final_data
+        }
+        
+    except Exception as e:
+        tb = traceback.format_exc()
+        log_structured("BatchProcessError", error=str(e), traceback=tb)
+        raise HTTPException(status_code=500, detail=f"Error procesando lote: {str(e)}")
 
 app.include_router(claims_router)

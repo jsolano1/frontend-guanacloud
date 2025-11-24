@@ -1,4 +1,5 @@
 import json
+import asyncio
 from sqlalchemy.sql import text
 from src.utils.database_client import get_db_connection
 from src.services import storage_service, vision_service
@@ -13,38 +14,95 @@ def _standardize_filename(service_number, category, raw_angle, original_name):
     
     std_category = "veh" if category == "vehicle" else "doc"
     
-    clean_suffix = raw_angle.lower().replace(" ", "_").replace("-", "_")
+    clean_suffix = str(raw_angle).lower().replace(" ", "_").replace("-", "_")
     
     return f"{service_number}_{std_category}_{clean_suffix}.{ext}"
 
-def process_claim_file(service_number: str, image_bytes: bytes, original_filename: str) -> dict:
+async def analyze_claim_image_async(service_number: str, image_bytes: bytes, original_filename: str) -> dict:
+    """
+    Procesa una sola imagen de forma asíncrona: Clasificación + OCR + Upload + Segmentación.
+    NO escribe en base de datos. Retorna la estructura de datos lista para consolidación.
+    """
+    try:
+        classification_task = vision_service.classify_image_async(image_bytes)
+        metadata_task = vision_service.extract_deep_metadata_async(image_bytes)
+        
+        classification, deep_metadata = await asyncio.gather(classification_task, metadata_task)
+        
+        category = classification.get("category", "unknown")
+        view_angle = classification.get("view_angle", "general")
+        
+        clean_filename = _standardize_filename(service_number, category, view_angle, original_filename)
+        json_key = clean_filename.replace(".", "_")
+
+        raw_url = await storage_service.upload_image_to_gcs_async(image_bytes, service_number, clean_filename, "raw")
+        
+        processed_url = None
+        
+        if category == "vehicle":
+            try:
+                processed_bytes = await vision_service.apply_segmentation_masks_async(image_bytes)
+                
+                if processed_bytes != image_bytes:
+                    proc_filename = f"annotated_{clean_filename}"
+                    processed_url = await storage_service.upload_image_to_gcs_async(processed_bytes, service_number, proc_filename, "processed")
+            except Exception as e:
+                log_structured("ProcessingWarn", error=str(e), filename=original_filename)
+        
+        return {
+            "key": json_key,
+            "data": {
+                "raw_url": raw_url,
+                "processed_url": processed_url,
+                "data": {
+                    "technical": classification,
+                    "business_data": deep_metadata,
+                    "upload_filename": original_filename
+                }
+            }
+        }
+    except Exception as e:
+        log_structured("ImageAnalysisError", error=str(e), filename=original_filename)
+        return {"error": str(e), "filename": original_filename}
+
+def save_batch_claim_data(service_number: str, results_list: list) -> dict:
+    """
+    Guarda TODOS los resultados en una sola transacción de DB.
+    Optimiza la estructura JSON extrayendo datos globales del vehículo (Marca, Modelo, VIN, etc.)
+    para no repetirlos en cada entrada de imagen.
+    """
     engine = get_db_connection()
     
-    classification = vision_service.classify_image(image_bytes)
-    category = classification.get("category", "unknown")
-    view_angle = classification.get("view_angle", "general")
+    global_vehicle_info = {}
+    optimized_results = {}
     
-    deep_metadata = vision_service.extract_deep_metadata(image_bytes)
-    
-    clean_filename = _standardize_filename(service_number, category, view_angle, original_filename)
-    
-    raw_url = storage_service.upload_image_to_gcs(image_bytes, service_number, clean_filename, "raw")
-    
-    processed_url = None
-    
-    if category == "vehicle":
-        try:
-            processed_bytes = vision_service.apply_segmentation_masks(image_bytes)
+    global_keys = ["marca", "modelo", "año_aproximado", "color", "placa_visible", "vin", "tipo_carroceria"]
+
+    for res in results_list:
+        if "error" in res: continue
+        
+        key = res["key"]
+        entry = res["data"]
+        biz_data = entry["data"].get("business_data", {})
+        category = entry["data"]["technical"].get("category")
+
+        if category == "vehicle" and biz_data:
+            for k in global_keys:
+                val = biz_data.get(k)
+                if val:
+                    current_val = global_vehicle_info.get(k)
+                    if not current_val or len(str(val)) > len(str(current_val)):
+                        global_vehicle_info[k] = val
             
-            proc_filename = f"annotated_{clean_filename}"
-            processed_url = storage_service.upload_image_to_gcs(processed_bytes, service_number, proc_filename, "processed")
-        except Exception as e:
-            log_structured("ProcessingWarn", error=str(e))
-    
-    full_details = {
-        "technical": classification,
-        "business_data": deep_metadata,
-        "upload_filename": original_filename
+            for k in global_keys:
+                if k in biz_data:
+                    del biz_data[k]
+        
+        optimized_results[key] = entry
+
+    final_json_structure = {
+        "global_vehicle_details": global_vehicle_info,
+        "images": optimized_results
     }
 
     try:
@@ -54,37 +112,38 @@ def process_claim_file(service_number: str, image_bytes: bytes, original_filenam
                 {"svc": service_number}
             ).fetchone()
             
-            json_key = clean_filename.replace(".", "_")
-            
-            new_entry_data = {
-                "raw_url": raw_url,
-                "processed_url": processed_url,
-                "data": full_details
-            }
-            
             if existing:
-                claim_id, current_json = existing
-                if not current_json: current_json = {}
-                if isinstance(current_json, str): current_json = json.loads(current_json)
+                claim_id, current_json_str = existing
+                current_json = json.loads(current_json_str) if current_json_str else {}
                 
-                current_json[json_key] = new_entry_data
+                if "images" not in current_json: current_json["images"] = {}
+                current_json["images"].update(optimized_results)
+                
+                if "global_vehicle_details" not in current_json: current_json["global_vehicle_details"] = {}
+                current_json["global_vehicle_details"].update(global_vehicle_info)
                 
                 conn.execute(text("UPDATE claims_data SET ai_metadata = :meta, updated_at = NOW() WHERE claim_id = :id"), 
                              {"meta": json.dumps(current_json), "id": claim_id})
-                action = "updated"
             else:
-                initial_json = {json_key: new_entry_data}
-                conn.execute(text("INSERT INTO claims_data (service_number, image_type, gcs_raw_url, ai_metadata) VALUES (:svc, 'mixed', :raw, :meta)"),
-                             {"svc": service_number, "raw": raw_url, "meta": json.dumps(initial_json)})
-                action = "created"
+                conn.execute(text("INSERT INTO claims_data (service_number, image_type, gcs_raw_url, ai_metadata) VALUES (:svc, 'batch_mixed', 'N/A', :meta)"),
+                             {"svc": service_number, "meta": json.dumps(final_json_structure)})
 
-        return {
-            "file_key": json_key,
-            "category": category,
-            "extracted_info": deep_metadata,
-            "processed_url": processed_url
-        }
+        return final_json_structure
 
     except Exception as e:
-        log_structured("DBError", error=str(e))
+        log_structured("DBBatchSaveError", error=str(e))
+        raise e
+
+def process_claim_file(service_number: str, image_bytes: bytes, original_filename: str) -> dict:
+    """
+    Wrapper de compatibilidad síncrona para código legado.
+    Ejecuta el flujo asíncrono en un loop temporal.
+    """
+    import asyncio
+    try:
+        res = asyncio.run(analyze_claim_image_async(service_number, image_bytes, original_filename))
+        if "error" in res: raise Exception(res["error"])
+        return save_batch_claim_data(service_number, [res])
+    except Exception as e:
+        log_structured("LegacyProcessError", error=str(e))
         raise e

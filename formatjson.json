@@ -1,0 +1,81 @@
+{
+    "123456789_doc_front_jpg": {
+        "data": {
+            "technical": {
+                "category": "document",
+                "view_angle": "front",
+                "description": "Costa Rican identification card front",
+                "specific_type": "cedula_identidad"
+            },
+            "business_data": {
+                "sexo": null,
+                "donador": null,
+                "pais_emisor": "Costa Rica",
+                "tipo_analisis": "documento",
+                "tipo_licencia": null,
+                "tipo_documento": "Cédula",
+                "nombre_completo": "JOSE ANDRES SOLANO ROJAS",
+                "fecha_nacimiento": null,
+                "numero_identidad": "1 1103 0763",
+                "fecha_vencimiento": null
+            },
+            "upload_filename": "7906FDC0-DF92-4361-A579-02CE07C1DE30.jpg"
+        },
+        "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fraw%2F123456789_doc_front.jpg",
+        "processed_url": null
+    },
+    "123456789_doc_full_shot_jpg": {
+        "data": {
+            "technical": {
+                "category": "document",
+                "view_angle": "full_shot",
+                "description": "Costa Rican ID card document",
+                "specific_type": "cedula_identidad"
+            },
+            "business_data": {
+                "sexo": null,
+                "donador": null,
+                "pais_emisor": "Costa Rica",
+                "tipo_analisis": "documento",
+                "tipo_licencia": null,
+                "tipo_documento": "Cédula",
+                "nombre_completo": null,
+                "fecha_nacimiento": "1981-05-15",
+                "numero_identidad": "111030763",
+                "fecha_vencimiento": "2030-02-04"
+            },
+            "upload_filename": "56A13715-C155-4F34-B4DB-8C3164948A55.jpg"
+        },
+        "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fraw%2F123456789_doc_full_shot.jpg",
+        "processed_url": null
+    },
+    "123456789_veh_front_left_jpg": {
+        "data": {
+            "technical": {
+                "category": "vehicle",
+                "view_angle": "front_left",
+                "description": "Blue car with side damage",
+                "specific_type": "car"
+            },
+            "business_data": {
+                "color": "Azul",
+                "marca": "Smart",
+                "modelo": "Fortwo",
+                "placa_visible": null,
+                "tipo_analisis": "vehiculo",
+                "daños_resumen": [
+                    "Golpe y abolladura profunda en la puerta del conductor",
+                    "Arañazos y transferencia de pintura en la puerta y el guardabarros delantero",
+                    "Deformación en el guardabarros delantero izquierdo",
+                    "Rueda delantera izquierda posiblemente dañada o desalineada",
+                    "Neumático delantero izquierdo comprimido contra el bordillo"
+                ],
+                "año_aproximado": "1998-2007",
+                "tipo_carroceria": "Microcoche"
+            },
+            "upload_filename": "Golpe-chapa.jpg"
+        },
+        "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fraw%2F123456789_veh_front_left.jpg",
+        "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fprocessed%2Fannotated_123456789_veh_front_left.jpg"
+    }
+}

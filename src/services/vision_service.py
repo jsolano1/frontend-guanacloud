@@ -1,6 +1,7 @@
 import json
 import io
 import base64
+import asyncio
 import numpy as np
 from PIL import Image, ImageDraw
 from google import genai
@@ -11,8 +12,11 @@ from src.utils.prompt_loader import load_prompt
 
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
-def extract_deep_metadata(image_bytes: bytes) -> dict:
-    """Extrae datos profundos (OCR/Características) del vehículo o documento."""
+async def extract_deep_metadata_async(image_bytes: bytes) -> dict:
+    """Extrae datos profundos (OCR/Características) del vehículo o documento (Wrapper Async)."""
+    return await asyncio.to_thread(extract_deep_metadata_sync, image_bytes)
+
+def extract_deep_metadata_sync(image_bytes: bytes) -> dict:
     prompt = load_prompt("extract_deep_metadata.md")
     try:
         response = client.models.generate_content(
@@ -27,8 +31,11 @@ def extract_deep_metadata(image_bytes: bytes) -> dict:
         log_structured("DeepExtractionError", error=str(e))
         return {"error": "No se pudo extraer metadata profunda"}
 
-def classify_image(image_bytes: bytes) -> dict:
-    """Clasificación ligera para ruteo."""
+async def classify_image_async(image_bytes: bytes) -> dict:
+    """Clasificación ligera para ruteo (Wrapper Async)."""
+    return await asyncio.to_thread(classify_image_sync, image_bytes)
+
+def classify_image_sync(image_bytes: bytes) -> dict:
     prompt = load_prompt("classify_image_type.md")
     try:
         response = client.models.generate_content(
@@ -42,10 +49,11 @@ def classify_image(image_bytes: bytes) -> dict:
     except Exception:
         return {"category": "unknown"}
 
-def apply_segmentation_masks(image_bytes: bytes) -> bytes:
-    """
-    Dibuja máscaras con estilo 'Agua/Transparente'.
-    """
+async def apply_segmentation_masks_async(image_bytes: bytes) -> bytes:
+    """Dibuja máscaras SOLO de daños en rojo, ignorando partes sanas (Wrapper Async)."""
+    return await asyncio.to_thread(apply_segmentation_masks_sync, image_bytes)
+
+def apply_segmentation_masks_sync(image_bytes: bytes) -> bytes:
     prompt = load_prompt("segment_vehicle_layers.md")
     original_img = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
     
@@ -75,18 +83,21 @@ def apply_segmentation_masks(image_bytes: bytes) -> bytes:
                 
                 if x1 <= x0 or y1 <= y0: continue
 
+                # === REGLA DE NEGOCIO: SOLO PINTAR DAÑOS ===
+                if item.get("type") == "damage":
+                    # Rojo semitransparente para el relleno
+                    fill_color = (255, 50, 50, 80) 
+                    # Rojo sólido para el borde
+                    outline_color = (255, 0, 0, 150)
+                else:
+                    continue 
+
                 mask_resized = mask_img.resize((x1 - x0, y1 - y0), Image.Resampling.BILINEAR)
                 
-                if item.get("type") == "damage":
-                    fill_color = (255, 50, 50, 80) 
-                else:
-                    fill_color = (0, 255, 255, 40)
-
                 color_block = Image.new('RGBA', (x1 - x0, y1 - y0), fill_color)
                 overlay.paste(color_block, (x0, y0), mask_resized)
                 
                 draw = ImageDraw.Draw(overlay)
-                outline_color = (255, 0, 0, 150) if item.get("type") == "damage" else (0, 255, 255, 100)
                 draw.rectangle([x0, y0, x1, y1], outline=outline_color, width=2)
 
             except Exception: continue
@@ -99,3 +110,7 @@ def apply_segmentation_masks(image_bytes: bytes) -> bytes:
     except Exception as e:
         log_structured("SegmentationError", error=str(e))
         return image_bytes
+
+classify_image = classify_image_sync
+extract_deep_metadata = extract_deep_metadata_sync
+apply_segmentation_masks = apply_segmentation_masks_sync
