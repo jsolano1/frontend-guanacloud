@@ -83,7 +83,18 @@ def save_batch_claim_data(service_number: str, results_list: list) -> dict:
         
         key = res["key"]
         entry = res["data"]
-        biz_data = entry["data"].get("business_data", {})
+        
+        raw_biz_data = entry["data"].get("business_data")
+        
+        if isinstance(raw_biz_data, list):
+            biz_data = raw_biz_data[0] if raw_biz_data else {}
+        elif isinstance(raw_biz_data, dict):
+            biz_data = raw_biz_data
+        else:
+            biz_data = {}
+            
+        entry["data"]["business_data"] = biz_data
+        
         category = entry["data"]["technical"].get("category")
 
         if category == "vehicle" and biz_data:
