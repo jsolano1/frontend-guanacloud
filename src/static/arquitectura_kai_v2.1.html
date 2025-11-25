@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecosistema KAI v2 - Mapa de Arquitectura</title>
-    <title>By. Jose Solano</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -110,11 +109,11 @@
         /* Estilos de Nodo */
         .node {
             position: absolute;
-            width: 130px; /* Ligeramente mas angosto para densificar */
-            padding: 8px;
+            width: 140px;
+            padding: 10px;
             background: var(--card-bg);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -128,23 +127,23 @@
         }
 
         .node:hover {
-            transform: translate(-50%, -55%) scale(1.1);
+            transform: translate(-50%, -55%) scale(1.05);
             border-color: var(--col-user);
             box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
             z-index: 50;
         }
 
-        .node-icon { font-size: 20px; margin-bottom: 3px; }
-        .node-title { font-size: 11px; font-weight: 700; color: #fff; line-height: 1.1; }
-        .node-sub { font-size: 9px; color: var(--text-secondary); margin-top: 2px; }
+        .node-icon { font-size: 22px; margin-bottom: 4px; }
+        .node-title { font-size: 12px; font-weight: 700; color: #fff; line-height: 1.2; }
+        .node-sub { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
 
         /* Estados del Nodo */
         .status-indicator {
             position: absolute;
-            top: -3px;
-            right: -3px;
-            width: 7px;
-            height: 7px;
+            top: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             border: 2px solid var(--bg-color);
         }
@@ -154,7 +153,7 @@
         .st-plan { background: #64748b; border: 1px solid #fff; }
 
         .node.is-future { border-style: dashed; opacity: 0.7; }
-        .node.is-core { border-color: var(--col-core); background: rgba(129, 140, 248, 0.15); width: 150px; padding: 12px; }
+        .node.is-core { border-color: var(--col-core); background: rgba(129, 140, 248, 0.15); }
 
         @keyframes pulse-amber {
             0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
@@ -166,7 +165,7 @@
         .zone {
             position: absolute;
             bottom: 20px;
-            font-size: 60px;
+            font-size: 80px;
             font-weight: 800;
             color: rgba(255,255,255,0.03);
             text-transform: uppercase;
@@ -180,13 +179,13 @@
 
     <header>
         <h1>KAI v2 <span>Core</span></h1>
-        <h2>Ecosistema Multi-Agente & Herramientas Corporativas</h2>
+        <h2>Arquitectura de Ecosistema Multi-Agente</h2>
     </header>
 
     <!-- Zonas de fondo -->
-    <div class="zone" style="left: 5%;">Entrada</div>
-    <div class="zone" style="left: 35%;">Cognición</div>
-    <div class="zone" style="left: 75%;">Infra & Tools</div>
+    <div class="zone" style="left: 5%;">Canales</div>
+    <div class="zone" style="left: 35%;">Inteligencia</div>
+    <div class="zone" style="left: 75%;">Infraestructura</div>
 
     <div class="legend">
         <div class="legend-item"><div class="dot st-active"></div> Producción</div>
@@ -201,38 +200,35 @@
     <div id="node-layer"></div>
 
     <script>
-        // === 1. DEFINICIÓN DEL ECOSISTEMA (NODOS) ===
+        // === 1. DEFINICIÓN DEL ECOSISTEMA ===
         const NODES = [
             // -- COLUMNA 1: CANALES (Usuarios) --
             { id: 'app', label: 'Mobile App', sub: 'iOS / Android', icon: '📱', x: 0.1, y: 0.25, type: 'user', status: 'active' },
             { id: 'wa', label: 'WhatsApp/GChat', sub: 'Business API', icon: '💬', x: 0.1, y: 0.5, type: 'user', status: 'active' },
-            { id: 'web', label: 'API Int.', sub: 'Integraciones', icon: '💻', x: 0.1, y: 0.75, type: 'user', status: 'active' },
+            { id: 'web', label: 'Web B2B', sub: 'Integraciones', icon: '💻', x: 0.1, y: 0.75, type: 'user', status: 'active' },
 
             // -- COLUMNA 2: CORE (Gateway & Orchestrator) --
             { id: 'gateway', label: 'API Gateway', sub: 'Cloud Run', icon: '🛡️', x: 0.28, y: 0.5, type: 'core', status: 'active', class: 'is-core' },
             { id: 'langgraph', label: 'Orquestador', sub: 'LangGraph State', icon: '🧠', x: 0.42, y: 0.5, type: 'core', status: 'active', class: 'is-core' },
 
-            // -- COLUMNA 3: ENJAMBRE DE AGENTES (Specialists) --
+            // -- COLUMNA 3: ENJAMBRE DE AGENTES (Arriba a Abajo) --
             { id: 'ag_vision', label: 'Vision Agent', sub: 'Daños Vehiculares', icon: '📸', x: 0.6, y: 0.15, type: 'agent', status: 'dev' },
             { id: 'ag_claims', label: 'Claims Agent', sub: 'Reglas de Negocio', icon: '🚗', x: 0.6, y: 0.32, type: 'agent', status: 'active' },
             { id: 'ag_auditor', label: 'Auditor Agent', sub: 'Compliance & QA', icon: '⚖️', x: 0.6, y: 0.5, type: 'agent', status: 'dev' },
             { id: 'ag_support', label: 'Support Agent', sub: 'Helpdesk / KB', icon: '🎧', x: 0.6, y: 0.68, type: 'agent', status: 'active' },
             { id: 'ag_home', label: 'Home Agent', sub: 'Hogar & Pólizas', icon: '🏠', x: 0.6, y: 0.85, type: 'agent', status: 'plan', class: 'is-future' },
 
-            // -- COLUMNA 4: INFRAESTRUCTURA (Data & AI) --
-            { id: 'vertex', label: 'Vertex AI', sub: 'Gemini 2.5 Pro/Flash', icon: '✨', x: 0.85, y: 0.12, type: 'ai', status: 'active' },
-            { id: 'firestore', label: 'Firestore', sub: 'Memoria Sesión', icon: '🔥', x: 0.85, y: 0.24, type: 'infra', status: 'active' },
-            { id: 'bq', label: 'BigQuery', sub: 'DWH Analytics', icon: '📊', x: 0.85, y: 0.36, type: 'infra', status: 'active' },
-            { id: 'looker', label: 'Looker', sub: 'BI Dashboards', icon: '📈', x: 0.85, y: 0.48, type: 'infra', status: 'active' },
-
-            // -- COLUMNA 4 (MITAD INFERIOR): EXTERNAL TOOLS --
-            { id: 'github', label: 'GitHub', sub: 'PR Review / Issues', icon: '🐙', x: 0.85, y: 0.62, type: 'tool', status: 'active' },
-            { id: 'asana', label: 'Asana', sub: 'Gestión Tareas', icon: '✅', x: 0.85, y: 0.74, type: 'tool', status: 'active' },
-            { id: 'reminders', label: 'Reminders', sub: 'Alertas / Cron', icon: '⏰', x: 0.85, y: 0.86, type: 'tool', status: 'active' },
-            { id: 'gmail', label: 'Email/Chat/Calendar', sub: 'Notificaciones', icon: '📩', x: 0.95, y: 0.80, type: 'tool', status: 'active' },
+            // -- COLUMNA 4: HERRAMIENTAS & INFRA --
+            // AI & Data
+            { id: 'vertex', label: 'Vertex AI', sub: 'Gemini 2.5 Pro/Flash', icon: '✨', x: 0.85, y: 0.2, type: 'ai', status: 'active' },
+            { id: 'firestore', label: 'Firestore', sub: 'Memoria Sesión', icon: '🔥', x: 0.85, y: 0.35, type: 'infra', status: 'active' },
+            { id: 'bq', label: 'BigQuery', sub: 'DWH Analytics', icon: '📊', x: 0.85, y: 0.5, type: 'infra', status: 'active' },
+            
+            // External Tools
+            { id: 'asana', label: 'Asana', sub: 'Gestión Tareas', icon: '✅', x: 0.85, y: 0.65, type: 'tool', status: 'active' },
+            { id: 'gmail', label: 'Gmail / Calendar', sub: 'Notificaciones', icon: '📩', x: 0.85, y: 0.8, type: 'tool', status: 'active' },
         ];
 
-        // === 2. CONEXIONES (FLUJOS) ===
         const CONNECTIONS = [
             // Entradas
             { from: 'app', to: 'gateway', color: '#38bdf8' },
@@ -249,31 +245,22 @@
             { from: 'langgraph', to: 'ag_support', color: '#fff' },
             { from: 'langgraph', to: 'ag_home', color: '#64748b', dashed: true },
 
-            // Agentes -> Infra (Data/AI)
-            { from: 'ag_vision', to: 'vertex', color: '#f472b6' }, 
-            { from: 'ag_claims', to: 'firestore', color: '#fbbf24' }, 
+            // Agentes -> Infra/Tools
+            { from: 'ag_vision', to: 'vertex', color: '#f472b6' }, // Vision usa Gemini
+            { from: 'ag_claims', to: 'firestore', color: '#fbbf24' }, // Claims guarda estado
             { from: 'ag_claims', to: 'vertex', color: '#f472b6' },
             
-            // Auditor usa Data
-            { from: 'ag_auditor', to: 'bq', color: '#34d399' }, 
-            { from: 'ag_auditor', to: 'looker', color: '#34d399' },
+            { from: 'ag_auditor', to: 'bq', color: '#34d399' }, // Auditor revisa historial
             { from: 'ag_auditor', to: 'vertex', color: '#f472b6' },
 
-            // Support Agent -> External Tools (El "Tool User" pesado)
-            { from: 'ag_support', to: 'github', color: '#a78bfa' },
-            { from: 'ag_support', to: 'asana', color: '#a78bfa' },
-            { from: 'ag_support', to: 'reminders', color: '#a78bfa' },
+            { from: 'ag_support', to: 'asana', color: '#a78bfa' }, // Crea tickets
             { from: 'ag_support', to: 'gmail', color: '#a78bfa' },
-            { from: 'ag_support', to: 'looker', color: '#34d399' }, // Support consulta reportes
-
-            // Relaciones de Datos (Flujo Secundario)
-            { from: 'bq', to: 'looker', color: '#fbbf24', dashed: true }, // BQ alimenta Looker
             
             // Memoria Global
             { from: 'langgraph', to: 'firestore', color: '#fbbf24' } 
         ];
 
-        // === 3. MOTOR GRÁFICO ===
+        // === 2. MOTOR GRÁFICO ===
         const canvas = document.getElementById('canvas-layer');
         const ctx = canvas.getContext('2d');
         const nodeLayer = document.getElementById('node-layer');
@@ -335,7 +322,7 @@
             });
         }
 
-        // === 4. FÍSICA DE PARTÍCULAS ===
+        // === 3. FÍSICA DE PARTÍCULAS ===
         class Particle {
             constructor() {
                 this.reset();
@@ -347,7 +334,7 @@
                 this.target = nodeElements[route.to];
                 this.color = route.color;
                 this.progress = 0;
-                this.speed = 0.004 + Math.random() * 0.004; // Velocidad variable
+                this.speed = 0.005 + Math.random() * 0.005; // Velocidad variable
                 
                 // Si el nodo no existe (por error de config), reintentar
                 if (!this.source || !this.target) this.reset();
@@ -392,12 +379,12 @@
         }
 
         function initParticles() {
-            for(let i=0; i<80; i++) { // Aumentamos partículas para más "vida"
+            for(let i=0; i<60; i++) { // Más partículas
                 particles.push(new Particle());
             }
         }
 
-        // === 5. LOOP DE RENDERIZADO ===
+        // === 4. LOOP DE RENDERIZADO ===
         function animate() {
             ctx.clearRect(0, 0, width, height);
 
