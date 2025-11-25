@@ -13,6 +13,10 @@ app = FastAPI(title="KAI Core V2", version="2.2.0-batch-optimized")
 
 claims_router = APIRouter(prefix="/api/v1/claims", tags=["claims"])
 
+@app.get("/arquitectura", response_class=FileResponse)
+async def get_architecture():
+    return "src/static/arquitectura_kai_v2.html"
+
 @app.post("/")
 async def handle_chat_event(request: Request):
     try:
