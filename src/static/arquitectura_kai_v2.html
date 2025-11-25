@@ -3,96 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecosistema KAI v2 - Arquitectura Multi-Agente</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Ecosistema KAI v2 - Mapa de Arquitectura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b1120;
-            --card-bg: #1e293b;
-            --text-primary: #f1f5f9;
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             
-            /* Colores de Flujo */
-            --flow-user: #3b82f6;   /* Azul */
-            --flow-logic: #8b5cf6;  /* Violeta */
-            --flow-data: #10b981;   /* Verde */
-            --flow-ai: #ef4444;     /* Rojo/Gemini */
-            --flow-infra: #f59e0b;  /* Naranja */
+            /* Palette */
+            --col-user: #38bdf8;   /* Celeste */
+            --col-core: #818cf8;   /* Indigo */
+            --col-agent: #34d399;  /* Emerald */
+            --col-ai: #f472b6;     /* Pink/Gemini */
+            --col-infra: #fbbf24;  /* Amber */
+            --col-tool: #a78bfa;   /* Violet */
         }
+
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             width: 100vw;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* UI Overlay */
-        .ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
-
+        /* Header Flotante */
         header {
-            padding: 20px 40px;
-            pointer-events: auto;
-            background: linear-gradient(180deg, rgba(11,17,32,0.9) 0%, rgba(11,17,32,0) 100%);
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            z-index: 100;
+            pointer-events: none;
         }
 
         h1 {
             margin: 0;
-            font-weight: 300;
-            font-size: 24px;
-            letter-spacing: 1px;
-        }
-        
-        h1 span {
-            font-weight: 600;
-            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            font-weight: 800;
+            font-size: 28px;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        h2 {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--col-user);
+            opacity: 0.8;
+        }
+
+        /* Leyenda */
         .legend {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(30, 41, 59, 0.8);
+            bottom: 30px;
+            left: 30px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
             padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            pointer-events: auto;
+            border-radius: 12px;
             backdrop-filter: blur(10px);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
+            z-index: 100;
             font-size: 12px;
-            color: var(--text-secondary);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
+        .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
 
-        /* Canvas Layer */
-        #canvas-container {
+        /* Canvas Fullscreen */
+        #canvas-layer {
             position: absolute;
             top: 0;
             left: 0;
@@ -101,82 +95,82 @@
             z-index: 1;
         }
 
-        /* Nodes (HTML Elements positioned over canvas) */
-        .node-container {
+        /* Capa de Nodos (HTML sobre Canvas) */
+        #node-layer {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            z-index: 5;
-            pointer-events: none; /* Let clicks pass to canvas if needed, but we want nodes interactive */
+            z-index: 10;
+            pointer-events: none; /* Permitir clicks al fondo */
         }
 
+        /* Estilos de Nodo */
         .node {
             position: absolute;
+            width: 140px;
+            padding: 10px;
             background: var(--card-bg);
-            border: 1px solid #334155;
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
-            padding: 12px;
-            width: 160px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
+            transform: translate(-50%, -50%); /* Centrar exacto */
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
             pointer-events: auto;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             cursor: default;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
         .node:hover {
-            transform: translateY(-5px) scale(1.02);
-            z-index: 20;
-            border-color: var(--flow-user);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            transform: translate(-50%, -55%) scale(1.05);
+            border-color: var(--col-user);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+            z-index: 50;
         }
 
-        .node-icon {
-            font-size: 24px;
-            margin-bottom: 6px;
-        }
+        .node-icon { font-size: 22px; margin-bottom: 4px; }
+        .node-title { font-size: 12px; font-weight: 700; color: #fff; line-height: 1.2; }
+        .node-sub { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
 
-        .node-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .node-sub {
-            font-size: 10px;
-            color: var(--text-secondary);
-            line-height: 1.2;
-        }
-
-        .status-dot {
+        /* Estados del Nodo */
+        .status-indicator {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 6px;
-            height: 6px;
+            top: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
+            border: 2px solid var(--bg-color);
+        }
+        
+        .st-active { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .st-dev { background: #f59e0b; animation: pulse-amber 2s infinite; }
+        .st-plan { background: #64748b; border: 1px solid #fff; }
+
+        .node.is-future { border-style: dashed; opacity: 0.7; }
+        .node.is-core { border-color: var(--col-core); background: rgba(129, 140, 248, 0.15); }
+
+        @keyframes pulse-amber {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
         }
 
-        .status-active { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-        .status-dev { background-color: #f59e0b; }
-        .status-plan { background-color: #64748b; border: 1px solid #94a3b8; }
-
-        /* Zone Labels */
-        .zone-label {
+        /* Etiquetas de Zona */
+        .zone {
             position: absolute;
-            font-size: 10px;
+            bottom: 20px;
+            font-size: 80px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.03);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #475569;
-            font-weight: 600;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 5px;
-            width: 200px;
             pointer-events: none;
+            z-index: 0;
         }
 
     </style>
@@ -184,301 +178,250 @@
 <body>
 
     <header>
-        <h1>KAI v2 <span>ECOSYSTEM</span></h1>
-        <div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">LangGraph Orchestration & Google Cloud Native</div>
+        <h1>KAI v2 <span>Core</span></h1>
+        <h2>Arquitectura de Ecosistema Multi-Agente</h2>
     </header>
 
-    <div class="legend ui-layer">
-        <div class="legend-item"><div class="dot" style="background: #3b82f6;"></div>Usuario / Interacción</div>
-        <div class="legend-item"><div class="dot" style="background: #8b5cf6;"></div>Orquestación (LangGraph)</div>
-        <div class="legend-item"><div class="dot" style="background: #ef4444;"></div>Inferencia AI (Gemini)</div>
-        <div class="legend-item"><div class="dot" style="background: #10b981;"></div>Datos / Herramientas</div>
-        <div style="margin-top: 10px; font-size: 10px; border-top: 1px solid #334155; padding-top: 5px;">
-            <span style="color: #10b981">●</span> Prod &nbsp; <span style="color: #f59e0b">●</span> Dev &nbsp; <span style="color: #64748b">○</span> Plan
+    <!-- Zonas de fondo -->
+    <div class="zone" style="left: 5%;">Canales</div>
+    <div class="zone" style="left: 35%;">Inteligencia</div>
+    <div class="zone" style="left: 75%;">Infraestructura</div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="dot st-active"></div> Producción</div>
+        <div class="legend-item"><div class="dot st-dev"></div> En Desarrollo</div>
+        <div class="legend-item"><div class="dot st-plan"></div> Plan Futuro</div>
+        <div class="legend-item" style="grid-column: span 2; margin-top:5px; border-top:1px solid #333; padding-top:5px;">
+            Flujos de datos en tiempo real
         </div>
     </div>
 
-    <div id="canvas-container">
-        <canvas id="network"></canvas>
-    </div>
-
-    <!-- Nodos posicionados via JS para responsividad relativa -->
-    <div class="node-container" id="node-layer">
-        <!-- Labels -->
-        <div class="zone-label" style="top: 8%; left: 5%;">Canales de Entrada</div>
-        <div class="zone-label" style="top: 8%; left: 35%;">Core & Agentes</div>
-        <div class="zone-label" style="top: 8%; left: 75%;">Infraestructura GCP</div>
-    </div>
+    <canvas id="canvas-layer"></canvas>
+    <div id="node-layer"></div>
 
     <script>
-        // --- CONFIGURACIÓN DE NODOS ---
-        const nodesConfig = [
-            // CANALES (Izquierda)
-            { id: 'user_app', x: 0.08, y: 0.30, label: 'Mobile App', sub: 'iOS / Android', icon: '📱', type: 'channel' },
-            { id: 'user_wa', x: 0.08, y: 0.50, label: 'WhatsApp', sub: 'Twilio/Meta API', icon: '💬', type: 'channel' },
-            { id: 'user_web', x: 0.08, y: 0.70, label: 'Web Portal', sub: 'B2B Dashboard', icon: '💻', type: 'channel' },
+        // === 1. DEFINICIÓN DEL ECOSISTEMA ===
+        const NODES = [
+            // -- COLUMNA 1: CANALES (Usuarios) --
+            { id: 'app', label: 'Mobile App', sub: 'iOS / Android', icon: '📱', x: 0.1, y: 0.25, type: 'user', status: 'active' },
+            { id: 'wa', label: 'WhatsApp/GChat', sub: 'Business API', icon: '💬', x: 0.1, y: 0.5, type: 'user', status: 'active' },
+            { id: 'web', label: 'Web B2B', sub: 'Assistencias', icon: '💻', x: 0.1, y: 0.75, type: 'user', status: 'active' },
 
-            // GATEWAY & ORCHESTRATOR (Centro-Izquierda)
-            { id: 'gateway', x: 0.25, y: 0.50, label: 'API Gateway', sub: 'Cloud Run / FastAPI', icon: '🛡️', type: 'core', status: 'active' },
-            { id: 'orchestrator', x: 0.40, y: 0.50, label: 'Supervisor Graph', sub: 'LangGraph State', icon: '🧠', type: 'core', status: 'active' },
+            // -- COLUMNA 2: CORE (Gateway & Orchestrator) --
+            { id: 'gateway', label: 'API Gateway', sub: 'Cloud Run', icon: '🛡️', x: 0.28, y: 0.5, type: 'core', status: 'active', class: 'is-core' },
+            { id: 'langgraph', label: 'Orquestador', sub: 'LangGraph State', icon: '🧠', x: 0.42, y: 0.5, type: 'core', status: 'active', class: 'is-core' },
 
-            // AGENTES (Centro - Enjambre vertical)
-            { id: 'agent_vision', x: 0.58, y: 0.15, label: 'Vision Agent', sub: 'Detección de Daños', icon: '👁️', type: 'agent', status: 'dev' },
-            { id: 'agent_claims', x: 0.58, y: 0.30, label: 'Claims Agent', sub: 'Auto Insurance Rules', icon: '🚗', type: 'agent', status: 'active' },
-            { id: 'agent_home', x: 0.58, y: 0.45, label: 'Home Agent', sub: 'Asistencia Hogar', icon: '🏠', type: 'agent', status: 'plan' },
-            { id: 'agent_support', x: 0.58, y: 0.60, label: 'Support Agent', sub: 'FAQ & Helpdesk', icon: '🎧', type: 'agent', status: 'active' },
-            { id: 'agent_auditor', x: 0.58, y: 0.75, label: 'Auditor Agent', sub: 'Compliance Review', icon: '⚖️', type: 'agent', status: 'dev' },
-            { id: 'agent_bidi', x: 0.58, y: 0.90, label: 'Bidi Voice', sub: 'Real-time Audio', icon: '🎙️', type: 'agent', status: 'plan' },
+            // -- COLUMNA 3: ENJAMBRE DE AGENTES (Arriba a Abajo) --
+            { id: 'ag_vision', label: 'Vision Agent', sub: 'Daños Vehiculares', icon: '📸', x: 0.6, y: 0.15, type: 'agent', status: 'dev' },
+            { id: 'ag_claims', label: 'Claims Agent', sub: 'Reglas de Negocio', icon: '🚗', x: 0.6, y: 0.32, type: 'agent', status: 'active' },
+            { id: 'ag_auditor', label: 'Auditor Agent', sub: 'Compliance & QA', icon: '⚖️', x: 0.6, y: 0.5, type: 'agent', status: 'dev' },
+            { id: 'ag_support', label: 'Support Agent', sub: 'Helpdesk / KB', icon: '🎧', x: 0.6, y: 0.68, type: 'agent', status: 'active' },
+            { id: 'ag_home', label: 'Home Agent', sub: 'Hogar & Pólizas', icon: '🏠', x: 0.6, y: 0.85, type: 'agent', status: 'plan', class: 'is-future' },
 
-            // INFRAESTRUCTURA (Derecha)
-            { id: 'vertex', x: 0.85, y: 0.30, label: 'Vertex AI', sub: 'Gemini 1.5 Pro/Flash', icon: '💎', type: 'infra', status: 'active' },
-            { id: 'firestore', x: 0.85, y: 0.50, label: 'Firestore', sub: 'Memory & State', icon: '🔥', type: 'infra', status: 'active' },
-            { id: 'bigquery', x: 0.85, y: 0.70, label: 'BigQuery', sub: 'DWH & Analytics', icon: '🔍', type: 'infra', status: 'active' },
-            { id: 'tools_ext', x: 0.85, y: 0.90, label: 'Ext. Tools', sub: 'Asana / Gmail / SQL', icon: '🛠️', type: 'infra', status: 'active' },
+            // -- COLUMNA 4: HERRAMIENTAS & INFRA --
+            // AI & Data
+            { id: 'vertex', label: 'Vertex AI', sub: 'Gemini 2.5 Pro/Flash', icon: '✨', x: 0.85, y: 0.2, type: 'ai', status: 'active' },
+            { id: 'firestore', label: 'Firestore', sub: 'Memoria Sesión', icon: '🔥', x: 0.85, y: 0.35, type: 'infra', status: 'active' },
+            { id: 'bq', label: 'BigQuery', sub: 'DWH Analytics', icon: '📊', x: 0.85, y: 0.5, type: 'infra', status: 'active' },
+            
+            // External Tools
+            { id: 'asana', label: 'Asana', sub: 'Gestión Tareas', icon: '✅', x: 0.85, y: 0.65, type: 'tool', status: 'active' },
+            { id: 'gmail', label: 'Gmail / Cal', sub: 'Notificaciones', icon: '📩', x: 0.85, y: 0.8, type: 'tool', status: 'active' },
         ];
 
-        // --- CONFIGURACIÓN DE CONEXIONES (Grafo Lógico) ---
-        const connectionsConfig = [
-            // Canales a Gateway
-            { from: 'user_app', to: 'gateway', type: 'user' },
-            { from: 'user_wa', to: 'gateway', type: 'user' },
-            { from: 'user_web', to: 'gateway', type: 'user' },
-
-            // Gateway a Orquestador
-            { from: 'gateway', to: 'orchestrator', type: 'logic' },
-
-            // Orquestador a Agentes (Delegación)
-            { from: 'orchestrator', to: 'agent_claims', type: 'logic' },
-            { from: 'orchestrator', to: 'agent_vision', type: 'logic' },
-            { from: 'orchestrator', to: 'agent_home', type: 'logic' },
-            { from: 'orchestrator', to: 'agent_support', type: 'logic' },
-            { from: 'orchestrator', to: 'agent_auditor', type: 'logic' },
-            { from: 'orchestrator', to: 'agent_bidi', type: 'logic' },
-
-            // Agentes a Infraestructura (Dependencias)
-            // Vision usa Vertex y guarda en Storage (simulado en Tools)
-            { from: 'agent_vision', to: 'vertex', type: 'ai' }, 
+        const CONNECTIONS = [
+            // Entradas
+            { from: 'app', to: 'gateway', color: '#38bdf8' },
+            { from: 'wa', to: 'gateway', color: '#38bdf8' },
+            { from: 'web', to: 'gateway', color: '#38bdf8' },
             
-            // Claims usa Firestore para estado y Vertex para NLP
-            { from: 'agent_claims', to: 'vertex', type: 'ai' },
-            { from: 'agent_claims', to: 'firestore', type: 'data' },
-
-            // Support usa Tools (Busqueda) y Vertex
-            { from: 'agent_support', to: 'tools_ext', type: 'data' },
-            { from: 'agent_support', to: 'vertex', type: 'ai' },
-
-            // Auditor verifica contra BigQuery y usa Vertex
-            { from: 'agent_auditor', to: 'bigquery', type: 'data' },
-            { from: 'agent_auditor', to: 'vertex', type: 'ai' },
-
-            // Orquestador persiste memoria global
-            { from: 'orchestrator', to: 'firestore', type: 'data' },
+            // Core Loop
+            { from: 'gateway', to: 'langgraph', color: '#818cf8' },
             
-            // Bidi voice directo a Vertex (Audio)
-            { from: 'agent_bidi', to: 'vertex', type: 'ai' }
+            // Delegación (Orchestrator -> Agents)
+            { from: 'langgraph', to: 'ag_vision', color: '#fff', dashed: true },
+            { from: 'langgraph', to: 'ag_claims', color: '#fff' },
+            { from: 'langgraph', to: 'ag_auditor', color: '#fff', dashed: true },
+            { from: 'langgraph', to: 'ag_support', color: '#fff' },
+            { from: 'langgraph', to: 'ag_home', color: '#64748b', dashed: true },
+
+            // Agentes -> Infra/Tools
+            { from: 'ag_vision', to: 'vertex', color: '#f472b6' }, // Vision usa Gemini
+            { from: 'ag_claims', to: 'firestore', color: '#fbbf24' }, // Claims guarda estado
+            { from: 'ag_claims', to: 'vertex', color: '#f472b6' },
+            
+            { from: 'ag_auditor', to: 'bq', color: '#34d399' }, // Auditor revisa historial
+            { from: 'ag_auditor', to: 'vertex', color: '#f472b6' },
+
+            { from: 'ag_support', to: 'asana', color: '#a78bfa' }, // Crea tickets
+            { from: 'ag_support', to: 'gmail', color: '#a78bfa' },
+            
+            // Memoria Global
+            { from: 'langgraph', to: 'firestore', color: '#fbbf24' } 
         ];
 
-        const canvas = document.getElementById('network');
+        // === 2. MOTOR GRÁFICO ===
+        const canvas = document.getElementById('canvas-layer');
         const ctx = canvas.getContext('2d');
         const nodeLayer = document.getElementById('node-layer');
         
         let width, height;
-        let nodes = {}; // Map id -> html element & coordinates
-        let paths = []; // Array of calculated bezier paths
+        let nodeElements = {}; // Mapeo ID -> Elemento DOM & Coordenadas
         let particles = [];
 
-        // --- INICIALIZACIÓN ---
-        function init() {
-            createNodes();
+        // Inicialización segura
+        window.onload = () => {
             resize();
-            window.addEventListener('resize', resize);
-            createParticles();
+            renderNodes();
+            initParticles();
             animate();
-        }
-
-        function createNodes() {
-            nodesConfig.forEach(conf => {
-                const el = document.createElement('div');
-                el.className = 'node';
-                el.id = conf.id;
-                
-                // Status dot
-                const dot = document.createElement('div');
-                dot.className = `status-dot status-${conf.status || 'active'}`;
-                el.appendChild(dot);
-
-                const icon = document.createElement('div');
-                icon.className = 'node-icon';
-                icon.textContent = conf.icon;
-                el.appendChild(icon);
-
-                const title = document.createElement('span');
-                title.className = 'node-title';
-                title.textContent = conf.label;
-                el.appendChild(title);
-
-                const sub = document.createElement('span');
-                sub.className = 'node-sub';
-                sub.textContent = conf.sub;
-                el.appendChild(sub);
-
-                nodeLayer.appendChild(el);
-                nodes[conf.id] = { el, config: conf };
+            window.addEventListener('resize', () => {
+                resize();
+                updateNodePositions();
             });
-        }
+        };
 
         function resize() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
+        }
 
-            // Actualizar posiciones absolutas de los nodos
-            Object.values(nodes).forEach(n => {
-                const x = n.config.x * width - 80; // Center offset (width/2)
-                const y = n.config.y * height - 40; // Center offset (height/2 approx)
-                n.el.style.left = `${x}px`;
-                n.el.style.top = `${y}px`;
+        function renderNodes() {
+            nodeLayer.innerHTML = ''; // Limpiar
+            NODES.forEach(n => {
+                const el = document.createElement('div');
+                el.className = `node ${n.class || ''}`;
+                el.innerHTML = `
+                    <div class="status-indicator st-${n.status}"></div>
+                    <div class="node-icon">${n.icon}</div>
+                    <div class="node-title">${n.label}</div>
+                    <div class="node-sub">${n.sub}</div>
+                `;
+                nodeLayer.appendChild(el);
                 
-                // Guardar centro real para el canvas
-                n.cx = n.config.x * width;
-                n.cy = n.config.y * height;
+                // Guardar referencia y posición lógica
+                nodeElements[n.id] = { el, xPct: n.x, yPct: n.y };
             });
-
-            // Recalcular caminos
-            calculatePaths();
+            updateNodePositions();
         }
 
-        function calculatePaths() {
-            paths = [];
-            connectionsConfig.forEach(conn => {
-                const n1 = nodes[conn.from];
-                const n2 = nodes[conn.to];
-                if(!n1 || !n2) return;
-
-                // Calcular puntos de control para curva Bezier Cúbica
-                // Hacemos que las curvas salgan horizontalmente
-                const cp1x = n1.cx + (n2.cx - n1.cx) * 0.5;
-                const cp1y = n1.cy;
-                const cp2x = n1.cx + (n2.cx - n1.cx) * 0.5;
-                const cp2y = n2.cy;
-
-                paths.push({
-                    start: {x: n1.cx, y: n1.cy},
-                    end: {x: n2.cx, y: n2.cy},
-                    cp1: {x: cp1x, y: cp1y},
-                    cp2: {x: cp2x, y: cp2y},
-                    type: conn.type
-                });
+        function updateNodePositions() {
+            Object.keys(nodeElements).forEach(id => {
+                const node = nodeElements[id];
+                // Convertir porcentaje a pixeles
+                const px = node.xPct * width;
+                const py = node.yPct * height;
+                
+                node.x = px;
+                node.y = py;
+                
+                node.el.style.left = px + 'px';
+                node.el.style.top = py + 'px';
             });
         }
 
-        // --- SISTEMA DE PARTÍCULAS (Matemáticas Reales) ---
-        
-        // Función de Bezier Cúbica: B(t) = (1-t)^3 P0 + 3(1-t)^2 t P1 + 3(1-t) t^2 P2 + t^3 P3
-        function getBezierPoint(t, p0, p1, p2, p3) {
-            const mt = 1 - t;
-            const mt2 = mt * mt;
-            const mt3 = mt2 * mt;
-            const t2 = t * t;
-            const t3 = t2 * t;
-
-            const x = mt3 * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t3 * p3.x;
-            const y = mt3 * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t3 * p3.y;
-            return { x, y };
-        }
-
+        // === 3. FÍSICA DE PARTÍCULAS ===
         class Particle {
             constructor() {
                 this.reset();
             }
 
             reset() {
-                // Elegir un camino aleatorio
-                this.path = paths[Math.floor(Math.random() * paths.length)];
-                this.t = 0;
-                // Velocidad variable basada en el tipo de camino
-                this.speed = 0.003 + Math.random() * 0.004;
-                this.size = 2 + Math.random() * 2;
+                const route = CONNECTIONS[Math.floor(Math.random() * CONNECTIONS.length)];
+                this.source = nodeElements[route.from];
+                this.target = nodeElements[route.to];
+                this.color = route.color;
+                this.progress = 0;
+                this.speed = 0.005 + Math.random() * 0.005; // Velocidad variable
                 
-                // Color basado en tipo
-                switch(this.path.type) {
-                    case 'user': this.color = '#3b82f6'; break;
-                    case 'logic': this.color = '#8b5cf6'; break;
-                    case 'ai': this.color = '#ef4444'; this.speed *= 1.5; break; // AI más rápido
-                    case 'data': this.color = '#10b981'; break;
-                    default: this.color = '#f1f5f9';
-                }
+                // Si el nodo no existe (por error de config), reintentar
+                if (!this.source || !this.target) this.reset();
             }
 
             update() {
-                this.t += this.speed;
-                if (this.t >= 1) {
+                this.progress += this.speed;
+                if (this.progress >= 1) {
                     this.reset();
                 }
             }
 
-            draw(ctx) {
-                if (!this.path) return;
-                
-                const pos = getBezierPoint(
-                    this.t, 
-                    this.path.start, 
-                    this.path.cp1, 
-                    this.path.cp2, 
-                    this.path.end
-                );
+            draw() {
+                if (!this.source || !this.target) return;
 
+                const sx = this.source.x;
+                const sy = this.source.y;
+                const tx = this.target.x;
+                const ty = this.target.y;
+
+                // Curva Bezier para movimiento fluido
+                // Puntos de control intermedios
+                const cp1x = sx + (tx - sx) * 0.5;
+                const cp1y = sy;
+                const cp2x = sx + (tx - sx) * 0.5;
+                const cp2y = ty;
+
+                // Cálculo de posición en curva (Matemática de Bezier Cúbica)
+                const t = this.progress;
+                const cx = Math.pow(1-t,3)*sx + 3*Math.pow(1-t,2)*t*cp1x + 3*(1-t)*Math.pow(t,2)*cp2x + Math.pow(t,3)*tx;
+                const cy = Math.pow(1-t,3)*sy + 3*Math.pow(1-t,2)*t*cp1y + 3*(1-t)*Math.pow(t,2)*cp2y + Math.pow(t,3)*ty;
+
+                // Dibujar partícula
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, this.size, 0, Math.PI * 2);
+                ctx.arc(cx, cy, 3, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                // Glow effect
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = 10;
                 ctx.shadowColor = this.color;
                 ctx.fill();
-                ctx.shadowBlur = 0; // Reset
+                ctx.shadowBlur = 0;
             }
         }
 
-        function createParticles() {
-            // Número de partículas
-            for(let i=0; i<40; i++) {
+        function initParticles() {
+            for(let i=0; i<60; i++) { // Más partículas
                 particles.push(new Particle());
             }
         }
 
-        function drawNetwork() {
+        // === 4. LOOP DE RENDERIZADO ===
+        function animate() {
             ctx.clearRect(0, 0, width, height);
 
-            // 1. Dibujar Líneas (Fondo)
-            ctx.lineWidth = 1;
-            paths.forEach(p => {
-                ctx.beginPath();
-                ctx.moveTo(p.start.x, p.start.y);
-                ctx.bezierCurveTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, p.end.x, p.end.y);
-                
-                // Color de línea tenue según tipo
-                let stroke = '#334155'; // Default slate-700
-                if(p.type === 'ai') stroke = 'rgba(239, 68, 68, 0.2)'; // Red tint for AI
-                
-                ctx.strokeStyle = stroke;
-                ctx.stroke();
+            // 1. Dibujar Líneas de Conexión
+            CONNECTIONS.forEach(conn => {
+                const n1 = nodeElements[conn.from];
+                const n2 = nodeElements[conn.to];
+                if(n1 && n2) {
+                    ctx.beginPath();
+                    ctx.moveTo(n1.x, n1.y);
+                    // Misma curvatura que las partículas
+                    const cp1x = n1.x + (n2.x - n1.x) * 0.5;
+                    const cp1y = n1.y;
+                    const cp2x = n1.x + (n2.x - n1.x) * 0.5;
+                    const cp2y = n2.y;
+                    
+                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, n2.x, n2.y);
+                    
+                    ctx.strokeStyle = conn.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.globalAlpha = 0.2; // Líneas tenues
+                    if(conn.dashed) ctx.setLineDash([5, 5]);
+                    else ctx.setLineDash([]);
+                    
+                    ctx.stroke();
+                    ctx.globalAlpha = 1.0;
+                }
             });
 
-            // 2. Dibujar Partículas
+            // 2. Animar Partículas
             particles.forEach(p => {
                 p.update();
-                p.draw(ctx);
+                p.draw();
             });
-        }
 
-        function animate() {
-            drawNetwork();
             requestAnimationFrame(animate);
         }
-
-        // Start
-        init();
 
     </script>
 </body>
