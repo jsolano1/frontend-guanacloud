@@ -3,142 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arquitectura KAI v2 - Ecosistema Cognitivo</title>
+    <title>Ecosistema KAI v2 - Arquitectura Multi-Agente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
+            --bg-color: #0b1120;
             --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-purple: #8b5cf6;
-            --accent-red: #ef4444;
-            --line-color: #475569;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            
+            /* Colores de Flujo */
+            --flow-user: #3b82f6;   /* Azul */
+            --flow-logic: #8b5cf6;  /* Violeta */
+            --flow-data: #10b981;   /* Verde */
+            --flow-ai: #ef4444;     /* Rojo/Gemini */
+            --flow-infra: #f59e0b;  /* Naranja */
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            height: 100vh;
+        }
+
+        /* UI Overlay */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
         }
 
         header {
-            padding: 20px;
-            text-align: center;
-            z-index: 10;
+            padding: 20px 40px;
+            pointer-events: auto;
+            background: linear-gradient(180deg, rgba(11,17,32,0.9) 0%, rgba(11,17,32,0) 100%);
         }
 
         h1 {
             margin: 0;
             font-weight: 300;
-            letter-spacing: 2px;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+        
+        h1 span {
+            font-weight: 600;
             background: linear-gradient(to right, #3b82f6, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        h2 {
-            font-size: 1rem;
-            color: #94a3b8;
-            margin-top: 5px;
-            font-weight: 400;
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
         }
 
-        #canvas-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        .legend-item {
             display: flex;
-            justify-content: center;
             align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        canvas {
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Canvas Layer */
+        #canvas-container {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 1;
+        }
+
+        /* Nodes (HTML Elements positioned over canvas) */
+        .node-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none; /* Let clicks pass to canvas if needed, but we want nodes interactive */
         }
 
         .node {
             position: absolute;
             background: var(--card-bg);
-            border: 1px solid var(--line-color);
+            border: 1px solid #334155;
             border-radius: 12px;
-            padding: 15px 20px;
-            width: 180px;
+            padding: 12px;
+            width: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-            z-index: 2;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
+            pointer-events: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: default;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
 
         .node:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
-            border-color: var(--accent-blue);
+            transform: translateY(-5px) scale(1.02);
+            z-index: 20;
+            border-color: var(--flow-user);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
 
         .node-icon {
             font-size: 24px;
-            margin-bottom: 8px;
-            display: block;
+            margin-bottom: 6px;
         }
 
         .node-title {
+            font-size: 13px;
             font-weight: 600;
-            font-size: 14px;
-            display: block;
-            margin-bottom: 4px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
         }
 
-        .node-desc {
-            font-size: 11px;
-            color: #94a3b8;
+        .node-sub {
+            font-size: 10px;
+            color: var(--text-secondary);
             line-height: 1.2;
         }
 
-        /* Layer Labels */
-        .layer-label {
+        .status-dot {
             position: absolute;
-            left: 40px;
-            font-size: 12px;
-            color: #64748b;
+            top: 10px;
+            right: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-active { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+        .status-dev { background-color: #f59e0b; }
+        .status-plan { background-color: #64748b; border: 1px solid #94a3b8; }
+
+        /* Zone Labels */
+        .zone-label {
+            position: absolute;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            border-left: 2px solid #334155;
-            padding-left: 10px;
-            height: 100px;
-            display: flex;
-            align-items: center;
-        }
-
-        /* Specific Node Colors */
-        .user-node { border-top: 4px solid var(--accent-blue); }
-        .orch-node { border-top: 4px solid var(--accent-purple); }
-        .agent-node { border-top: 4px solid var(--accent-green); }
-        .infra-node { border-top: 4px solid var(--accent-red); }
-
-        /* Animation */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-
-        .active-pulse {
-            animation: pulse 2s infinite;
+            letter-spacing: 2px;
+            color: #475569;
+            font-weight: 600;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 5px;
+            width: 200px;
+            pointer-events: none;
         }
 
     </style>
@@ -146,244 +184,301 @@
 <body>
 
     <header>
-        <h1>KAI v2 ARCHITECTURE</h1>
-        <h2>Ecosistema Multi-Agente & Cloud Native</h2>
+        <h1>KAI v2 <span>ECOSYSTEM</span></h1>
+        <div style="font-size: 12px; color: #94a3b8; margin-top: 5px;">LangGraph Orchestration & Google Cloud Native</div>
     </header>
 
+    <div class="legend ui-layer">
+        <div class="legend-item"><div class="dot" style="background: #3b82f6;"></div>Usuario / Interacción</div>
+        <div class="legend-item"><div class="dot" style="background: #8b5cf6;"></div>Orquestación (LangGraph)</div>
+        <div class="legend-item"><div class="dot" style="background: #ef4444;"></div>Inferencia AI (Gemini)</div>
+        <div class="legend-item"><div class="dot" style="background: #10b981;"></div>Datos / Herramientas</div>
+        <div style="margin-top: 10px; font-size: 10px; border-top: 1px solid #334155; padding-top: 5px;">
+            <span style="color: #10b981">●</span> Prod &nbsp; <span style="color: #f59e0b">●</span> Dev &nbsp; <span style="color: #64748b">○</span> Plan
+        </div>
+    </div>
+
     <div id="canvas-container">
-        <canvas id="connections"></canvas>
-        
-        <!-- Layer Labels -->
-        <div class="layer-label" style="top: 10%;">CANALES / USUARIOS</div>
-        <div class="layer-label" style="top: 40%;">NÚCLEO COGNITIVO (CLOUD RUN)</div>
-        <div class="layer-label" style="top: 75%;">INFRAESTRUCTURA GCP</div>
+        <canvas id="network"></canvas>
+    </div>
 
-        <!-- Level 1: Entry -->
-        <div class="node user-node" id="user" style="top: 12%; left: 50%; transform: translateX(-50%);">
-            <span class="node-icon">👤</span>
-            <span class="node-title">Usuario Final</span>
-            <span class="node-desc">App, WhatsApp, Voz, Web</span>
-        </div>
-
-        <!-- Level 2: Gateway -->
-        <div class="node user-node" id="gateway" style="top: 25%; left: 50%; transform: translateX(-50%);">
-            <span class="node-icon">🛡️</span>
-            <span class="node-title">API Gateway</span>
-            <span class="node-desc">Load Balancer & Auth</span>
-        </div>
-
-        <!-- Level 3: Orchestrator (Center) -->
-        <div class="node orch-node active-pulse" id="orchestrator" style="top: 45%; left: 50%; transform: translateX(-50%); width: 220px;">
-            <span class="node-icon">🧠</span>
-            <span class="node-title">Orquestador de Grafos</span>
-            <span class="node-desc">KAI Core (LangGraph Supervisor)</span>
-        </div>
-
-        <!-- Level 4: Agents (Swarm) -->
-        <div class="node agent-node" id="agent-claims" style="top: 45%; left: 20%;">
-            <span class="node-icon">🚗</span>
-            <span class="node-title">Agente Siniestros</span>
-            <span class="node-desc">Visión de Daños & Reporte</span>
-        </div>
-
-        <div class="node agent-node" id="agent-home" style="top: 38%; left: 80%;">
-            <span class="node-icon">🏠</span>
-            <span class="node-title">Agente Hogar</span>
-            <span class="node-desc">Asistencia Domiciliaria</span>
-        </div>
-
-        <div class="node agent-node" id="agent-auditor" style="top: 55%; left: 80%;">
-            <span class="node-icon">⚖️</span>
-            <span class="node-title">Agente Auditor</span>
-            <span class="node-desc">Compliance & Reglas</span>
-        </div>
-
-        <!-- Level 5: Infrastructure -->
-        <div class="node infra-node" id="vertex" style="top: 75%; left: 20%;">
-            <span class="node-icon">💎</span>
-            <span class="node-title">Vertex AI</span>
-            <span class="node-desc">Gemini 2.5 Pro & Flash</span>
-        </div>
-
-        <div class="node infra-node" id="firestore" style="top: 75%; left: 50%; transform: translateX(-50%);">
-            <span class="node-icon">🔥</span>
-            <span class="node-title">Firestore</span>
-            <span class="node-desc">Persistencia de Sesión</span>
-        </div>
-
-        <div class="node infra-node" id="bigquery" style="top: 75%; left: 80%;">
-            <span class="node-icon">🔍</span>
-            <span class="node-title">BigQuery</span>
-            <span class="node-desc">DWH & Analítica</span>
-        </div>
-
+    <!-- Nodos posicionados via JS para responsividad relativa -->
+    <div class="node-container" id="node-layer">
+        <!-- Labels -->
+        <div class="zone-label" style="top: 8%; left: 5%;">Canales de Entrada</div>
+        <div class="zone-label" style="top: 8%; left: 35%;">Core & Agentes</div>
+        <div class="zone-label" style="top: 8%; left: 75%;">Infraestructura GCP</div>
     </div>
 
     <script>
-        const canvas = document.getElementById('connections');
+        // --- CONFIGURACIÓN DE NODOS ---
+        const nodesConfig = [
+            // CANALES (Izquierda)
+            { id: 'user_app', x: 0.08, y: 0.30, label: 'Mobile App', sub: 'iOS / Android', icon: '📱', type: 'channel' },
+            { id: 'user_wa', x: 0.08, y: 0.50, label: 'WhatsApp', sub: 'Twilio/Meta API', icon: '💬', type: 'channel' },
+            { id: 'user_web', x: 0.08, y: 0.70, label: 'Web Portal', sub: 'B2B Dashboard', icon: '💻', type: 'channel' },
+
+            // GATEWAY & ORCHESTRATOR (Centro-Izquierda)
+            { id: 'gateway', x: 0.25, y: 0.50, label: 'API Gateway', sub: 'Cloud Run / FastAPI', icon: '🛡️', type: 'core', status: 'active' },
+            { id: 'orchestrator', x: 0.40, y: 0.50, label: 'Supervisor Graph', sub: 'LangGraph State', icon: '🧠', type: 'core', status: 'active' },
+
+            // AGENTES (Centro - Enjambre vertical)
+            { id: 'agent_vision', x: 0.58, y: 0.15, label: 'Vision Agent', sub: 'Detección de Daños', icon: '👁️', type: 'agent', status: 'dev' },
+            { id: 'agent_claims', x: 0.58, y: 0.30, label: 'Claims Agent', sub: 'Auto Insurance Rules', icon: '🚗', type: 'agent', status: 'active' },
+            { id: 'agent_home', x: 0.58, y: 0.45, label: 'Home Agent', sub: 'Asistencia Hogar', icon: '🏠', type: 'agent', status: 'plan' },
+            { id: 'agent_support', x: 0.58, y: 0.60, label: 'Support Agent', sub: 'FAQ & Helpdesk', icon: '🎧', type: 'agent', status: 'active' },
+            { id: 'agent_auditor', x: 0.58, y: 0.75, label: 'Auditor Agent', sub: 'Compliance Review', icon: '⚖️', type: 'agent', status: 'dev' },
+            { id: 'agent_bidi', x: 0.58, y: 0.90, label: 'Bidi Voice', sub: 'Real-time Audio', icon: '🎙️', type: 'agent', status: 'plan' },
+
+            // INFRAESTRUCTURA (Derecha)
+            { id: 'vertex', x: 0.85, y: 0.30, label: 'Vertex AI', sub: 'Gemini 1.5 Pro/Flash', icon: '💎', type: 'infra', status: 'active' },
+            { id: 'firestore', x: 0.85, y: 0.50, label: 'Firestore', sub: 'Memory & State', icon: '🔥', type: 'infra', status: 'active' },
+            { id: 'bigquery', x: 0.85, y: 0.70, label: 'BigQuery', sub: 'DWH & Analytics', icon: '🔍', type: 'infra', status: 'active' },
+            { id: 'tools_ext', x: 0.85, y: 0.90, label: 'Ext. Tools', sub: 'Asana / Gmail / SQL', icon: '🛠️', type: 'infra', status: 'active' },
+        ];
+
+        // --- CONFIGURACIÓN DE CONEXIONES (Grafo Lógico) ---
+        const connectionsConfig = [
+            // Canales a Gateway
+            { from: 'user_app', to: 'gateway', type: 'user' },
+            { from: 'user_wa', to: 'gateway', type: 'user' },
+            { from: 'user_web', to: 'gateway', type: 'user' },
+
+            // Gateway a Orquestador
+            { from: 'gateway', to: 'orchestrator', type: 'logic' },
+
+            // Orquestador a Agentes (Delegación)
+            { from: 'orchestrator', to: 'agent_claims', type: 'logic' },
+            { from: 'orchestrator', to: 'agent_vision', type: 'logic' },
+            { from: 'orchestrator', to: 'agent_home', type: 'logic' },
+            { from: 'orchestrator', to: 'agent_support', type: 'logic' },
+            { from: 'orchestrator', to: 'agent_auditor', type: 'logic' },
+            { from: 'orchestrator', to: 'agent_bidi', type: 'logic' },
+
+            // Agentes a Infraestructura (Dependencias)
+            // Vision usa Vertex y guarda en Storage (simulado en Tools)
+            { from: 'agent_vision', to: 'vertex', type: 'ai' }, 
+            
+            // Claims usa Firestore para estado y Vertex para NLP
+            { from: 'agent_claims', to: 'vertex', type: 'ai' },
+            { from: 'agent_claims', to: 'firestore', type: 'data' },
+
+            // Support usa Tools (Busqueda) y Vertex
+            { from: 'agent_support', to: 'tools_ext', type: 'data' },
+            { from: 'agent_support', to: 'vertex', type: 'ai' },
+
+            // Auditor verifica contra BigQuery y usa Vertex
+            { from: 'agent_auditor', to: 'bigquery', type: 'data' },
+            { from: 'agent_auditor', to: 'vertex', type: 'ai' },
+
+            // Orquestador persiste memoria global
+            { from: 'orchestrator', to: 'firestore', type: 'data' },
+            
+            // Bidi voice directo a Vertex (Audio)
+            { from: 'agent_bidi', to: 'vertex', type: 'ai' }
+        ];
+
+        const canvas = document.getElementById('network');
         const ctx = canvas.getContext('2d');
-        const container = document.getElementById('canvas-container');
-
-        // Nodes config for connections
-        const nodes = {
-            user: document.getElementById('user'),
-            gateway: document.getElementById('gateway'),
-            orchestrator: document.getElementById('orchestrator'),
-            agentClaims: document.getElementById('agent-claims'),
-            agentHome: document.getElementById('agent-home'),
-            agentAuditor: document.getElementById('agent-auditor'),
-            vertex: document.getElementById('vertex'),
-            firestore: document.getElementById('firestore'),
-            bigquery: document.getElementById('bigquery')
-        };
-
-        // Particles for animation
+        const nodeLayer = document.getElementById('node-layer');
+        
+        let width, height;
+        let nodes = {}; // Map id -> html element & coordinates
+        let paths = []; // Array of calculated bezier paths
         let particles = [];
 
-        function resizeCanvas() {
-            canvas.width = container.offsetWidth;
-            canvas.height = container.offsetHeight;
+        // --- INICIALIZACIÓN ---
+        function init() {
+            createNodes();
+            resize();
+            window.addEventListener('resize', resize);
+            createParticles();
+            animate();
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        function createNodes() {
+            nodesConfig.forEach(conf => {
+                const el = document.createElement('div');
+                el.className = 'node';
+                el.id = conf.id;
+                
+                // Status dot
+                const dot = document.createElement('div');
+                dot.className = `status-dot status-${conf.status || 'active'}`;
+                el.appendChild(dot);
 
-        function getCenter(element) {
-            const rect = element.getBoundingClientRect();
-            return {
-                x: rect.left + rect.width / 2,
-                y: rect.top + rect.height / 2
-            };
+                const icon = document.createElement('div');
+                icon.className = 'node-icon';
+                icon.textContent = conf.icon;
+                el.appendChild(icon);
+
+                const title = document.createElement('span');
+                title.className = 'node-title';
+                title.textContent = conf.label;
+                el.appendChild(title);
+
+                const sub = document.createElement('span');
+                sub.className = 'node-sub';
+                sub.textContent = conf.sub;
+                el.appendChild(sub);
+
+                nodeLayer.appendChild(el);
+                nodes[conf.id] = { el, config: conf };
+            });
         }
 
-        function drawLine(start, end, color = '#334155', width = 2) {
-            ctx.beginPath();
-            ctx.moveTo(start.x, start.y);
-            // Curva Bezier para hacerlo fluido
-            const cp1 = { x: start.x, y: (start.y + end.y) / 2 };
-            const cp2 = { x: end.x, y: (start.y + end.y) / 2 };
-            
-            // Si es horizontal
-            if (Math.abs(start.y - end.y) < 50) {
-                 ctx.lineTo(end.x, end.y);
-            } else {
-                ctx.bezierCurveTo(start.x, end.y - 50, end.x, start.y + 50, end.x, end.y);
-            }
-            
-            ctx.strokeStyle = color;
-            ctx.lineWidth = width;
-            ctx.stroke();
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            // Actualizar posiciones absolutas de los nodos
+            Object.values(nodes).forEach(n => {
+                const x = n.config.x * width - 80; // Center offset (width/2)
+                const y = n.config.y * height - 40; // Center offset (height/2 approx)
+                n.el.style.left = `${x}px`;
+                n.el.style.top = `${y}px`;
+                
+                // Guardar centro real para el canvas
+                n.cx = n.config.x * width;
+                n.cy = n.config.y * height;
+            });
+
+            // Recalcular caminos
+            calculatePaths();
         }
 
-        // Particle System for Data Flow
+        function calculatePaths() {
+            paths = [];
+            connectionsConfig.forEach(conn => {
+                const n1 = nodes[conn.from];
+                const n2 = nodes[conn.to];
+                if(!n1 || !n2) return;
+
+                // Calcular puntos de control para curva Bezier Cúbica
+                // Hacemos que las curvas salgan horizontalmente
+                const cp1x = n1.cx + (n2.cx - n1.cx) * 0.5;
+                const cp1y = n1.cy;
+                const cp2x = n1.cx + (n2.cx - n1.cx) * 0.5;
+                const cp2y = n2.cy;
+
+                paths.push({
+                    start: {x: n1.cx, y: n1.cy},
+                    end: {x: n2.cx, y: n2.cy},
+                    cp1: {x: cp1x, y: cp1y},
+                    cp2: {x: cp2x, y: cp2y},
+                    type: conn.type
+                });
+            });
+        }
+
+        // --- SISTEMA DE PARTÍCULAS (Matemáticas Reales) ---
+        
+        // Función de Bezier Cúbica: B(t) = (1-t)^3 P0 + 3(1-t)^2 t P1 + 3(1-t) t^2 P2 + t^3 P3
+        function getBezierPoint(t, p0, p1, p2, p3) {
+            const mt = 1 - t;
+            const mt2 = mt * mt;
+            const mt3 = mt2 * mt;
+            const t2 = t * t;
+            const t3 = t2 * t;
+
+            const x = mt3 * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t3 * p3.x;
+            const y = mt3 * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t3 * p3.y;
+            return { x, y };
+        }
+
         class Particle {
-            constructor(startNode, endNode, color) {
-                this.startNode = startNode;
-                this.endNode = endNode;
-                this.progress = 0;
-                this.speed = 0.005 + Math.random() * 0.005;
-                this.color = color;
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                // Elegir un camino aleatorio
+                this.path = paths[Math.floor(Math.random() * paths.length)];
+                this.t = 0;
+                // Velocidad variable basada en el tipo de camino
+                this.speed = 0.003 + Math.random() * 0.004;
+                this.size = 2 + Math.random() * 2;
+                
+                // Color basado en tipo
+                switch(this.path.type) {
+                    case 'user': this.color = '#3b82f6'; break;
+                    case 'logic': this.color = '#8b5cf6'; break;
+                    case 'ai': this.color = '#ef4444'; this.speed *= 1.5; break; // AI más rápido
+                    case 'data': this.color = '#10b981'; break;
+                    default: this.color = '#f1f5f9';
+                }
             }
 
             update() {
-                this.progress += this.speed;
-                if (this.progress >= 1) {
-                    this.progress = 0; // Loop
+                this.t += this.speed;
+                if (this.t >= 1) {
+                    this.reset();
                 }
             }
 
-            draw() {
-                const start = getCenter(nodes[this.startNode]);
-                const end = getCenter(nodes[this.endNode]);
+            draw(ctx) {
+                if (!this.path) return;
                 
-                // Calculate position on curve (Quadratic for simplicity here or linear interp)
-                // Usando interpolación simple para la demo, mejorando a Bezier
-                const t = this.progress;
-                
-                // Simple Linear interpolation for demo logic complexity reduction
-                // In a real Bezier, we'd calculate B(t)
-                
-                // Let's mimic the line logic
-                let x, y;
-                if (Math.abs(start.y - end.y) < 50) {
-                    x = start.x + (end.x - start.x) * t;
-                    y = start.y + (end.y - start.y) * t;
-                } else {
-                     // Aproximación simple de curva S
-                     x = start.x + (end.x - start.x) * t;
-                     // Easing y
-                     y = start.y + (end.y - start.y) * (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
-                }
+                const pos = getBezierPoint(
+                    this.t, 
+                    this.path.start, 
+                    this.path.cp1, 
+                    this.path.cp2, 
+                    this.path.end
+                );
 
                 ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.arc(pos.x, pos.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
+                // Glow effect
+                ctx.shadowBlur = 8;
                 ctx.shadowColor = this.color;
                 ctx.fill();
-                ctx.shadowBlur = 0;
+                ctx.shadowBlur = 0; // Reset
             }
         }
 
-        // Initialize particles
-        function initParticles() {
-            // Flow: User -> Gateway -> Orchestrator
-            particles.push(new Particle('user', 'gateway', '#3b82f6'));
-            particles.push(new Particle('gateway', 'orchestrator', '#3b82f6'));
-            
-            // Flow: Orchestrator -> Agents
-            particles.push(new Particle('orchestrator', 'agentClaims', '#10b981'));
-            particles.push(new Particle('orchestrator', 'agentHome', '#10b981'));
-            particles.push(new Particle('orchestrator', 'agentAuditor', '#10b981'));
-            
-            // Flow: Agents -> Infra
-            particles.push(new Particle('agentClaims', 'vertex', '#ef4444'));
-            particles.push(new Particle('agentAuditor', 'bigquery', '#ef4444'));
-            
-            // Flow: State
-            particles.push(new Particle('orchestrator', 'firestore', '#f59e0b'));
+        function createParticles() {
+            // Número de partículas
+            for(let i=0; i<40; i++) {
+                particles.push(new Particle());
+            }
         }
 
-        initParticles();
+        function drawNetwork() {
+            ctx.clearRect(0, 0, width, height);
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Connections
-            const pUser = getCenter(nodes.user);
-            const pGw = getCenter(nodes.gateway);
-            const pOrch = getCenter(nodes.orchestrator);
-            const pClaims = getCenter(nodes.agentClaims);
-            const pHome = getCenter(nodes.agentHome);
-            const pAuditor = getCenter(nodes.agentAuditor);
-            const pVertex = getCenter(nodes.vertex);
-            const pFire = getCenter(nodes.firestore);
-            const pBQ = getCenter(nodes.bigquery);
-
-            // Main Trunk
-            drawLine(pUser, pGw);
-            drawLine(pGw, pOrch);
-
-            // Branches
-            drawLine(pOrch, pClaims, '#475569');
-            drawLine(pOrch, pHome, '#475569');
-            drawLine(pOrch, pAuditor, '#475569');
-
-            // Infra Connections
-            drawLine(pClaims, pVertex, '#94a3b8', 1); // Claims uses Vertex
-            drawLine(pOrch, pFire, '#f59e0b', 2); // State Persistance
-            drawLine(pAuditor, pBQ, '#94a3b8', 1); // Analytics
-
-            // Draw Particles
-            particles.forEach(p => {
-                p.update();
-                p.draw();
+            // 1. Dibujar Líneas (Fondo)
+            ctx.lineWidth = 1;
+            paths.forEach(p => {
+                ctx.beginPath();
+                ctx.moveTo(p.start.x, p.start.y);
+                ctx.bezierCurveTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, p.end.x, p.end.y);
+                
+                // Color de línea tenue según tipo
+                let stroke = '#334155'; // Default slate-700
+                if(p.type === 'ai') stroke = 'rgba(239, 68, 68, 0.2)'; // Red tint for AI
+                
+                ctx.strokeStyle = stroke;
+                ctx.stroke();
             });
 
+            // 2. Dibujar Partículas
+            particles.forEach(p => {
+                p.update();
+                p.draw(ctx);
+            });
+        }
+
+        function animate() {
+            drawNetwork();
             requestAnimationFrame(animate);
         }
 
-        animate();
+        // Start
+        init();
 
     </script>
 </body>
