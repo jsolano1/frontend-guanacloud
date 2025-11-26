@@ -6,23 +6,15 @@ from src.services import storage_service, vision_service
 from src.utils.logging_utils import log_structured
 
 def _standardize_filename(service_number, category, raw_angle, original_name):
-    """
-    Genera nombres de archivo deterministas.
-    """
     ext = original_name.split('.')[-1] if '.' in original_name else "jpg"
     std_category = "veh" if category == "vehicle" else "doc"
     clean_suffix = str(raw_angle).lower().replace(" ", "_").replace("-", "_")
     return f"{service_number}_{std_category}_{clean_suffix}.{ext}"
 
 async def analyze_claim_image_async(service_number: str, image_bytes: bytes, original_filename: str, mime_type: str = "image/jpeg") -> dict:
-    """
-    Procesa una sola imagen.
-    """
     try:
-        # 1. Clasificación
         if "pdf" in mime_type:
             classification = {"category": "document", "specific_type": "archivo_pdf", "view_angle": "general"}
-            # Para PDFs, asumimos extracción directa sin gather para evitar complejidad extra por ahora
             deep_metadata = await vision_service.extract_deep_metadata_async(image_bytes, mime_type)
         else:
             classification_task = vision_service.classify_image_async(image_bytes)
@@ -35,11 +27,9 @@ async def analyze_claim_image_async(service_number: str, image_bytes: bytes, ori
         clean_filename = _standardize_filename(service_number, category, view_angle, original_filename)
         json_key = clean_filename.replace(".", "_")
 
-        # 2. Upload Raw
         raw_url = await storage_service.upload_image_to_gcs_async(image_bytes, service_number, clean_filename, "raw")
         processed_url = None
         
-        # 3. Segmentación (Solo imágenes de vehículos)
         if category == "vehicle" and "image" in mime_type:
             try:
                 processed_bytes = await vision_service.apply_segmentation_masks_async(image_bytes)

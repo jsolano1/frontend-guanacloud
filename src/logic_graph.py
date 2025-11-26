@@ -7,12 +7,11 @@ from src.config import settings
 from src.tools.helpdesk_tools import tools_list as helpdesk_tools
 from src.tools.dwh_tools import dwh_tools_list
 from src.tools.knowledge_tools import search_knowledge_base_tool
+from src.tools.general_tools import tools_list as general_tools
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
 from src.utils.prompt_loader import load_prompt
-from src.tools.general_tools import tools_list as general_tools
 
-knowledge_tools_list = [search_knowledge_base_tool]
 all_tools = helpdesk_tools + dwh_tools_list + [search_knowledge_base_tool] + general_tools
 
 _COMPILED_GRAPH = None
@@ -27,7 +26,7 @@ def get_gemini_client():
 class AgentState(TypedDict):
     messages: List[types.Content]
     user_email: str
-    origin: str # Campo nuevo para saber de dónde viene (web vs chat)
+    origin: str 
     generated_card: Optional[Dict[str, Any]]
 
 def agent_node(state: AgentState):
@@ -57,18 +56,16 @@ def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_outputs = []
     user_email = state.get("user_email", "unknown")
-    origin = state.get("origin", "chat") # Default chat si no se especifica
+    origin = state.get("origin", "chat")
 
     for part in last_message.parts:
         if part.function_call:
             fn_name = part.function_call.name
             fn_args = part.function_call.args
             
-            # Inyecciones automáticas de contexto
             if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
                 fn_args["solicitante_email"] = user_email
 
-            # Lógica híbrida DWH: Inyectar el origen para decidir Sync/Async
             if fn_name == "consultar_dwh_tool":
                 fn_args["context_origin"] = origin
 
@@ -79,7 +76,6 @@ def tools_execution_node(state: AgentState):
                 
                 if fn_name == "consultar_dwh_tool":
                      from src.tools import dwh_tools
-                     # La herramienta ahora acepta context_origin
                      result = dwh_tools.consultar_dwh_tool(**fn_args)
                 
                 elif fn_name in ["crear_tiquete_tool", "cerrar_tiquete_tool", "reasignar_tiquete_tool", "consultar_estado_tool"]:
@@ -90,9 +86,13 @@ def tools_execution_node(state: AgentState):
                 elif fn_name == "search_knowledge_base_tool":
                      from src.tools import knowledge_tools
                      result = knowledge_tools.search_knowledge_base_tool(**fn_args)
+                     
+                elif fn_name == "responder_consultas_generales":
+                     from src.tools import general_tools
+                     result = general_tools.responder_consultas_generales(**fn_args)
 
                 if isinstance(result, str) and '"cardsV2"' in result:
-                    try:
+                     try:
                         json_str = result
                         if result.startswith("```json"):
                             json_str = result.replace("```json", "").replace("```", "")
@@ -103,6 +103,7 @@ def tools_execution_node(state: AgentState):
                             result = "Acción completada. Tarjeta UI mostrada al usuario."
                     except Exception as json_err:
                         log_structured("CardParseError", error=str(json_err))
+                     pass
 
             except Exception as e:
                 result = f"Error ejecutando {fn_name}: {str(e)}"

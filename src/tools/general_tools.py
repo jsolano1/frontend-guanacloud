@@ -1,23 +1,16 @@
 from src.utils.logging_utils import log_structured
+from src.utils.prompt_loader import load_prompt
 
-def responder_consultas_generales(consulta: str, tema: str = "general") -> str:
+def responder_consultas_generales(consulta: str, contexto: str = "general") -> str:
     """
-    Herramienta para responder preguntas de conocimiento general, explicaciones, 
-    conceptos, redacción de correos o cualquier tema que NO requiera datos privados de la empresa.
-    
-    Usa esta herramienta si el usuario pregunta cosas como:
-    - "¿Qué es un seguro de cobertura amplia?"
-    - "Redacta un correo para un cliente..."
-    - "Explícame qué hace un ajustador."
-    - "¿Cuál es la capital de Francia?"
+    Herramienta para responder preguntas de conocimiento general o capacidad generativa.
     """
+    log_structured("GeneralKnowledgeToolUsed", query=consulta)
     
-    log_structured("GeneralKnowledgeToolUsed", topic=tema, query=consulta)
-    
-    return (
-        f"CONFIRMACIÓN: La consulta '{consulta}' es de conocimiento general o capacidad generativa. "
-        "INSTRUCCIÓN PARA EL AGENTE: Usa tu propio conocimiento y capacidades de LLM para responder "
-        "de manera completa, experta y servicial. No busques en bases de datos internas."
-    )
+    prompt = load_prompt("general_chat.md")
+    if not prompt:
+        return "INSTRUCCIÓN: Responde al usuario usando tu conocimiento general."
+        
+    return prompt
 
 tools_list = [responder_consultas_generales]

@@ -14,10 +14,23 @@ def _check_permission_hybrid(user_email: str) -> bool:
     try:
         if check_dwh_permission(user_email): return True
     except Exception: pass
-    return True 
+
+    try:
+        creds, _ = google.auth.default()
+        service = build('cloudresourcemanager', 'v1', credentials=creds)
+        policy = service.projects().getIamPolicy(resource=TARGET_PROJECT_ID).execute()
+        user_member = f"user:{user_email.strip().lower()}"
+        bq_roles = ["roles/bigquery.dataViewer", "roles/bigquery.dataEditor", "roles/bigquery.admin", "roles/owner"]
+        for binding in policy.get('bindings', []):
+            if binding['role'] in bq_roles:
+                members = [m.lower() for m in binding.get('members', [])]
+                if user_member in members: return True
+    except Exception: pass
+    
+    return False
 
 def _run_dwh_async_secure(pregunta, email, space_name):
-    """Hilo background para GChat."""
+    """Solo para Google Chat."""
     log_structured("AsyncDWHStart", user=email)
     try:
         resultado = dwh_query_service.consultar_dwh(pregunta, email)
@@ -27,32 +40,30 @@ def _run_dwh_async_secure(pregunta, email, space_name):
         enviar_mensaje_directo_chat(space_name, {"text": f"❌ Error DWH: {str(e)}"})
 
 def consultar_dwh_tool(pregunta: str, solicitante_email: str = "unknown", context_origin: str = "chat") -> str:
-    """
-    Herramienta DWH Híbrida.
-    """
+    log_structured("DWH_Tool_Called", origin=context_origin, user=solicitante_email)
+
+    if not _check_permission_hybrid(solicitante_email):
+         return "⛔ No tienes permisos para consultar el Data Warehouse."
 
     # --- RUTA WEB (Síncrona) ---
     if context_origin == "web":
-        log_structured("DWH_Sync_Execution", user=solicitante_email, origin="web")
         try:
             return dwh_query_service.consultar_dwh(pregunta, solicitante_email)
         except Exception as e:
-            return f"Error ejecutando consulta síncrona: {str(e)}"
+            return f"Error ejecutando consulta: {str(e)}"
 
     # --- RUTA CHAT (Asíncrona) ---
     dm_space_name = get_dm_space_name_for_user(solicitante_email)
     
     if not dm_space_name:
-        log_structured("DWH_Sync_Fallback", reason="NoDMSpace")
         return dwh_query_service.consultar_dwh(pregunta, solicitante_email)
 
-    log_structured("DWH_Async_Execution", user=solicitante_email)
     thread = threading.Thread(
         target=_run_dwh_async_secure, 
         args=(pregunta, solicitante_email, dm_space_name)
     )
     thread.start()
     
-    return "⏳ Consulta en proceso."
+    return "⏳ Procesando consulta en segundo plano. Te enviaré un mensaje privado con los resultados."
 
 dwh_tools_list = [consultar_dwh_tool]

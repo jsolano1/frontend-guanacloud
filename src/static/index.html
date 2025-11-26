@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </div>
-            <div class="text-[10px] text-slate-600 text-center">Conectado a: Google Vertex AI</div>
+            <div class="text-[10px] text-slate-600 text-center">Conectado a: KAI</div>
         </div>
 
         <div class="flex-1 flex flex-col relative bg-slate-900/40">
@@ -121,9 +121,31 @@
         const API_BASE = window.location.origin; 
         let CURRENT_USER = null;
 
+        // --- FIX: DECODIFICACIÓN UTF-8 CORRECTA PARA TILDES ---
+        function decodeJwtResponse(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                // Fallback moderno si lo anterior falla
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const binaryString = window.atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return JSON.parse(new TextDecoder().decode(bytes));
+            }
+        }
+
         function handleCredentialResponse(response) {
             try {
-                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                const payload = decodeJwtResponse(response.credential);
                 CURRENT_USER = { email: payload.email, name: payload.name, picture: payload.picture };
                 document.getElementById('user-name').textContent = CURRENT_USER.name;
                 document.getElementById('user-email').textContent = CURRENT_USER.email;
@@ -134,7 +156,6 @@
                 setTimeout(() => overlay.remove(), 500);
                 document.getElementById('app-container').classList.remove('opacity-0', 'pointer-events-none');
                 
-                // Mensaje inicial con Avatar KAI
                 addMessage(`¡Hola **${CURRENT_USER.name.split(' ')[0]}**! Soy KAI v2. 🤖\nEstoy listo para ayudarte con:\n* Análisis de Siniestros\n* Consultas de Base de Datos\n* Gestión de Tiquetes`, false);
             } catch (e) { console.error(e); }
         }
@@ -165,14 +186,12 @@
             }
         }
 
-        // --- CLAIMS SUBMIT CON ANIMACION ---
         const claimsForm = document.getElementById('claims-form');
         claimsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('upload-btn');
             const originalHtml = btn.innerHTML;
             
-            // ANIMACION DE CARGA
             btn.disabled = true;
             btn.className = "w-full py-4 bg-slate-700 text-slate-300 font-bold rounded-xl cursor-not-allowed flex justify-center items-center gap-3";
             btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Analizando evidencias...`;
@@ -204,7 +223,6 @@
             const container = document.createElement('div');
             container.className = 'flex flex-col gap-4 w-full mt-2';
 
-            // 1. DATOS DE DOCUMENTO (Merge de todos los docs encontrados)
             let docInfo = {};
             const images = Object.values(backendData.images || {});
             images.forEach(img => {
@@ -213,7 +231,6 @@
                 }
             });
 
-            // RENDER DOC INFO (EMPTY STATE HANDLED)
             const docCard = document.createElement('div');
             docCard.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm';
             if (Object.keys(docInfo).length > 0 && !docInfo.error) {
@@ -232,7 +249,6 @@
             }
             container.appendChild(docCard);
 
-            // 2. DATOS VEHICULO
             const vehInfo = backendData.global_vehicle_details || {};
             const vehCard = document.createElement('div');
             vehCard.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm';
@@ -252,7 +268,6 @@
             }
             container.appendChild(vehCard);
 
-            // 3. GALERIA
             const grid = document.createElement('div');
             grid.className = 'grid grid-cols-1 gap-4 mt-2';
             
@@ -268,7 +283,6 @@
                     const card = document.createElement('div');
                     card.className = 'bg-slate-800 border border-slate-700 rounded-xl overflow-hidden';
                     
-                    // Contenido de imagen (Side by side si hay procesada)
                     let imgContent = `<img src="${rawUrl}" class="w-full h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=Error+Carga'">`;
                     
                     if (processedUrl && tech.category === 'vehicle') {
@@ -281,7 +295,6 @@
                          imgContent = `<div class="h-20 flex items-center justify-center bg-slate-700 text-slate-400 flex-col"><i data-lucide="file-text" class="w-8 h-8 mb-1"></i><span class="text-xs">Archivo PDF</span><a href="${rawUrl}" target="_blank" class="text-[10px] text-indigo-400 underline mt-1">Ver documento</a></div>`;
                     }
 
-                    // Daños
                     let damageList = "";
                     if(biz.daños_resumen && biz.daños_resumen.length > 0) {
                         damageList = `<div class="p-3 bg-red-900/10 border-t border-red-900/20"><p class="text-[10px] text-red-300 font-bold mb-1">DAÑOS:</p><ul class="list-disc ml-4 text-[10px] text-slate-300">${biz.daños_resumen.map(d=>`<li>${d}</li>`).join('')}</ul></div>`;
