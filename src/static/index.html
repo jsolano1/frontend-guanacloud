@@ -203,14 +203,14 @@
             typing.classList.remove('hidden');
             
             try {
-                // Llamada REAL al backend
                 const res = await fetch(API_BASE + '/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         type: 'MESSAGE', 
+                        source: 'web',
                         message: { text: text },
-                        user: { email: CURRENT_USER.email } // Enviar identidad real
+                        user: { email: CURRENT_USER.email }
                     })
                 });
                 
@@ -239,13 +239,11 @@
             btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Procesando en Vertex AI...`;
             
             const formData = new FormData(claimsForm);
-            // El backend espera 'service_number' y 'files'
 
             try {
-                // Llamada REAL al endpoint de Claims
                 const res = await fetch(API_BASE + '/api/v1/claims/upload', {
                     method: 'POST',
-                    body: formData // Fetch maneja el Content-Type multipart automáticamente
+                    body: formData
                 });
 
                 if (!res.ok) {
@@ -253,12 +251,11 @@
                     throw new Error(`Fallo backend (${res.status}): ${errText}`);
                 }
 
-                const resultData = await res.json(); // Respuesta real del backend
+                const resultData = await res.json();
                 
                 toggleClaimsPanel();
                 addMessage(`✅ **Análisis completado** para el caso ${resultData.service}. He procesado ${resultData.processed_count} archivos.`);
                 
-                // Generar reporte visual basado en JSON real
                 setTimeout(() => {
                     const reportNode = createRealRichReport(resultData.data);
                     addMessage(reportNode);
@@ -277,12 +274,9 @@
             }
         });
 
-        // --- VISUALIZATION (Mapping Real Backend Data) ---
         function createRealRichReport(backendData) {
-            // backendData structure matches 'save_batch_claim_data' return value
             const container = document.createElement('div');
             
-            // 1. Datos Globales del Vehículo
             const gv = backendData.global_vehicle_details || {};
             const headerInfo = document.createElement('div');
             headerInfo.className = 'bg-slate-900/50 p-3 rounded-lg mb-4 text-xs border border-slate-700/50';
@@ -297,11 +291,9 @@
             `;
             container.appendChild(headerInfo);
 
-            // 2. Galería de Imágenes
             const galleryGrid = document.createElement('div');
             galleryGrid.className = 'space-y-4';
             
-            // backendData.images es un Diccionario, convertir a array
             const images = Object.values(backendData.images || {});
 
             images.forEach(imgEntry => {
@@ -311,10 +303,8 @@
                 const card = document.createElement('div');
                 card.className = 'bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-lg';
                 
-                // Mostrar imagen PROCESADA si existe (máscaras), sino la RAW
                 const displayUrl = imgEntry.processed_url || imgEntry.raw_url;
                 
-                // Detalles de daños
                 let damageHtml = '';
                 if(biz.daños_resumen && biz.daños_resumen.length > 0) {
                     damageHtml = `<ul class="list-disc ml-4 mt-1 space-y-0.5 text-slate-400">${biz.daños_resumen.map(d => `<li>${d}</li>`).join('')}</ul>`;
@@ -360,7 +350,6 @@
             if (typeof content === 'string') bubble.innerHTML = marked.parse(content);
             else bubble.appendChild(content);
 
-            // Avatar logic simplified
             const avatar = document.createElement('div');
             avatar.className = 'w-8 h-8 flex-shrink-0 rounded-full overflow-hidden border border-slate-600';
             avatar.innerHTML = isUser 

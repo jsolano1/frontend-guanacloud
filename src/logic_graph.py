@@ -26,6 +26,7 @@ def get_gemini_client():
 class AgentState(TypedDict):
     messages: List[types.Content]
     user_email: str
+    origin: str # Campo nuevo para saber de dónde viene (web vs chat)
     generated_card: Optional[Dict[str, Any]]
 
 def agent_node(state: AgentState):
@@ -37,8 +38,6 @@ def agent_node(state: AgentState):
 
     try:
         client = get_gemini_client()
-        log_structured("LLMRequest", user=user_email, message_count=len(messages))
-        
         response = client.models.generate_content(
             model=settings.GEMINI_MODEL_ID,
             contents=messages,
@@ -48,54 +47,48 @@ def agent_node(state: AgentState):
                 temperature=0.0
             )
         )
-        
-        ai_content = response.candidates[0].content
-        first_part = ai_content.parts[0]
-        
-        if first_part.text:
-            log_structured("LLMResponse_Text", text_snippet=first_part.text[:200])
-        elif first_part.function_call:
-            log_structured("LLMResponse_ToolCall", tool_name=first_part.function_call.name, args=first_part.function_call.args)
-
-        return {"messages": [ai_content]}
-        
+        return {"messages": [response.candidates[0].content]}
     except Exception as e:
         log_structured("LLMError", error=str(e))
-        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Tuve un problema técnico. 😵‍💫")])]}
+        return {"messages": [types.Content(role="model", parts=[types.Part.from_text(text="Error técnico en el modelo.")])]}
 
 def tools_execution_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_outputs = []
-    card_found = None
     user_email = state.get("user_email", "unknown")
+    origin = state.get("origin", "chat") # Default chat si no se especifica
 
     for part in last_message.parts:
         if part.function_call:
             fn_name = part.function_call.name
             fn_args = part.function_call.args
             
+            # Inyecciones automáticas de contexto
             if "solicitante_email" not in fn_args or fn_args["solicitante_email"] == "unknown":
                 fn_args["solicitante_email"] = user_email
 
-            log_structured("ToolExecutionStart", tool=fn_name, user=user_email)
+            # Lógica híbrida DWH: Inyectar el origen para decidir Sync/Async
+            if fn_name == "consultar_dwh_tool":
+                fn_args["context_origin"] = origin
+
+            log_structured("ToolExecutionStart", tool=fn_name, user=user_email, origin=origin)
             
             try:
-                result = "Error: Herramienta no encontrada"
+                result = "Herramienta no encontrada"
                 
-                if fn_name in ["crear_tiquete_tool", "cerrar_tiquete_tool", "reasignar_tiquete_tool", "consultar_estado_tool", "start_ticket_creation_form"]:
+                if fn_name == "consultar_dwh_tool":
+                     from src.tools import dwh_tools
+                     # La herramienta ahora acepta context_origin
+                     result = dwh_tools.consultar_dwh_tool(**fn_args)
+                
+                elif fn_name in ["crear_tiquete_tool", "cerrar_tiquete_tool", "reasignar_tiquete_tool", "consultar_estado_tool"]:
                      from src.tools import helpdesk_tools
                      func = getattr(helpdesk_tools, fn_name, None)
                      if func: result = func(**fn_args)
-                
-                elif fn_name == "consultar_dwh_tool":
-                     from src.tools import dwh_tools
-                     result = dwh_tools.consultar_dwh_tool(**fn_args)
-                
+
                 elif fn_name == "search_knowledge_base_tool":
                      from src.tools import knowledge_tools
                      result = knowledge_tools.search_knowledge_base_tool(**fn_args)
-
-                log_structured("ToolExecutionResult", tool=fn_name, result_preview=str(result)[:200])
 
                 if isinstance(result, str) and '"cardsV2"' in result:
                     try:
@@ -112,14 +105,10 @@ def tools_execution_node(state: AgentState):
 
             except Exception as e:
                 result = f"Error ejecutando {fn_name}: {str(e)}"
-                log_structured("ToolException", tool=fn_name, error=str(e))
             
             tool_outputs.append(types.Part.from_function_response(name=fn_name, response={"result": result}))
             
-    return {
-        "messages": [types.Content(role="tool", parts=tool_outputs)],
-        "generated_card": card_found
-    }
+    return {"messages": [types.Content(role="tool", parts=tool_outputs)]}
 
 def should_continue(state: AgentState):
     last_message = state["messages"][-1]
