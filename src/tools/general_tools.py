@@ -1,20 +1,23 @@
 from src.utils.logging_utils import log_structured
 
-def responder_charla_general(mensaje_usuario: str, intencion: str) -> str:
+def responder_consultas_generales(consulta: str, tema: str = "general") -> str:
     """
-    Herramienta para manejar saludos, despedidas, chistes, agradecimientos o preguntas sobre la identidad de KAI.
-    NO usar para preguntas de datos o tiquetes.
+    Herramienta para responder preguntas de conocimiento general, explicaciones, 
+    conceptos, redacción de correos o cualquier tema que NO requiera datos privados de la empresa.
     
-    Args:
-        mensaje_usuario: El texto que escribió el usuario.
-        intencion: Resumen de la intención (ej. "saludo", "pregunta_identidad", "chiste").
+    Usa esta herramienta si el usuario pregunta cosas como:
+    - "¿Qué es un seguro de cobertura amplia?"
+    - "Redacta un correo para un cliente..."
+    - "Explícame qué hace un ajustador."
+    - "¿Cuál es la capital de Francia?"
     """
     
-    log_structured("ConversationalToolUsed", intent=intencion)
+    log_structured("GeneralKnowledgeToolUsed", topic=tema, query=consulta)
     
-    if "identidad" in intencion or "quien eres" in mensaje_usuario.lower():
-        return "Soy KAI (Knowledge & Assistance Interface), el asistente de IA de Connect Assistance."
-    
-    return "Conversación general procesada. Procede a responder amablemente al usuario."
+    return (
+        f"CONFIRMACIÓN: La consulta '{consulta}' es de conocimiento general o capacidad generativa. "
+        "INSTRUCCIÓN PARA EL AGENTE: Usa tu propio conocimiento y capacidades de LLM para responder "
+        "de manera completa, experta y servicial. No busques en bases de datos internas."
+    )
 
-tools_list = [responder_charla_general]
+tools_list = [responder_consultas_generales]
