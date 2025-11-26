@@ -2,6 +2,7 @@ import os
 import uvicorn
 import asyncio
 import traceback
+import mimetypes
 from typing import List, Optional
 
 from fastapi import FastAPI, Request, UploadFile, File, Form, Header, HTTPException, APIRouter
@@ -11,22 +12,17 @@ from fastapi.staticfiles import StaticFiles
 
 from google.genai import types
 
-# --- IMPORTS REALES (Sin Mocks) ---
-try:
-    from src.logic_graph import get_compiled_graph
-    from src.utils.logging_utils import log_structured
-    from src.tools.claims_tools import analyze_claim_image_async, save_batch_claim_data
-except ImportError as e:
-    print(f"❌ Error Crítico: Faltan módulos internos. {e}")
-    # Si falla esto en prod, es mejor que falle para saberlo, no usar mocks.
-    raise e
+# --- IMPORTS ESTRICTOS (Si falla aquí, es porque faltan archivos en src/) ---
+from src.logic_graph import get_compiled_graph
+from src.utils.logging_utils import log_structured
+from src.tools.claims_tools import analyze_claim_image_async, save_batch_claim_data
 
-app = FastAPI(title="KAI Core V2", version="3.1.0")
+app = FastAPI(title="KAI Core V2", version="3.2.0-prod-vision")
 
 # Configuración CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # En prod, restringe esto a tu dominio
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,8 +36,7 @@ STATIC_PATH = os.path.join(BASE_DIR, "src", "static")
 INDEX_FILE = os.path.join(STATIC_PATH, "index.html")
 ARCH_FILE = os.path.join(STATIC_PATH, "arquitectura_kai_v2.html")
 
-# --- ENDPOINTS VISTAS ---
-
+# --- VISTAS UI ---
 @app.get("/", tags=["UI"])
 async def serve_ui():
     if os.path.exists(INDEX_FILE):
@@ -56,44 +51,36 @@ async def serve_architecture():
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "mode": "production_no_iap"}
+    return {"status": "ok", "mode": "real_ai_enabled"}
 
-# --- ENDPOINT CHAT (LangGraph) ---
-
+# --- CHATBOT (LangGraph) ---
 @app.post("/", tags=["Chat"])
 async def handle_chat(request: Request):
     try:
         event = await request.json()
-        
-        # 1. Validar Tipo de Evento
         if event.get('type') != 'MESSAGE': return {}
 
-        # 2. Resolver Identidad (Simplificado: JSON payload o Guest)
-        # Ya no verificamos headers de IAP. Confiamos en el payload del cliente.
-        json_email = event.get('user', {}).get('email')
-        user_email = json_email if json_email else 'web_guest@kai.ai'
-        
-        # 3. Extraer Mensaje
+        # Identidad
+        user_email = event.get('user', {}).get('email', 'web_guest@kai.ai')
         message_text = event.get('message', {}).get('text', '')
         thread_id = event.get('message', {}).get('thread', {}).get('name', f"thread_{user_email}")
 
-        log_structured("MessageReceived", user=user_email, text=message_text, source="open_endpoint")
+        log_structured("MessageReceived", user=user_email, text=message_text)
 
-        # 4. Ejecutar Grafo (Cerebro KAI)
+        # Cerebro
         graph = get_compiled_graph()
         if not graph:
-            return {"text": "Error: Cerebro no inicializado."}
+            raise ImportError("El grafo lógico no se pudo cargar.")
 
         config = {"configurable": {"thread_id": thread_id}}
-        
         inputs = {
             "messages": [types.Content(role="user", parts=[types.Part.from_text(text=message_text)])],
-            "user_email": user_email 
+            "user_email": user_email
         }
         
         state = await graph.ainvoke(inputs, config=config)
         
-        # 5. Respuesta
+        # Respuesta
         last_msg = state["messages"][-1]
         response_text = last_msg.parts[0].text if last_msg.parts else "..."
         
@@ -101,40 +88,48 @@ async def handle_chat(request: Request):
 
     except Exception as e:
         tb = traceback.format_exc()
-        print(f"Error en Chat: {e}\n{tb}")
-        return {"text": f"Error interno procesando mensaje: {str(e)}"}
+        print(f"Chat Error: {e}")
+        return {"text": f"Error en el cerebro KAI: {str(e)}"}
 
-# --- ENDPOINT CLAIMS (Procesamiento REAL) ---
-
+# --- CLAIMS UPLOAD (Soporte PDF + Imagenes) ---
 @claims_router.post("/upload")
 async def upload_claims(
     service_number: str = Form(...),
     files: List[UploadFile] = File(...)
 ):
     """
-    Procesa imágenes REALES usando Gemini Vision en paralelo.
+    Procesa lote mixto de imágenes y PDFs.
     """
     try:
         count = len(files)
         log_structured("BatchUploadStart", service=service_number, count=count)
         
-        # 1. Leer archivos en memoria
+        tasks = []
         file_contents = []
+
+        # 1. Lectura y preparación de tareas
         for file in files:
             content = await file.read()
-            file_contents.append((content, file.filename))
+            # Detectar mime type real para Gemini
+            mime_type, _ = mimetypes.guess_type(file.filename)
+            if not mime_type:
+                mime_type = file.content_type or "application/octet-stream"
+            
+            file_contents.append({
+                "filename": file.filename,
+                "mime_type": mime_type,
+                "size": len(content)
+            })
+
+            # Lanzar análisis asíncrono (Real AI)
+            tasks.append(
+                analyze_claim_image_async(service_number, content, file.filename, mime_type)
+            )
         
-        # 2. Ejecutar tareas de IA en Paralelo (REAL)
-        # Llamamos a la función real importada de src.tools.claims_tools
-        tasks = [
-            analyze_claim_image_async(service_number, content, name) 
-            for content, name in file_contents
-        ]
-        
-        # Scatter-Gather pattern
+        # 2. Ejecución Paralela en Vertex AI
         raw_results = await asyncio.gather(*tasks)
         
-        # 3. Guardar Data Estructurada (REAL)
+        # 3. Persistencia
         final_data = save_batch_claim_data(service_number, raw_results)
         
         log_structured("BatchUploadSuccess", service=service_number, processed=len(raw_results))
@@ -143,14 +138,14 @@ async def upload_claims(
             "status": "success",
             "service": service_number,
             "processed_count": count,
-            "results": raw_results, 
+            "results": raw_results,
             "data": final_data
         }
 
     except Exception as e:
         tb = traceback.format_exc()
-        log_structured("BatchUploadError", error=str(e), traceback=tb)
-        return JSONResponse(status_code=500, content={"error": str(e), "detail": "Fallo en procesamiento de imágenes."})
+        print(f"Upload Error: {tb}")
+        return JSONResponse(status_code=500, content={"error": str(e), "detail": "Fallo en procesamiento IA."})
 
 app.include_router(claims_router)
 
