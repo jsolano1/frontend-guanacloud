@@ -10,59 +10,42 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg-dark: #0f172a; --card: #1e293b; }
+        :root { --bg-dark: #0f172a; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: #f8fafc; height: 100vh; overflow: hidden; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar { width: 6px; background: transparent; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-        
-        /* Animaciones */
         .message-enter { animation: slideIn 0.3s ease-out forwards; opacity: 0; transform: translateY(10px); }
         @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
-        
-        .loading-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-
-        /* Estilos de Login */
-        #login-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(10px); z-index: 50; display: flex;
-            justify-content: center; align-items: center; flex-direction: column;
-        }
+        #login-overlay { position: absolute; inset: 0; background: rgba(15,23,42,0.98); backdrop-filter: blur(10px); z-index: 50; display: flex; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
 <body class="flex items-center justify-center text-sm">
 
     <div id="login-overlay">
         <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4">
+            <div class="w-20 h-20 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
                 <i data-lucide="brain-circuit" class="w-10 h-10 text-white"></i>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">KAI Core v2</h1>
             <p class="text-slate-400">Identifícate para acceder al ecosistema.</p>
         </div>
-        <div id="g_id_onload"
-             data-client_id="537990588927-4ba61tp2s9hv5g5m0fqcppgilrag9np9.apps.googleusercontent.com" 
-             data-callback="handleCredentialResponse"
-             data-auto_select="false">
-        </div>
+        <div id="g_id_onload" data-client_id="537990588927-4ba61tp2s9hv5g5m0fqcppgilrag9np9.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_select="false"></div>
         <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_blue" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
     </div>
 
-    <div id="app-container" class="relative w-full max-w-6xl h-[95vh] bg-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl flex overflow-hidden flex-col md:flex-row opacity-0 transition-opacity duration-500 pointer-events-none">
+    <div id="app-container" class="relative w-full max-w-6xl h-[95vh] bg-slate-900/90 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl flex overflow-hidden flex-col md:flex-row opacity-0 transition-opacity duration-500 pointer-events-none">
         
-        <div class="w-full md:w-80 bg-slate-800/50 border-r border-slate-700/50 p-5 flex flex-col justify-between hidden md:flex">
+        <div class="w-full md:w-80 bg-slate-800/50 border-r border-slate-700 p-5 flex flex-col justify-between hidden md:flex">
             <div>
                 <div class="flex items-center gap-3 mb-8">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                        <i data-lucide="aperture" class="text-white w-6 h-6"></i>
+                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-indigo-500">
+                        <img src="https://storage.googleapis.com/kai-imagen/CON_MediaKit_Workplace%20Profile%20Picture%2003.png" class="w-full h-full object-cover">
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg tracking-tight text-white leading-tight">KAI v2</h1>
-                        <p id="user-role-label" class="text-[10px] text-indigo-300 font-medium uppercase tracking-wider">Operaciones</p>
+                        <h1 class="font-bold text-lg text-white">KAI v2</h1>
+                        <p class="text-[10px] text-indigo-300 font-bold uppercase">Conectado</p>
                     </div>
                 </div>
-
                 <div class="p-3 bg-slate-700/30 rounded-xl border border-slate-600/30 mb-6 flex items-center gap-3">
                     <img id="user-avatar" src="" class="w-8 h-8 rounded-full bg-slate-600 object-cover">
                     <div class="overflow-hidden">
@@ -70,92 +53,62 @@
                         <p id="user-email" class="text-[10px] text-slate-400 truncate">...</p>
                     </div>
                 </div>
-
                 <div class="space-y-3">
-                    <div class="p-4 bg-indigo-500/10 rounded-xl border border-indigo-500/20 hover:bg-indigo-500/20 transition cursor-pointer group" onclick="toggleClaimsPanel()">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-xs font-bold text-indigo-400 uppercase">Siniestros & Ajustes</h3>
-                            <i data-lucide="arrow-right" class="w-4 h-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                        </div>
-                        <p class="text-[11px] text-slate-400 mb-3 leading-relaxed">Análisis automatizado de daños y extracción de documentos.</p>
-                        <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition shadow-lg shadow-indigo-900/20 flex items-center justify-center gap-2">
-                            <i data-lucide="camera" class="w-3.5 h-3.5"></i>
-                            NUEVO REPORTE
+                    <div class="p-4 bg-indigo-500/10 rounded-xl border border-indigo-500/20 hover:bg-indigo-500/20 transition cursor-pointer" onclick="toggleClaimsPanel()">
+                        <h3 class="text-xs font-bold text-indigo-400 uppercase mb-2">Siniestros & Ajustes</h3>
+                        <p class="text-[11px] text-slate-400 mb-3">Análisis de daños y extracción de documentos.</p>
+                        <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2">
+                            <i data-lucide="camera" class="w-3.5 h-3.5"></i> NUEVO REPORTE
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="text-[10px] text-slate-600 text-center flex items-center justify-center gap-1.5">
-                <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                Conectado a Vertex AI
-            </div>
+            <div class="text-[10px] text-slate-600 text-center">Conectado a: Google Vertex AI</div>
         </div>
 
         <div class="flex-1 flex flex-col relative bg-slate-900/40">
-            <div class="md:hidden p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80 backdrop-blur">
+            <div class="md:hidden p-4 border-b border-slate-700 flex justify-between bg-slate-800">
                 <span class="font-bold text-white">KAI v2</span>
-                <button onclick="toggleClaimsPanel()" class="text-indigo-400 p-2"><i data-lucide="camera" class="w-5 h-5"></i></button>
+                <button onclick="toggleClaimsPanel()" class="text-indigo-400"><i data-lucide="camera"></i></button>
             </div>
-
             <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth"></div>
-
-            <div id="typing-indicator" class="hidden px-6 py-2 flex items-center gap-2 bg-slate-900/50 backdrop-blur border-t border-slate-800">
+            <div id="typing-indicator" class="hidden px-6 py-2 flex items-center gap-2 bg-slate-900/50 border-t border-slate-800">
                 <div class="flex gap-1">
                     <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></div>
                     <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-75"></div>
                     <div class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-150"></div>
                 </div>
-                <span class="text-xs text-indigo-300 font-medium">KAI está pensando...</span>
+                <span class="text-xs text-indigo-300">KAI está pensando...</span>
             </div>
-
             <div class="p-4 bg-slate-800/40 border-t border-slate-700/50 backdrop-blur-md">
                 <form id="chat-form" class="flex gap-3 max-w-4xl mx-auto" onsubmit="handleChatSubmit(event)">
-                    <div class="relative flex-1">
-                        <input type="text" id="user-input" class="w-full bg-slate-900/90 border border-slate-600/50 rounded-xl pl-4 pr-12 py-3 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition shadow-inner" placeholder="Escribe un mensaje a KAI..." autocomplete="off">
-                    </div>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl transition shadow-lg shadow-indigo-900/20 flex items-center justify-center aspect-square"><i data-lucide="send-horizontal" class="w-5 h-5"></i></button>
+                    <input type="text" id="user-input" class="flex-1 bg-slate-900/90 border border-slate-600/50 rounded-xl pl-4 py-3 text-white focus:border-indigo-500 outline-none" placeholder="Escribe un mensaje..." autocomplete="off">
+                    <button type="submit" class="bg-indigo-600 text-white p-3 rounded-xl"><i data-lucide="send-horizontal" class="w-5 h-5"></i></button>
                 </form>
             </div>
 
             <div id="claims-panel" class="absolute inset-0 bg-slate-900/95 backdrop-blur-xl transform translate-y-full transition-transform duration-300 flex flex-col z-50">
                 <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-                    <h2 class="font-bold text-lg text-white flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-                            <i data-lucide="scan-eye" class="text-indigo-400 w-5 h-5"></i>
-                        </span>
-                        Análisis Visual IA
-                    </h2>
-                    <button onclick="toggleClaimsPanel()" class="p-2 hover:bg-slate-700 rounded-full transition"><i data-lucide="x" class="text-slate-400"></i></button>
+                    <h2 class="font-bold text-lg text-white flex items-center gap-2"><i data-lucide="scan-eye" class="text-indigo-400"></i> Análisis Visual IA</h2>
+                    <button onclick="toggleClaimsPanel()" class="p-2 hover:bg-slate-700 rounded-full"><i data-lucide="x" class="text-slate-400"></i></button>
                 </div>
-                
                 <div class="flex-1 p-6 flex flex-col items-center overflow-y-auto">
                     <form id="claims-form" class="w-full max-w-lg space-y-6 mt-8">
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-indigo-300 uppercase tracking-wide ml-1">Número de Caso / Expediente</label>
-                            <div class="relative">
-                                <i data-lucide="hash" class="absolute left-3 top-3 text-slate-500 w-4 h-4"></i>
-                                <input type="text" name="service_number" required placeholder="Ej. 10101010" class="w-full bg-slate-800 border border-slate-600 rounded-xl pl-10 pr-4 py-3 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition placeholder-slate-600">
-                            </div>
+                            <label class="text-xs font-bold text-indigo-300 uppercase">Número de Caso</label>
+                            <input type="text" name="service_number" required placeholder="Ej. 10101010" class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-white focus:border-indigo-500 outline-none">
                         </div>
-                        
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-indigo-300 uppercase tracking-wide ml-1">Evidencias (Fotos y Documentos)</label>
-                            <div class="border-2 border-dashed border-slate-600/50 bg-slate-800/20 rounded-2xl p-12 text-center hover:border-indigo-500 hover:bg-indigo-500/5 transition cursor-pointer relative group">
-                                <input type="file" name="files" multiple accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="updateFileCount(this)">
-                                <div class="flex flex-col items-center gap-3 transition-transform group-hover:scale-105">
-                                    <div class="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center mb-2 group-hover:bg-indigo-600 transition-colors">
-                                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-300 group-hover:text-white"></i>
-                                    </div>
-                                    <p class="text-sm font-medium text-white">Arrastra fotos aquí o haz clic</p>
-                                    <p class="text-xs text-slate-500">Soporta JPG, PNG (Fotos de daños, Licencia, Cédula)</p>
-                                </div>
-                                <p id="file-count" class="absolute bottom-4 left-0 right-0 text-center text-xs text-indigo-400 font-bold hidden animate-bounce">0 archivos seleccionados</p>
+                            <label class="text-xs font-bold text-indigo-300 uppercase">Evidencias</label>
+                            <div class="border-2 border-dashed border-slate-600 bg-slate-800/20 rounded-2xl p-10 text-center hover:border-indigo-500 transition relative">
+                                <input type="file" name="files" multiple accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileCount(this)">
+                                <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mx-auto mb-2"></i>
+                                <p class="text-sm text-white">Sube fotos o documentos (PDF/IMG)</p>
+                                <p id="file-count" class="text-xs text-indigo-400 font-bold mt-2 hidden">0 archivos</p>
                             </div>
                         </div>
-
-                        <button type="submit" id="upload-btn" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-xl shadow-indigo-900/30 transition-all transform hover:scale-[1.02] flex justify-center items-center gap-3">
-                            <span>Iniciar Análisis Inteligente</span>
-                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        <button type="submit" id="upload-btn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition flex justify-center items-center gap-2">
+                            <span>Iniciar Análisis</span> <i data-lucide="sparkles" class="w-4 h-4"></i>
                         </button>
                     </form>
                 </div>
@@ -168,48 +121,31 @@
         const API_BASE = window.location.origin; 
         let CURRENT_USER = null;
 
-        // --- AUTHENTICATION ---
         function handleCredentialResponse(response) {
             try {
-                const responsePayload = decodeJwtResponse(response.credential);
-                CURRENT_USER = {
-                    email: responsePayload.email,
-                    name: responsePayload.name,
-                    picture: responsePayload.picture
-                };
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                CURRENT_USER = { email: payload.email, name: payload.name, picture: payload.picture };
                 document.getElementById('user-name').textContent = CURRENT_USER.name;
                 document.getElementById('user-email').textContent = CURRENT_USER.email;
                 document.getElementById('user-avatar').src = CURRENT_USER.picture;
-                document.getElementById('user-role-label').textContent = "Conectado";
-
+                
                 const overlay = document.getElementById('login-overlay');
-                const app = document.getElementById('app-container');
                 overlay.style.opacity = '0';
                 setTimeout(() => overlay.remove(), 500);
-                app.classList.remove('pointer-events-none');
-                app.classList.remove('opacity-0');
+                document.getElementById('app-container').classList.remove('opacity-0', 'pointer-events-none');
                 
-                addMessage(`👋 **¡Hola ${CURRENT_USER.name.split(' ')[0]}!** Soy KAI v2.\n\nEstoy listo para ayudarte con:\n* Análisis de Siniestros (Visión IA)\n* Consultas a Base de Datos (DWH)\n* Gestión de Tiquetes\n\n¿Por dónde empezamos?`, false);
-            } catch (e) { console.error("Error auth", e); }
+                // Mensaje inicial con Avatar KAI
+                addMessage(`¡Hola **${CURRENT_USER.name.split(' ')[0]}**! Soy KAI v2. 🤖\nEstoy listo para ayudarte con:\n* Análisis de Siniestros\n* Consultas de Base de Datos\n* Gestión de Tiquetes`, false);
+            } catch (e) { console.error(e); }
         }
 
-        function decodeJwtResponse(token) {
-            var base64Url = token.split('.')[1];
-            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
-        }
-
-        // --- CHAT LOGIC ---
         async function handleChatSubmit(e) {
             e.preventDefault();
-            if(!CURRENT_USER) return alert("Inicia sesión primero.");
+            if(!CURRENT_USER) return;
             const input = document.getElementById('user-input');
             const text = input.value.trim();
             if(!text) return;
-
+            
             addMessage(text, true);
             input.value = '';
             document.getElementById('typing-indicator').classList.remove('hidden');
@@ -218,119 +154,86 @@
                 const res = await fetch(API_BASE + '/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        type: 'MESSAGE', 
-                        source: 'web',
-                        message: { text: text },
-                        user: { email: CURRENT_USER.email }
-                    })
+                    body: JSON.stringify({ type: 'MESSAGE', source: 'web', message: { text }, user: { email: CURRENT_USER.email } })
                 });
-                if (!res.ok) throw new Error("Error backend");
                 const data = await res.json();
                 document.getElementById('typing-indicator').classList.add('hidden');
-                addMessage(data.text || "Sin respuesta.");
+                addMessage(data.text || "Error de respuesta.", false);
             } catch(e) {
                 document.getElementById('typing-indicator').classList.add('hidden');
-                addMessage(`❌ Error: ${e.message}`);
+                addMessage("Error de conexión.", false);
             }
         }
 
-        // --- CLAIMS LOGIC ---
         const claimsForm = document.getElementById('claims-form');
-        
         claimsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!CURRENT_USER) return alert("Sesión requerida.");
-
             const btn = document.getElementById('upload-btn');
-            const originalContent = btn.innerHTML;
+            const originalHtml = btn.innerHTML;
             
-            // 1. Loading State
             btn.disabled = true;
-            btn.className = "w-full py-4 bg-slate-700 text-slate-400 font-bold rounded-xl cursor-not-allowed flex justify-center items-center gap-3";
-            btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5 text-indigo-400"></i> <span>Procesando archivos con IA...</span>`;
+            btn.className = "w-full py-4 bg-slate-700 text-slate-300 font-bold rounded-xl cursor-not-allowed flex justify-center items-center gap-3";
+            btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin w-5 h-5"></i> Analizando evidencias...`;
             lucide.createIcons();
 
             const formData = new FormData(claimsForm);
-
             try {
                 const res = await fetch(API_BASE + '/api/v1/claims/upload', { method: 'POST', body: formData });
-                
-                if (!res.ok) {
-                    const errText = await res.text();
-                    throw new Error(errText);
-                }
-
-                const resultData = await res.json();
+                if (!res.ok) throw new Error(await res.text());
+                const result = await res.json();
                 
                 toggleClaimsPanel();
-                addMessage(`✅ **Análisis Completado** | Caso: ${resultData.service}\nHe procesado ${resultData.processed_count} evidencias. Generando informe técnico...`, false);
+                addMessage(`✅ **Análisis Completado** | Caso: ${result.service}\nHe procesado ${result.processed_count} archivos.`, false);
+                setTimeout(() => addMessage(createRichReport(result.data), false), 500);
                 
-                setTimeout(() => {
-                    const reportNode = createRichReport(resultData.data);
-                    addMessage(reportNode, false);
-                }, 800);
-
                 claimsForm.reset();
                 document.getElementById('file-count').classList.add('hidden');
-
             } catch (err) {
                 alert("Error: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.className = "w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-xl shadow-indigo-900/30 transition-all transform hover:scale-[1.02] flex justify-center items-center gap-3";
-                btn.innerHTML = originalContent;
+                btn.className = "w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition flex justify-center items-center gap-2";
+                btn.innerHTML = originalHtml;
                 lucide.createIcons();
             }
         });
 
-        // --- GENERADOR DE REPORTE UNIFICADO ---
         function createRichReport(backendData) {
             const container = document.createElement('div');
             container.className = 'flex flex-col gap-4 w-full mt-2';
 
-            // 1. EXTRAER DATOS DE DOCUMENTOS (Iterar imágenes buscando 'document')
             let docInfo = {};
             const images = Object.values(backendData.images || {});
-            
             images.forEach(img => {
-                if (img.data.technical.category === 'document') {
-                    // Fusionar datos encontrados en documentos
+                if (img.data.technical.category === 'document' || img.data.technical.specific_type?.includes('pdf')) {
                     Object.assign(docInfo, img.data.business_data);
                 }
             });
 
-            // 2. TARJETA: DATOS DEL DOCUMENTO (Formulario Estándar)
-            if (Object.keys(docInfo).length > 0) {
-                const docCard = document.createElement('div');
-                docCard.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm';
+            const docCard = document.createElement('div');
+            docCard.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm';
+            if (Object.keys(docInfo).length > 0 && !docInfo.error) {
                 docCard.innerHTML = `
-                    <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2">
-                        <i data-lucide="id-card" class="text-green-400 w-4 h-4"></i>
-                        <h4 class="text-xs font-bold text-white uppercase tracking-wide">Datos del Documento Extraídos</h4>
-                    </div>
+                    <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2"><i data-lucide="file-text" class="text-green-400 w-4 h-4"></i><h4 class="text-xs font-bold text-white uppercase">Datos Extraídos</h4></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                        ${renderField("Tipo Documento", docInfo.tipo_documento || docInfo.specific_type)}
-                        ${renderField("Nro. Identidad", docInfo.numero_identidad)}
-                        ${renderField("Nombre Completo", docInfo.nombre_completo)}
-                        ${renderField("País Emisor", docInfo.pais_emisor)}
-                        ${renderField("Vencimiento", docInfo.fecha_vencimiento)}
-                        ${renderField("Licencia", docInfo.tipo_licencia)}
-                    </div>
-                `;
-                container.appendChild(docCard);
+                        ${renderField("Doc", docInfo.tipo_documento || docInfo.specific_type)}
+                        ${renderField("ID/Licencia", docInfo.numero_identidad || docInfo.numero_licencia)}
+                        ${renderField("Nombre", docInfo.nombre_completo)}
+                        ${renderField("País", docInfo.pais_emisor)}
+                        ${renderField("Vence", docInfo.fecha_vencimiento)}
+                        ${renderField("Placa Ref", docInfo.placa_vehiculo)}
+                    </div>`;
+            } else {
+                docCard.innerHTML = `<div class="text-center py-2 text-xs text-slate-500 italic">No se detectaron documentos legibles.</div>`;
             }
+            container.appendChild(docCard);
 
-            // 3. TARJETA: DATOS DEL VEHÍCULO (Formulario Estándar)
             const vehInfo = backendData.global_vehicle_details || {};
+            const vehCard = document.createElement('div');
+            vehCard.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm';
             if (Object.keys(vehInfo).length > 0) {
-                const vehCard = document.createElement('div');
-                vehCard.className = 'bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm';
                 vehCard.innerHTML = `
-                    <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2">
-                        <i data-lucide="car" class="text-indigo-400 w-4 h-4"></i>
-                        <h4 class="text-xs font-bold text-white uppercase tracking-wide">Vehículo Identificado</h4>
-                    </div>
+                    <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2"><i data-lucide="car" class="text-indigo-400 w-4 h-4"></i><h4 class="text-xs font-bold text-white uppercase">Vehículo</h4></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                         ${renderField("Marca", vehInfo.marca)}
                         ${renderField("Modelo", vehInfo.modelo)}
@@ -338,131 +241,85 @@
                         ${renderField("Color", vehInfo.color)}
                         ${renderField("Placa", vehInfo.placa_visible)}
                         ${renderField("VIN", vehInfo.vin)}
-                    </div>
-                `;
-                container.appendChild(vehCard);
+                    </div>`;
+            } else {
+                vehCard.innerHTML = `<div class="text-center py-2 text-xs text-slate-500 italic">No se detectó un vehículo claramente.</div>`;
             }
-
-            // 4. GALERÍA DE EVIDENCIAS (Comparativa Side-by-Side)
-            const galleryTitle = document.createElement('h4');
-            galleryTitle.className = 'text-xs font-bold text-slate-400 uppercase mt-2 mb-1 ml-1';
-            galleryTitle.textContent = 'Análisis de Evidencias';
-            container.appendChild(galleryTitle);
+            container.appendChild(vehCard);
 
             const grid = document.createElement('div');
-            grid.className = 'grid grid-cols-1 gap-4';
+            grid.className = 'grid grid-cols-1 gap-4 mt-2';
+            
+            if(images.length === 0) {
+                grid.innerHTML = `<div class="text-center text-xs text-slate-500">Sin evidencias cargadas.</div>`;
+            } else {
+                images.forEach(imgEntry => {
+                    const tech = imgEntry.data.technical || {};
+                    const biz = imgEntry.data.business_data || {};
+                    const processedUrl = imgEntry.processed_url;
+                    const rawUrl = imgEntry.raw_url;
 
-            images.forEach(imgEntry => {
-                const tech = imgEntry.data.technical || {};
-                const biz = imgEntry.data.business_data || {};
-                const hasProcessed = !!imgEntry.processed_url;
-                const isVehicle = tech.category === 'vehicle';
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-800 border border-slate-700 rounded-xl overflow-hidden';
+                    
+                    let imgContent = `<img src="${rawUrl}" class="w-full h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=Error+Carga'">`;
+                    
+                    if (processedUrl && tech.category === 'vehicle') {
+                        imgContent = `
+                            <div class="grid grid-cols-2 gap-0.5 bg-slate-900">
+                                <div class="relative"><span class="absolute top-1 left-1 bg-black/60 text-[10px] text-white px-1 rounded">Original</span><img src="${rawUrl}" class="w-full h-40 object-cover" onclick="window.open(this.src)"></div>
+                                <div class="relative"><span class="absolute top-1 left-1 bg-red-600/80 text-[10px] text-white px-1 rounded">IA</span><img src="${processedUrl}" class="w-full h-40 object-cover" onclick="window.open(this.src)"></div>
+                            </div>`;
+                    } else if (tech.specific_type?.includes('pdf')) {
+                         imgContent = `<div class="h-20 flex items-center justify-center bg-slate-700 text-slate-400 flex-col"><i data-lucide="file-text" class="w-8 h-8 mb-1"></i><span class="text-xs">Archivo PDF</span><a href="${rawUrl}" target="_blank" class="text-[10px] text-indigo-400 underline mt-1">Ver documento</a></div>`;
+                    }
 
-                const card = document.createElement('div');
-                card.className = 'bg-slate-800 border border-slate-700 rounded-xl overflow-hidden';
+                    let damageList = "";
+                    if(biz.daños_resumen && biz.daños_resumen.length > 0) {
+                        damageList = `<div class="p-3 bg-red-900/10 border-t border-red-900/20"><p class="text-[10px] text-red-300 font-bold mb-1">DAÑOS:</p><ul class="list-disc ml-4 text-[10px] text-slate-300">${biz.daños_resumen.map(d=>`<li>${d}</li>`).join('')}</ul></div>`;
+                    }
 
-                // Header de la imagen
-                const header = document.createElement('div');
-                header.className = 'p-3 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center';
-                header.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-white">${tech.description || 'Imagen'}</span>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600">${tech.view_angle || 'General'}</span>
-                    </div>
-                    ${hasProcessed ? '<span class="text-[10px] text-green-400 font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> Daños Detectados</span>' : ''}
-                `;
-                card.appendChild(header);
-
-                // Cuerpo de Imágenes
-                const imgBody = document.createElement('div');
-                
-                if (isVehicle && hasProcessed) {
-                    // MODO COMPARATIVO (Side by Side)
-                    imgBody.className = 'grid grid-cols-2 gap-0.5 bg-slate-700';
-                    imgBody.innerHTML = `
-                        <div class="relative group">
-                            <div class="absolute top-2 left-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] text-white font-bold z-10">ORIGINAL</div>
-                            <img src="${imgEntry.raw_url}" class="w-full h-48 object-cover hover:opacity-90 transition cursor-pointer" onclick="window.open(this.src)">
-                        </div>
-                        <div class="relative group">
-                            <div class="absolute top-2 left-2 bg-red-600/80 backdrop-blur px-2 py-1 rounded text-[10px] text-white font-bold z-10 flex items-center gap-1"><i data-lucide="scan-line" class="w-3 h-3"></i> IA</div>
-                            <img src="${imgEntry.processed_url}" class="w-full h-48 object-cover hover:opacity-90 transition cursor-pointer" onclick="window.open(this.src)">
-                        </div>
+                    card.innerHTML = `
+                        <div class="p-2 border-b border-slate-700 bg-slate-800 flex justify-between"><span class="text-xs font-bold text-white">${tech.description || 'Archivo'}</span><span class="text-[10px] bg-slate-700 px-1 rounded text-slate-300">${tech.view_angle || 'General'}</span></div>
+                        ${imgContent}
+                        ${damageList}
                     `;
-                } else {
-                    // MODO SINGLE (Documentos o sin procesar)
-                    imgBody.className = 'relative';
-                    imgBody.innerHTML = `
-                        <img src="${imgEntry.raw_url}" class="w-full h-56 object-cover">
-                    `;
-                }
-                card.appendChild(imgBody);
-
-                // Footer con detalles
-                if (biz.daños_resumen && biz.daños_resumen.length > 0) {
-                    const footer = document.createElement('div');
-                    footer.className = 'p-3 bg-red-900/10 border-t border-red-900/20';
-                    footer.innerHTML = `
-                        <p class="text-[10px] text-red-300 font-bold mb-1 uppercase">Daños Reportados:</p>
-                        <ul class="list-disc ml-4 space-y-0.5 text-xs text-slate-300">
-                            ${biz.daños_resumen.map(d => `<li>${d}</li>`).join('')}
-                        </ul>
-                    `;
-                    card.appendChild(footer);
-                }
-
-                grid.appendChild(card);
-            });
-
+                    grid.appendChild(card);
+                });
+            }
             container.appendChild(grid);
             return container;
         }
 
-        // Helper para renderizar campos estándar
         function renderField(label, value) {
             if (!value || value === 'null') return '';
-            return `
-                <div class="flex justify-between md:block p-2 bg-slate-700/30 rounded border border-slate-700/50">
-                    <span class="text-[10px] text-slate-400 uppercase block mb-0.5">${label}</span>
-                    <span class="font-semibold text-white truncate block" title="${value}">${value}</span>
-                </div>
-            `;
+            return `<div class="flex justify-between p-2 bg-slate-700/30 rounded"><span class="text-slate-400">${label}</span><span class="font-semibold text-white text-right truncate w-32" title="${value}">${value}</span></div>`;
         }
 
-        // --- UI UTILS ---
-        function toggleClaimsPanel() { document.getElementById('claims-panel').classList.toggle('translate-y-full'); }
-        
         function updateFileCount(input) {
             const el = document.getElementById('file-count');
-            if (input.files.length > 0) {
-                el.textContent = `${input.files.length} archivo(s) listos`;
-                el.classList.remove('hidden');
-            } else { el.classList.add('hidden'); }
+            if (input.files.length > 0) { el.textContent = `${input.files.length} archivos`; el.classList.remove('hidden'); }
+            else el.classList.add('hidden');
         }
+
+        function toggleClaimsPanel() { document.getElementById('claims-panel').classList.toggle('translate-y-full'); }
 
         function addMessage(content, isUser) {
             const container = document.getElementById('chat-container');
             const wrapper = document.createElement('div');
-            wrapper.className = `flex gap-3 message-enter ${isUser ? 'flex-row-reverse' : ''} mb-4`;
+            wrapper.className = `flex gap-3 mb-4 ${isUser ? 'flex-row-reverse' : ''} message-enter`;
             
-            // Avatar
             const avatar = document.createElement('div');
-            avatar.className = 'w-8 h-8 flex-shrink-0 rounded-full overflow-hidden border border-slate-600 shadow-md';
-            avatar.innerHTML = isUser 
-                ? `<img src="${CURRENT_USER ? CURRENT_USER.picture : ''}" class="w-full h-full object-cover">`
-                : `<div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">K</div>`;
+            avatar.className = 'w-8 h-8 rounded-full overflow-hidden border border-slate-600 flex-shrink-0';
+            avatar.innerHTML = isUser ? `<img src="${CURRENT_USER.picture}" class="w-full h-full">` : `<img src="https://storage.googleapis.com/kai-imagen/CON_MediaKit_Workplace%20Profile%20Picture%2003.png" class="w-full h-full">`;
 
-            // Bubble
             const bubble = document.createElement('div');
-            bubble.className = isUser 
-                ? 'bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-lg' 
-                : 'bg-slate-800 border border-slate-700 p-4 rounded-2xl rounded-tl-sm max-w-[90%] text-sm text-slate-200 shadow-lg w-full';
+            bubble.className = isUser ? 'bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] text-sm' : 'bg-slate-800 border border-slate-700 p-4 rounded-2xl rounded-tl-sm max-w-[90%] text-sm text-slate-200 w-full';
             
             if (typeof content === 'string') bubble.innerHTML = marked.parse(content);
             else bubble.appendChild(content);
 
-            wrapper.appendChild(avatar);
-            wrapper.appendChild(bubble);
+            wrapper.appendChild(avatar); wrapper.appendChild(bubble);
             container.appendChild(wrapper);
             container.scrollTop = container.scrollHeight;
             lucide.createIcons();

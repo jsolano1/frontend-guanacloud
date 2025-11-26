@@ -12,16 +12,15 @@ from src.utils.prompt_loader import load_prompt
 
 client = genai.Client(vertexai=True, project=settings.GCP_PROJECT_ID, location=settings.LOCATION)
 
-async def extract_deep_metadata_async(image_bytes: bytes) -> dict:
-    """Extrae datos profundos (OCR/Características) del vehículo o documento (Wrapper Async)."""
-    return await asyncio.to_thread(extract_deep_metadata_sync, image_bytes)
+async def extract_deep_metadata_async(image_bytes: bytes, mime_type: str = "image/jpeg") -> dict:
+    return await asyncio.to_thread(extract_deep_metadata_sync, image_bytes, mime_type)
 
-def extract_deep_metadata_sync(image_bytes: bytes) -> dict:
+def extract_deep_metadata_sync(image_bytes: bytes, mime_type: str = "image/jpeg") -> dict:
     prompt = load_prompt("extract_deep_metadata.md")
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=[types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"), prompt],
+            contents=[types.Part.from_bytes(data=image_bytes, mime_type=mime_type), prompt],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json", temperature=0.0
             )

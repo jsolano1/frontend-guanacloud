@@ -1,114 +1,39 @@
-import json
-import asyncio
-from sqlalchemy.sql import text
-from src.utils.database_client import get_db_connection
-from src.services import storage_service, vision_service
+from google.cloud import storage
+from src.config import settings
 from src.utils.logging_utils import log_structured
+import asyncio
+import datetime
 
-def _standardize_filename(service_number, category, raw_angle, original_name):
-       """
-    Genera nombres de archivo deterministas y limpios para el sistema de integración.
-    Mapas de ejemplo: 'front_left' -> 'fl', 'document_front' -> 'doc_front'.
-    """
-    ext = original_name.split('.')[-1] if '.' in original_name else "jpg"
-    std_category = "veh" if category == "vehicle" else "doc"
-    clean_suffix = str(raw_angle).lower().replace(" ", "_").replace("-", "_")
-    return f"{service_number}_{std_category}_{clean_suffix}.{ext}"
+storage_client = storage.Client(project=settings.GCP_PROJECT_ID)
 
-async def analyze_claim_image_async(service_number: str, image_bytes: bytes, original_filename: str, mime_type: str = None) -> dict:
+def upload_image_to_gcs(image_bytes: bytes, service_number: str, filename: str, folder_type: str = "raw") -> str:
     """
-    Procesa una sola imagen.
-    Nota: 'mime_type' se recibe por compatibilidad con el endpoint, pero KAI usa vision_service para la clasificación real.
+    Sube archivo y genera una SIGNED URL temporal para visualización en frontend.
     """
     try:
-        classification_task = vision_service.classify_image_async(image_bytes)
-        metadata_task = vision_service.extract_deep_metadata_async(image_bytes)
-        
-        classification, deep_metadata = await asyncio.gather(classification_task, metadata_task)
-        
-        category = classification.get("category", "unknown")
-        view_angle = classification.get("view_angle", "general")
-        
-        clean_filename = _standardize_filename(service_number, category, view_angle, original_filename)
-        json_key = clean_filename.replace(".", "_")
+        bucket = storage_client.bucket(settings.GCS_CLAIMS_BUCKET)
+        destination_blob_name = f"{service_number}/{folder_type}/{filename}"
+        blob = bucket.blob(destination_blob_name)
 
-        raw_url = await storage_service.upload_image_to_gcs_async(image_bytes, service_number, clean_filename, "raw")
-        processed_url = None
+        content_type = "application/pdf" if filename.endswith(".pdf") else "image/jpeg"
+        blob.upload_from_string(image_bytes, content_type=content_type)
         
-        if category == "vehicle":
-            try:
-                processed_bytes = await vision_service.apply_segmentation_masks_async(image_bytes)
-                if processed_bytes != image_bytes:
-                    proc_filename = f"annotated_{clean_filename}"
-                    processed_url = await storage_service.upload_image_to_gcs_async(processed_bytes, service_number, proc_filename, "processed")
-            except Exception as e:
-                log_structured("ProcessingWarn", error=str(e))
+        url = blob.generate_signed_url(
+            version="v4",
+            expiration=datetime.timedelta(hours=1),
+            method="GET"
+        )
         
-        return {
-            "key": json_key,
-            "data": {
-                "raw_url": raw_url,
-                "processed_url": processed_url,
-                "data": {
-                    "technical": classification,
-                    "business_data": deep_metadata,
-                    "upload_filename": original_filename,
-                    "mime_source": mime_type
-                }
-            }
-        }
+        log_structured("GCSUploadSuccess", path=destination_blob_name, service=service_number)
+        return url
+        
     except Exception as e:
-        log_structured("ImageAnalysisError", error=str(e), filename=original_filename)
-        return {"error": str(e), "filename": original_filename}
+        log_structured("GCSUploadError", error=str(e), service=service_number)
+        return f"https://storage.googleapis.com/{settings.GCS_CLAIMS_BUCKET}/{destination_blob_name}"
 
-def save_batch_claim_data(service_number: str, results_list: list) -> dict:
+async def upload_image_to_gcs_async(image_bytes: bytes, service_number: str, filename: str, folder_type: str = "raw") -> str:
     """
-    Guarda TODOS los resultados en una sola transacción de DB.
-    Optimiza la estructura JSON extrayendo datos globales del vehículo (Marca, Modelo, VIN, etc.)
-    para no repetirlos en cada entrada de imagen.
+    Wrapper asíncrono para subir imágenes a GCS sin bloquear el event loop.
+    Esencial para procesamiento en batch.
     """
-    engine = get_db_connection()
-    global_vehicle_info = {}
-    optimized_results = {}
-    
-    global_keys = ["marca", "modelo", "año_aproximado", "color", "placa_visible", "vin", "tipo_carroceria"]
-
-    for res in results_list:
-        if "error" in res: continue
-        key = res["key"]
-        entry = res["data"]
-        
-        raw_biz_data = entry["data"].get("business_data")
-        if isinstance(raw_biz_data, list): biz_data = raw_biz_data[0] if raw_biz_data else {}
-        elif isinstance(raw_biz_data, dict): biz_data = raw_biz_data
-        else: biz_data = {}
-            
-        entry["data"]["business_data"] = biz_data
-        category = entry["data"]["technical"].get("category")
-
-        if category == "vehicle" and biz_data:
-            for k in global_keys:
-                val = biz_data.get(k)
-                if val:
-                    current_val = global_vehicle_info.get(k)
-                    if not current_val or len(str(val)) > len(str(current_val)):
-                        global_vehicle_info[k] = val
-            for k in global_keys:
-                if k in biz_data: del biz_data[k]
-        
-        optimized_results[key] = entry
-
-    final_json_structure = {
-        "global_vehicle_details": global_vehicle_info,
-        "images": optimized_results
-    }
-
-    try:
-        with engine.begin() as conn:
-            conn.execute(text("DELETE FROM claims_data WHERE service_number = :svc"), {"svc": service_number})
-            conn.execute(text("INSERT INTO claims_data (service_number, image_type, gcs_raw_url, ai_metadata) VALUES (:svc, 'batch_mixed', 'N/A', :meta)"),
-                             {"svc": service_number, "meta": json.dumps(final_json_structure)})
-        return final_json_structure
-    except Exception as e:
-        log_structured("DBBatchSaveError", error=str(e))
-        raise e
+    return await asyncio.to_thread(upload_image_to_gcs, image_bytes, service_number, filename, folder_type)

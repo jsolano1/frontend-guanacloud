@@ -15,16 +15,14 @@ def _standardize_filename(service_number, category, raw_angle, original_name):
     clean_suffix = str(raw_angle).lower().replace(" ", "_").replace("-", "_")
     return f"{service_number}_{std_category}_{clean_suffix}.{ext}"
 
-async def analyze_claim_image_async(service_number: str, image_bytes: bytes, original_filename: str, mime_type: str = None) -> dict:
-    """
-    Procesa una sola imagen.
-    Nota: 'mime_type' se recibe por compatibilidad con el endpoint, pero KAI usa vision_service para la clasificación real.
-    """
+async def analyze_claim_image_async(service_number: str, image_bytes: bytes, original_filename: str, mime_type: str = "image/jpeg") -> dict:
     try:
-        classification_task = vision_service.classify_image_async(image_bytes)
-        metadata_task = vision_service.extract_deep_metadata_async(image_bytes)
-        
-        classification, deep_metadata = await asyncio.gather(classification_task, metadata_task)
+        if "pdf" in mime_type:
+            classification = {"category": "document", "specific_type": "archivo_pdf"}
+        else:
+            classification = await vision_service.classify_image_async(image_bytes)
+
+        deep_metadata = await vision_service.extract_deep_metadata_async(image_bytes, mime_type)
         
         category = classification.get("category", "unknown")
         view_angle = classification.get("view_angle", "general")
@@ -35,14 +33,29 @@ async def analyze_claim_image_async(service_number: str, image_bytes: bytes, ori
         raw_url = await storage_service.upload_image_to_gcs_async(image_bytes, service_number, clean_filename, "raw")
         processed_url = None
         
-        if category == "vehicle":
+        if category == "vehicle" and "image" in mime_type:
             try:
                 processed_bytes = await vision_service.apply_segmentation_masks_async(image_bytes)
                 if processed_bytes != image_bytes:
                     proc_filename = f"annotated_{clean_filename}"
                     processed_url = await storage_service.upload_image_to_gcs_async(processed_bytes, service_number, proc_filename, "processed")
-            except Exception as e:
-                log_structured("ProcessingWarn", error=str(e))
+            pass 
+
+        return {
+            "key": json_key,
+            "data": {
+                "raw_url": raw_url,
+                "processed_url": processed_url,
+                "data": {
+                    "technical": classification,
+                    "business_data": deep_metadata,
+                    "upload_filename": original_filename,
+                    "mime_source": mime_type
+                }
+            }
+        }
+    except Exception as e:
+    log_structured("ProcessingWarn", error=str(e))
         
         return {
             "key": json_key,

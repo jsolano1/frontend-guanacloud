@@ -1,81 +1,178 @@
 {
-    "123456789_doc_front_jpg": {
-        "data": {
-            "technical": {
-                "category": "document",
-                "view_angle": "front",
-                "description": "Costa Rican identification card front",
-                "specific_type": "cedula_identidad"
+    "images": {
+        "09090909_veh_rear_jpg": {
+            "data": {
+                "technical": {
+                    "category": "vehicle",
+                    "view_angle": "rear",
+                    "description": "Puerto Rico license plate on car",
+                    "specific_type": "car"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": [
+                        "Rayones/rozaduras en el parachoques trasero"
+                    ]
+                },
+                "upload_filename": "13_202008218_124123_843_0.jpg"
             },
-            "business_data": {
-                "sexo": null,
-                "donador": null,
-                "pais_emisor": "Costa Rica",
-                "tipo_analisis": "documento",
-                "tipo_licencia": null,
-                "tipo_documento": "Cédula",
-                "nombre_completo": "JOSE ANDRES SOLANO ROJAS",
-                "fecha_nacimiento": null,
-                "numero_identidad": "1 1103 0763",
-                "fecha_vencimiento": null
-            },
-            "upload_filename": "7906FDC0-DF92-4361-A579-02CE07C1DE30.jpg"
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_veh_rear.jpg",
+            "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fprocessed%2Fannotated_09090909_veh_rear.jpg"
         },
-        "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fraw%2F123456789_doc_front.jpg",
-        "processed_url": null
+        "09090909_veh_front_jpg": {
+            "data": {
+                "technical": {
+                    "category": "vehicle",
+                    "view_angle": "front",
+                    "description": "Black Kia SUV parked outdoors",
+                    "specific_type": "suv"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": [
+                        "Faros delanteros opacos/hazy",
+                        "Carrocería sucia/polvorienta"
+                    ]
+                },
+                "upload_filename": "14_202008218_124140_400_0.jpg"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_veh_front.jpg",
+            "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fprocessed%2Fannotated_09090909_veh_front.jpg"
+        },
+        "09090909_doc_general_pdf": {
+            "data": {
+                "technical": {
+                    "category": "unknown"
+                },
+                "mime_source": "application/pdf",
+                "business_data": {
+                    "error": "No se pudo extraer metadata profunda"
+                },
+                "upload_filename": "59_812702.pdf"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_doc_general.pdf",
+            "processed_url": null
+        },
+        "09090909_doc_full_shot_jpg": {
+            "data": {
+                "technical": {
+                    "category": "document",
+                    "view_angle": "full_shot",
+                    "description": "Permiso de vehículo de Puerto Rico",
+                    "specific_type": "permiso_vehiculo"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "color": "NEGRO",
+                    "marca": "KIA",
+                    "modelo": "SPORTAGE/LX",
+                    "placa_visible": "IKP062",
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": null,
+                    "año_aproximado": "2014",
+                    "tipo_carroceria": "Automovil (Privado)"
+                },
+                "upload_filename": "9_202008218_124109_682_0.jpg"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_doc_full_shot.jpg",
+            "processed_url": null
+        },
+        "09090909_veh_dashboard_jpg": {
+            "data": {
+                "technical": {
+                    "category": "vehicle",
+                    "view_angle": "dashboard",
+                    "description": "Car dashboard showing instrument cluster",
+                    "specific_type": "car"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": []
+                },
+                "upload_filename": "10_202008218_124128_508_0.jpg"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_veh_dashboard.jpg",
+            "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fprocessed%2Fannotated_09090909_veh_dashboard.jpg"
+        },
+        "09090909_veh_rear_left_jpg": {
+            "data": {
+                "technical": {
+                    "category": "vehicle",
+                    "view_angle": "rear_left",
+                    "description": "Black Kia Sportage parked street",
+                    "specific_type": "suv"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": [
+                        "Múltiples rasguños y marcas blancas en la puerta trasera del lado del pasajero",
+                        "Múltiples rasguños y marcas blancas en el guardabarros trasero del lado del pasajero",
+                        "Rozadura en la parte inferior izquierda del parachoques trasero",
+                        "Suciedad general en la superficie del vehículo"
+                    ]
+                },
+                "upload_filename": "14_202008218_124139_613_0.jpg"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_veh_rear_left.jpg",
+            "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fprocessed%2Fannotated_09090909_veh_rear_left.jpg"
+        },
+        "09090909_veh_front_left_jpg": {
+            "data": {
+                "technical": {
+                    "category": "vehicle",
+                    "view_angle": "front_left",
+                    "description": "Black SUV parked on street",
+                    "specific_type": "suv"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": [
+                        "Múltiples arañazos y rozaduras en el parachoques delantero",
+                        "Arañazos y rozaduras en el guardabarros delantero derecho",
+                        "Abolladura y arañazos en la puerta delantera del lado del conductor",
+                        "Arañazos en la puerta trasera del lado del conductor",
+                        "Rozaduras en la esquina trasera izquierda del vehículo"
+                    ]
+                },
+                "upload_filename": "16_202008218_124208_707_0.jpg"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_veh_front_left.jpg",
+            "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fprocessed%2Fannotated_09090909_veh_front_left.jpg"
+        },
+        "09090909_veh_rear_right_jpg": {
+            "data": {
+                "technical": {
+                    "category": "vehicle",
+                    "view_angle": "rear_right",
+                    "description": "Black Kia Sportage parked on street",
+                    "specific_type": "suv"
+                },
+                "mime_source": "image/jpeg",
+                "business_data": {
+                    "tipo_analisis": "vehiculo",
+                    "daños_resumen": [
+                        "Scuffs and scratches on the lower black plastic part of the rear bumper",
+                        "White scuff mark on the lower rear bumper",
+                        "Dirty or water-stained rear window"
+                    ]
+                },
+                "upload_filename": "14_202008218_124137_197_0.jpg"
+            },
+            "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fraw%2F09090909_veh_rear_right.jpg",
+            "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/09090909%2Fprocessed%2Fannotated_09090909_veh_rear_right.jpg"
+        }
     },
-    "123456789_doc_full_shot_jpg": {
-        "data": {
-            "technical": {
-                "category": "document",
-                "view_angle": "full_shot",
-                "description": "Costa Rican ID card document",
-                "specific_type": "cedula_identidad"
-            },
-            "business_data": {
-                "sexo": null,
-                "donador": null,
-                "pais_emisor": "Costa Rica",
-                "tipo_analisis": "documento",
-                "tipo_licencia": null,
-                "tipo_documento": "Cédula",
-                "nombre_completo": null,
-                "fecha_nacimiento": "1981-05-15",
-                "numero_identidad": "111030763",
-                "fecha_vencimiento": "2030-02-04"
-            },
-            "upload_filename": "56A13715-C155-4F34-B4DB-8C3164948A55.jpg"
-        },
-        "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fraw%2F123456789_doc_full_shot.jpg",
-        "processed_url": null
-    },
-    "123456789_veh_front_left_jpg": {
-        "data": {
-            "technical": {
-                "category": "vehicle",
-                "view_angle": "front_left",
-                "description": "Blue car with side damage",
-                "specific_type": "car"
-            },
-            "business_data": {
-                "color": "Azul",
-                "marca": "Smart",
-                "modelo": "Fortwo",
-                "placa_visible": null,
-                "tipo_analisis": "vehiculo",
-                "daños_resumen": [
-                    "Golpe y abolladura profunda en la puerta del conductor",
-                    "Arañazos y transferencia de pintura en la puerta y el guardabarros delantero",
-                    "Deformación en el guardabarros delantero izquierdo",
-                    "Rueda delantera izquierda posiblemente dañada o desalineada",
-                    "Neumático delantero izquierdo comprimido contra el bordillo"
-                ],
-                "año_aproximado": "1998-2007",
-                "tipo_carroceria": "Microcoche"
-            },
-            "upload_filename": "Golpe-chapa.jpg"
-        },
-        "raw_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fraw%2F123456789_veh_front_left.jpg",
-        "processed_url": "https://www.googleapis.com/storage/v1/b/kai-claims-dev/o/123456789%2Fprocessed%2Fannotated_123456789_veh_front_left.jpg"
+    "global_vehicle_details": {
+        "color": "Negro",
+        "marca": "Kia",
+        "modelo": "Sportage",
+        "placa_visible": "TNP 1052",
+        "año_aproximado": "2010-2015",
+        "tipo_carroceria": "SUV"
     }
 }
