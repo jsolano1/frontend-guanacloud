@@ -10,9 +10,10 @@ from src.tools.knowledge_tools import search_knowledge_base_tool
 from src.utils.firestore_storage import FirestoreSaver
 from src.utils.logging_utils import log_structured
 from src.utils.prompt_loader import load_prompt
+from src.tools.general_tools import tools_list as general_tools
 
 knowledge_tools_list = [search_knowledge_base_tool]
-all_tools = helpdesk_tools + dwh_tools_list + knowledge_tools_list 
+all_tools = helpdesk_tools + dwh_tools_list + [search_knowledge_base_tool] + general_tools
 
 _COMPILED_GRAPH = None
 _GEMINI_CLIENT = None
