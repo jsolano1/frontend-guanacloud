@@ -7,8 +7,7 @@ from src.utils.logging_utils import log_structured
 
 def _standardize_filename(service_number, category, raw_angle, original_name):
     """
-    Genera nombres de archivo deterministas y limpios para el sistema de integración.
-    Mapas de ejemplo: 'front_left' -> 'fl', 'document_front' -> 'doc_front'.
+    Genera nombres de archivo deterministas y limpios.
     """
     ext = original_name.split('.')[-1] if '.' in original_name else "jpg"
     std_category = "veh" if category == "vehicle" else "doc"
@@ -16,13 +15,18 @@ def _standardize_filename(service_number, category, raw_angle, original_name):
     return f"{service_number}_{std_category}_{clean_suffix}.{ext}"
 
 async def analyze_claim_image_async(service_number: str, image_bytes: bytes, original_filename: str, mime_type: str = "image/jpeg") -> dict:
+    """
+    Procesa una sola imagen o documento.
+    """
     try:
         if "pdf" in mime_type:
-            classification = {"category": "document", "specific_type": "archivo_pdf"}
+            classification = {"category": "document", "specific_type": "archivo_pdf", "view_angle": "general"}
+            metadata_task = vision_service.extract_deep_metadata_async(image_bytes, mime_type)
+            deep_metadata = await metadata_task
         else:
-            classification = await vision_service.classify_image_async(image_bytes)
-
-        deep_metadata = await vision_service.extract_deep_metadata_async(image_bytes, mime_type)
+            classification_task = vision_service.classify_image_async(image_bytes)
+            metadata_task = vision_service.extract_deep_metadata_async(image_bytes, mime_type)
+            classification, deep_metadata = await asyncio.gather(classification_task, metadata_task)
         
         category = classification.get("category", "unknown")
         view_angle = classification.get("view_angle", "general")
@@ -36,26 +40,11 @@ async def analyze_claim_image_async(service_number: str, image_bytes: bytes, ori
         if category == "vehicle" and "image" in mime_type:
             try:
                 processed_bytes = await vision_service.apply_segmentation_masks_async(image_bytes)
-                if processed_bytes != image_bytes:
+                if processed_bytes and processed_bytes != image_bytes:
                     proc_filename = f"annotated_{clean_filename}"
                     processed_url = await storage_service.upload_image_to_gcs_async(processed_bytes, service_number, proc_filename, "processed")
-            pass 
-
-        return {
-            "key": json_key,
-            "data": {
-                "raw_url": raw_url,
-                "processed_url": processed_url,
-                "data": {
-                    "technical": classification,
-                    "business_data": deep_metadata,
-                    "upload_filename": original_filename,
-                    "mime_source": mime_type
-                }
-            }
-        }
-    except Exception as e:
-    log_structured("ProcessingWarn", error=str(e))
+            except Exception as e:
+                log_structured("ProcessingWarn", error=str(e), filename=original_filename)
         
         return {
             "key": json_key,
@@ -76,9 +65,7 @@ async def analyze_claim_image_async(service_number: str, image_bytes: bytes, ori
 
 def save_batch_claim_data(service_number: str, results_list: list) -> dict:
     """
-    Guarda TODOS los resultados en una sola transacción de DB.
-    Optimiza la estructura JSON extrayendo datos globales del vehículo (Marca, Modelo, VIN, etc.)
-    para no repetirlos en cada entrada de imagen.
+    Guarda resultados en DB.
     """
     engine = get_db_connection()
     global_vehicle_info = {}

@@ -31,7 +31,6 @@ def extract_deep_metadata_sync(image_bytes: bytes, mime_type: str = "image/jpeg"
         return {"error": "No se pudo extraer metadata profunda"}
 
 async def classify_image_async(image_bytes: bytes) -> dict:
-    """Clasificación ligera para ruteo (Wrapper Async)."""
     return await asyncio.to_thread(classify_image_sync, image_bytes)
 
 def classify_image_sync(image_bytes: bytes) -> dict:
@@ -49,20 +48,18 @@ def classify_image_sync(image_bytes: bytes) -> dict:
         return {"category": "unknown"}
 
 async def apply_segmentation_masks_async(image_bytes: bytes) -> bytes:
-    """Dibuja máscaras SOLO de daños en rojo, ignorando partes sanas (Wrapper Async)."""
     return await asyncio.to_thread(apply_segmentation_masks_sync, image_bytes)
 
 def apply_segmentation_masks_sync(image_bytes: bytes) -> bytes:
     prompt = load_prompt("segment_vehicle_layers.md")
     original_img = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
-    
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=[types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"), prompt],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                thinking_config=types.ThinkingConfig(thinking_budget=0) 
+                thinking_config=types.ThinkingConfig(thinking_budget=1024) 
             )
         )
         items = json.loads(response.text)
@@ -106,6 +103,7 @@ def apply_segmentation_masks_sync(image_bytes: bytes) -> bytes:
         combined.convert("RGB").save(out, format="JPEG")
         return out.getvalue()
 
+        return image_bytes
     except Exception as e:
         log_structured("SegmentationError", error=str(e))
         return image_bytes

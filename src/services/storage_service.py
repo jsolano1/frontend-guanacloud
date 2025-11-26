@@ -8,7 +8,7 @@ storage_client = storage.Client(project=settings.GCP_PROJECT_ID)
 
 def upload_image_to_gcs(image_bytes: bytes, service_number: str, filename: str, folder_type: str = "raw") -> str:
     """
-    Sube archivo y genera una SIGNED URL temporal para visualización en frontend.
+    Sube archivo y genera una SIGNED URL temporal (1 hora) para visualización pública segura.
     """
     try:
         bucket = storage_client.bucket(settings.GCS_CLAIMS_BUCKET)
@@ -32,8 +32,4 @@ def upload_image_to_gcs(image_bytes: bytes, service_number: str, filename: str, 
         return f"https://storage.googleapis.com/{settings.GCS_CLAIMS_BUCKET}/{destination_blob_name}"
 
 async def upload_image_to_gcs_async(image_bytes: bytes, service_number: str, filename: str, folder_type: str = "raw") -> str:
-    """
-    Wrapper asíncrono para subir imágenes a GCS sin bloquear el event loop.
-    Esencial para procesamiento en batch.
-    """
     return await asyncio.to_thread(upload_image_to_gcs, image_bytes, service_number, filename, folder_type)
