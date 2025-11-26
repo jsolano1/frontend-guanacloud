@@ -6,7 +6,7 @@ from src.services import storage_service, vision_service
 from src.utils.logging_utils import log_structured
 
 def _standardize_filename(service_number, category, raw_angle, original_name):
-       """
+    """
     Genera nombres de archivo deterministas y limpios para el sistema de integración.
     Mapas de ejemplo: 'front_left' -> 'fl', 'document_front' -> 'doc_front'.
     """
