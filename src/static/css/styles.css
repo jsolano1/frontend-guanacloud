@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.gradient-overlay {
+    background: linear-gradient(180deg, rgba(45, 80, 22, 0.8) 0%, rgba(45, 80, 22, 0) 100%);
+}
+
+.hero-bg {
+    background-image: url('../img/hero-bg.jpg'); /* Placeholder, will need a real image or gradient */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

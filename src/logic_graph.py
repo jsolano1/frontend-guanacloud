@@ -34,7 +34,7 @@ def agent_node(state: AgentState):
     user_email = state.get("user_email", "usuario@connect.inc")
     
     prompt_template = load_prompt("system_prompt.md")
-    system_prompt = prompt_template.format(user_email=user_email) if prompt_template else f"Eres KAI. Usuario: {user_email}."
+    system_prompt = prompt_template.format(user_email=user_email) if prompt_template else f"Eres DirIA. Usuario: {user_email}."
 
     try:
         client = get_gemini_client()

@@ -16,7 +16,7 @@ from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from src.tools.claims_tools import analyze_claim_image_async, save_batch_claim_data
 
-app = FastAPI(title="KAI Core V2", version="3.3.0-prod-hybrid")
+app = FastAPI(title="DirIA Core", version="3.3.0-prod-hybrid")
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,7 +52,7 @@ async def handle_chat(request: Request):
         
         if event.get('type') != 'MESSAGE': return {}
 
-        user_email = event.get('user', {}).get('email', 'web_guest@kai.ai')
+        user_email = event.get('user', {}).get('email', 'web_guest@diria.io')
         message_text = event.get('message', {}).get('text', '')
         thread_id = event.get('message', {}).get('thread', {}).get('name', f"thread_{user_email}")
 

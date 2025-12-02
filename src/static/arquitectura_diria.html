@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecosistema KAI v2 - Ecosistema Cognitivo</title>
+    <title>Ecosistema DirIA - Ecosistema Cognitivo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,23 +12,31 @@
             --card-bg: rgba(30, 41, 59, 0.7);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            
+
             /* Palette */
-            --col-user: #38bdf8;   /* Celeste */
-            --col-core: #818cf8;   /* Indigo */
-            --col-agent: #34d399;  /* Emerald */
-            --col-ai: #f472b6;     /* Pink/Gemini */
-            --col-infra: #fbbf24;  /* Amber */
-            --col-tool: #a78bfa;   /* Violet */
+            --col-user: #38bdf8;
+            /* Celeste */
+            --col-core: #818cf8;
+            /* Indigo */
+            --col-agent: #34d399;
+            /* Emerald */
+            --col-ai: #f472b6;
+            /* Pink/Gemini */
+            --col-infra: #fbbf24;
+            /* Amber */
+            --col-tool: #a78bfa;
+            /* Violet */
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
-            background-image: 
+            background-image:
                 radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
             color: var(--text-primary);
@@ -55,6 +64,7 @@
             text-transform: uppercase;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -105,7 +115,7 @@
             bottom: 30px;
             left: 30px;
             background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px;
             border-radius: 12px;
             backdrop-filter: blur(10px);
@@ -117,8 +127,18 @@
             transition: all 0.3s ease;
         }
 
-        .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
 
         /* Canvas Fullscreen */
         #canvas-layer {
@@ -138,7 +158,8 @@
             width: 100%;
             height: 100%;
             z-index: 10;
-            pointer-events: none; /* Permitir clicks al fondo */
+            pointer-events: none;
+            /* Permitir clicks al fondo */
         }
 
         /* Estilos de Nodo */
@@ -147,18 +168,19 @@
             width: 130px;
             padding: 8px;
             background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            transform: translate(-50%, -50%); /* Centrar exacto */
+            transform: translate(-50%, -50%);
+            /* Centrar exacto */
             backdrop-filter: blur(4px);
             transition: all 0.3s ease;
             pointer-events: auto;
             cursor: default;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .node:hover {
@@ -168,8 +190,11 @@
             z-index: 50;
         }
 
-        .node-icon { font-size: 20px; margin-bottom: 3px; }
-        
+        .node-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
         .node-img {
             width: 35px;
             height: 35px;
@@ -180,8 +205,18 @@
             background: #fff;
         }
 
-        .node-title { font-size: 11px; font-weight: 700; color: #fff; line-height: 1.1; }
-        .node-sub { font-size: 9px; color: var(--text-secondary); margin-top: 2px; }
+        .node-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+        }
+
+        .node-sub {
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
 
         /* Estados del Nodo */
         .status-indicator {
@@ -193,18 +228,46 @@
             border-radius: 50%;
             border: 2px solid var(--bg-color);
         }
-        
-        .st-active { background: #10b981; box-shadow: 0 0 8px #10b981; }
-        .st-dev { background: #f59e0b; animation: pulse-amber 2s infinite; }
-        .st-plan { background: #64748b; border: 1px solid #fff; }
 
-        .node.is-future { border-style: dashed; opacity: 0.7; }
-        .node.is-core { border-color: var(--col-core); background: rgba(129, 140, 248, 0.15); width: 150px; padding: 12px; }
+        .st-active {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .st-dev {
+            background: #f59e0b;
+            animation: pulse-amber 2s infinite;
+        }
+
+        .st-plan {
+            background: #64748b;
+            border: 1px solid #fff;
+        }
+
+        .node.is-future {
+            border-style: dashed;
+            opacity: 0.7;
+        }
+
+        .node.is-core {
+            border-color: var(--col-core);
+            background: rgba(129, 140, 248, 0.15);
+            width: 150px;
+            padding: 12px;
+        }
 
         @keyframes pulse-amber {
-            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
         }
 
         /* Etiquetas de Zona */
@@ -213,7 +276,7 @@
             bottom: 20px;
             font-size: 60px;
             font-weight: 800;
-            color: rgba(255,255,255,0.12);
+            color: rgba(255, 255, 255, 0.12);
             text-transform: uppercase;
             pointer-events: none;
             z-index: 0;
@@ -223,32 +286,75 @@
 
         /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 768px) {
-            header { top: 10px; left: 20px; }
-            h1 { font-size: 20px; }
-            h2 { font-size: 12px; }
-            
-            .node { width: 100px; padding: 6px; }
-            .node.is-core { width: 110px; }
-            .node-icon { font-size: 18px; }
-            .node-title { font-size: 10px; }
-            .node-sub { display: none; } /* Ocultar subtítulos en móvil */
-            .node-img { width: 28px; height: 28px; }
+            header {
+                top: 10px;
+                left: 20px;
+            }
 
-            .credits { bottom: 10px; right: 15px; }
-            .credits-name { font-size: 10px; }
-            .credits-role { font-size: 9px; }
+            h1 {
+                font-size: 20px;
+            }
+
+            h2 {
+                font-size: 12px;
+            }
+
+            .node {
+                width: 100px;
+                padding: 6px;
+            }
+
+            .node.is-core {
+                width: 110px;
+            }
+
+            .node-icon {
+                font-size: 18px;
+            }
+
+            .node-title {
+                font-size: 10px;
+            }
+
+            .node-sub {
+                display: none;
+            }
+
+            /* Ocultar subtítulos en móvil */
+            .node-img {
+                width: 28px;
+                height: 28px;
+            }
+
+            .credits {
+                bottom: 10px;
+                right: 15px;
+            }
+
+            .credits-name {
+                font-size: 10px;
+            }
+
+            .credits-role {
+                font-size: 9px;
+            }
 
             /* Ocultar leyenda y zonas en móvil para limpiar */
-            .legend { display: none; } 
-            .zone { opacity: 0; } 
-        }
+            .legend {
+                display: none;
+            }
 
+            .zone {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <header>
-        <h1>Ecosistema KAI v2</h1>
+        <h1>Ecosistema DirIA</h1>
         <h2>Ecosistema Cognitivo & Multi-Agente</h2>
     </header>
 
@@ -263,10 +369,17 @@
     <div class="zone" style="left: 75%;">Infra & Tools</div>
 
     <div class="legend">
-        <div class="legend-item"><div class="dot st-active"></div> Producción</div>
-        <div class="legend-item"><div class="dot st-dev"></div> En Desarrollo</div>
-        <div class="legend-item"><div class="dot st-plan"></div> Plan Futuro</div>
-        <div class="legend-item" style="grid-column: span 2; margin-top:5px; border-top:1px solid #333; padding-top:5px;">
+        <div class="legend-item">
+            <div class="dot st-active"></div> Producción
+        </div>
+        <div class="legend-item">
+            <div class="dot st-dev"></div> En Desarrollo
+        </div>
+        <div class="legend-item">
+            <div class="dot st-plan"></div> Plan Futuro
+        </div>
+        <div class="legend-item"
+            style="grid-column: span 2; margin-top:5px; border-top:1px solid #333; padding-top:5px;">
             Flujos de datos en tiempo real
         </div>
     </div>
@@ -283,24 +396,24 @@
             { id: 'web', label: 'APIs', sub: 'Integraciones', icon: '💻', x: 0.1, y: 0.75, mx: 0.8, my: 0.1, type: 'user', status: 'active' },
 
             // -- COLUMNA 2: CORE (Gateway & Orchestrator) --
-            { 
-                id: 'gateway', 
-                label: 'API Gateway', 
-                sub: 'Cloud Run', 
-                icon: '🛡️', 
-                image: 'https://storage.googleapis.com/kai-imagen/CON_MediaKit_Workplace%20Profile%20Picture%2003.png',
-                x: 0.28, y: 0.5, 
+            {
+                id: 'gateway',
+                label: 'API Gateway',
+                sub: 'Cloud Run',
+                icon: '🛡️',
+                image: 'img/guana_logo_primary.png',
+                x: 0.28, y: 0.5,
                 mx: 0.3, my: 0.25,
-                type: 'core', status: 'active', class: 'is-core' 
+                type: 'core', status: 'active', class: 'is-core'
             },
-            { 
-                id: 'langgraph', 
-                label: 'Orquestador', 
-                sub: 'LangGraph State', 
-                icon: '🧠', 
-                x: 0.42, y: 0.5, 
+            {
+                id: 'langgraph',
+                label: 'Orquestador',
+                sub: 'LangGraph State',
+                icon: '🧠',
+                x: 0.42, y: 0.5,
                 mx: 0.7, my: 0.25,
-                type: 'core', status: 'active', class: 'is-core' 
+                type: 'core', status: 'active', class: 'is-core'
             },
 
             // -- COLUMNA 3: ENJAMBRE DE AGENTES (Specialists) --
@@ -333,28 +446,28 @@
             { from: 'langgraph', to: 'ag_auditor', color: '#fff', dashed: true },
             { from: 'langgraph', to: 'ag_support', color: '#fff' },
             { from: 'langgraph', to: 'ag_home', color: '#64748b', dashed: true },
-            { from: 'ag_vision', to: 'vertex', color: '#f472b6' }, 
-            { from: 'ag_claims', to: 'firestore', color: '#fbbf24' }, 
+            { from: 'ag_vision', to: 'vertex', color: '#f472b6' },
+            { from: 'ag_claims', to: 'firestore', color: '#fbbf24' },
             { from: 'ag_claims', to: 'vertex', color: '#f472b6' },
-            { from: 'ag_auditor', to: 'bq', color: '#34d399' }, 
+            { from: 'ag_auditor', to: 'bq', color: '#34d399' },
             { from: 'ag_auditor', to: 'looker', color: '#34d399' },
             { from: 'ag_auditor', to: 'vertex', color: '#f472b6' },
             { from: 'ag_support', to: 'github', color: '#a78bfa' },
             { from: 'ag_support', to: 'asana', color: '#a78bfa' },
             { from: 'ag_support', to: 'reminders', color: '#a78bfa' },
             { from: 'ag_support', to: 'gmail', color: '#a78bfa' },
-            { from: 'ag_support', to: 'looker', color: '#34d399' }, 
-            { from: 'bq', to: 'looker', color: '#fbbf24', dashed: true }, 
-            { from: 'langgraph', to: 'firestore', color: '#fbbf24' } 
+            { from: 'ag_support', to: 'looker', color: '#34d399' },
+            { from: 'bq', to: 'looker', color: '#fbbf24', dashed: true },
+            { from: 'langgraph', to: 'firestore', color: '#fbbf24' }
         ];
 
         // === 3. MOTOR GRÁFICO ===
         const canvas = document.getElementById('canvas-layer');
         const ctx = canvas.getContext('2d');
         const nodeLayer = document.getElementById('node-layer');
-        
+
         let width, height;
-        let nodeElements = {}; 
+        let nodeElements = {};
         let particles = [];
         let isMobile = false;
 
@@ -379,11 +492,11 @@
         }
 
         function renderNodes() {
-            nodeLayer.innerHTML = ''; 
+            nodeLayer.innerHTML = '';
             NODES.forEach(n => {
                 const el = document.createElement('div');
                 el.className = `node ${n.class || ''}`;
-                
+
                 let visualContent;
                 if (n.image) {
                     visualContent = `<img src="${n.image}" class="node-img" alt="${n.label}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">`;
@@ -413,7 +526,7 @@
 
                 const px = targetX * width;
                 const py = targetY * height;
-                
+
                 node.x = px;
                 node.y = py;
                 node.el.style.left = px + 'px';
@@ -433,10 +546,10 @@
                 this.target = nodeElements[route.to];
                 this.color = route.color;
                 this.progress = 0;
-                
+
                 // VELOCIDAD REDUCIDA: Antes 0.004 -> Ahora 0.0015 (60% más lento)
                 this.speed = 0.0015 + Math.random() * 0.0015;
-                
+
                 if (!this.source || !this.target) this.reset();
             }
 
@@ -473,8 +586,8 @@
                 }
 
                 const t = this.progress;
-                const cx = Math.pow(1-t,3)*sx + 3*Math.pow(1-t,2)*t*cp1x + 3*(1-t)*Math.pow(t,2)*cp2x + Math.pow(t,3)*tx;
-                const cy = Math.pow(1-t,3)*sy + 3*Math.pow(1-t,2)*t*cp1y + 3*(1-t)*Math.pow(t,2)*cp2y + Math.pow(t,3)*ty;
+                const cx = Math.pow(1 - t, 3) * sx + 3 * Math.pow(1 - t, 2) * t * cp1x + 3 * (1 - t) * Math.pow(t, 2) * cp2x + Math.pow(t, 3) * tx;
+                const cy = Math.pow(1 - t, 3) * sy + 3 * Math.pow(1 - t, 2) * t * cp1y + 3 * (1 - t) * Math.pow(t, 2) * cp2y + Math.pow(t, 3) * ty;
 
                 ctx.beginPath();
                 ctx.arc(cx, cy, 3, 0, Math.PI * 2); // Partícula un poco más grande
@@ -487,7 +600,7 @@
         }
 
         function initParticles() {
-            for(let i=0; i<60; i++) { // Menos partículas en móvil para performance? No, mantenemos 60
+            for (let i = 0; i < 60; i++) { // Menos partículas en móvil para performance? No, mantenemos 60
                 particles.push(new Particle());
             }
         }
@@ -499,12 +612,12 @@
             CONNECTIONS.forEach(conn => {
                 const n1 = nodeElements[conn.from];
                 const n2 = nodeElements[conn.to];
-                if(n1 && n2) {
+                if (n1 && n2) {
                     ctx.beginPath();
                     ctx.moveTo(n1.x, n1.y);
-                    
+
                     let cp1x, cp1y, cp2x, cp2y;
-                    
+
                     if (isMobile) {
                         cp1x = n1.x;
                         cp1y = n1.y + (n2.y - n1.y) * 0.5;
@@ -516,15 +629,15 @@
                         cp2x = n1.x + (n2.x - n1.x) * 0.5;
                         cp2y = n2.y;
                     }
-                    
+
                     ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, n2.x, n2.y);
-                    
+
                     ctx.strokeStyle = conn.color;
                     ctx.lineWidth = 1.5;
                     ctx.globalAlpha = 0.15; // Líneas aún más sutiles
-                    if(conn.dashed) ctx.setLineDash([5, 5]);
+                    if (conn.dashed) ctx.setLineDash([5, 5]);
                     else ctx.setLineDash([]);
-                    
+
                     ctx.stroke();
                     ctx.globalAlpha = 1.0;
                 }
@@ -540,4 +653,5 @@
 
     </script>
 </body>
+
 </html>
