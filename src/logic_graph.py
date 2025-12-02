@@ -92,18 +92,17 @@ def tools_execution_node(state: AgentState):
                      result = general_tools.responder_consultas_generales(**fn_args)
 
                 if isinstance(result, str) and '"cardsV2"' in result:
-                     try:
+                    try:
                         json_str = result
                         if result.startswith("```json"):
                             json_str = result.replace("```json", "").replace("```", "")
                         
                         card_data = json.loads(json_str)
                         if "cardsV2" in card_data:
-                            card_found = card_data
+                            # card_found = card_data 
                             result = "Acción completada. Tarjeta UI mostrada al usuario."
                     except Exception as json_err:
                         log_structured("CardParseError", error=str(json_err))
-                     pass
 
             except Exception as e:
                 result = f"Error ejecutando {fn_name}: {str(e)}"
