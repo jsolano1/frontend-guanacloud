@@ -22,8 +22,9 @@ def get_db_connection() -> sqlalchemy.engine.base.Engine:
             user=settings.DB_USER,
             password=settings.DB_PASS,
             db=settings.DB_NAME,
-            ip_type=IPTypes.PRIVATE
+            ip_type=IPTypes.PUBLIC  
         )
+        conn.run("SET search_path TO core, helpdesk, claims, public")
         return conn
 
     try:

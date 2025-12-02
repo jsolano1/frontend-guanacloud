@@ -42,8 +42,8 @@ jobs:
             echo "Ambiente: PRODUCCION 🚀"
             echo "SERVICE_NAME=diria-api-core-prod" >> $GITHUB_ENV
             echo "CLOUD_RUN_FLAGS=--allow-unauthenticated --memory=2Gi --cpu=2 --min-instances=1" >> $GITHUB_ENV
-            echo "APP_BASE_URL=https://diria-api-core-prod-537990588927.us-central1.run.app" >> $GITHUB_ENV
-            echo "DB_INSTANCE_NAME=diria-postgres-prod" >> $GITHUB_ENV
+            echo "DB_INSTANCE_NAME=diria-postgres" >> $GITHUB_ENV
+            echo "DB_NAME=diria_prod" >> $GITHUB_ENV 
             echo "DB_PASS_SECRET_NAME=diria-postgres-password-prod" >> $GITHUB_ENV
             echo "FIRESTORE_DB_ID=agentdiria-core" >> $GITHUB_ENV
             echo "FIRESTORE_SESSION_COLLECTION=diria_v2_graph_state_prod" >> $GITHUB_ENV
@@ -52,8 +52,8 @@ jobs:
             echo "Ambiente: DESARROLLO 🛠️"
             echo "SERVICE_NAME=diria-api-core-dev" >> $GITHUB_ENV
             echo "CLOUD_RUN_FLAGS=--allow-unauthenticated --memory=2Gi --cpu=2" >> $GITHUB_ENV
-            echo "APP_BASE_URL=https://diria-api-core-dev-537990588927.us-central1.run.app" >> $GITHUB_ENV
-            echo "DB_INSTANCE_NAME=diria-postgres-dev" >> $GITHUB_ENV
+            echo "DB_INSTANCE_NAME=diria-postgres" >> $GITHUB_ENV
+            echo "DB_NAME=diria_dev" >> $GITHUB_ENV
             echo "DB_PASS_SECRET_NAME=diria-postgres-password-dev" >> $GITHUB_ENV
             echo "FIRESTORE_DB_ID=agentdiria-core-dev" >> $GITHUB_ENV
             echo "FIRESTORE_SESSION_COLLECTION=diria_v2_graph_state_dev" >> $GITHUB_ENV
@@ -77,6 +77,7 @@ jobs:
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
           flags: ${{ env.CLOUD_RUN_FLAGS }}
           
+          
           env_vars: |-
             GCP_PROJECT_ID=${{ env.PROJECT_ID }}
             LOCATION=${{ env.REGION }}
@@ -84,7 +85,7 @@ jobs:
             FIRESTORE_DATABASE_ID=${{ env.FIRESTORE_DB_ID }}
             FIRESTORE_SESSION_COLLECTION=${{ env.FIRESTORE_SESSION_COLLECTION }}
             DB_USER=postgres
-            DB_NAME=postgres
+            DB_NAME=${{ env.DB_NAME }}
             DB_CONNECTION_NAME=${{ env.PROJECT_ID }}:${{ env.REGION }}:${{ env.DB_INSTANCE_NAME }}
             DB_POOL_SIZE=5
             APP_BASE_URL=${{ env.APP_BASE_URL }}
@@ -94,4 +95,11 @@ jobs:
             KNOWLEDGE_BASE_BUCKET=diria-knowledge-base
             
           secrets: |-
-            DB_PASS=${{ env.DB_PASS_SECRET_NAME }}:latest        
+            DB_PASS=${{ env.DB_PASS_SECRET_NAME }}:latest
+            ASANA_PERSONAL_ACCESS_TOKEN=asana-pat:latest
+            GITHUB_PAT=GITHUB_PAT:latest
+            GITHUB_WEBHOOK_SECRET=GITHUB_WEBHOOK_SECRET:latest
+            LOOKERSDK_CLIENT_ID=LOOKERSDK_CLIENT_ID:latest
+            LOOKERSDK_CLIENT_SECRET=LOOKERSDK_CLIENT_SECRET:latest
+            GOOGLE_CHAT_WEBHOOK_URL=GOOGLE_CHAT_WEBHOOK_URL:latest
+            TI_GOOGLE_CHAT_WEBHOOK_URL=TI_GOOGLE_CHAT_WEBHOOK_URL:latest
