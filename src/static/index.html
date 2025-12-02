@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DirIA - Inteligencia Empresarial desde las Alturas</title>
+    <title>Guana Cloud - Inteligencia Empresarial</title>
     <meta name="description"
-        content="DirIA orquesta agentes de IA especializados que trabajan juntos como los picos de una montaña.">
+        content="Guana Cloud orquesta agentes de IA especializados que trabajan juntos como los picos de una montaña.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,11 +42,16 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            'from': { boxShadow: '0 0 10px -10px rgba(0, 255, 157, 0)' },
+                            'to': { boxShadow: '0 0 20px 5px rgba(0, 255, 157, 0.3)' }
                         }
                     }
                 }
@@ -82,6 +87,29 @@
             box-shadow: 0 10px 30px -10px rgba(0, 255, 157, 0.1);
         }
 
+        /* Bento Grid Styles */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 1fr);
+            }
+
+            .bento-item-large {
+                grid-column: span 2;
+                grid-row: span 2;
+            }
+
+            .bento-item-tall {
+                grid-row: span 2;
+            }
+        }
+
         /* Dynamic Background Particles */
         #particles-js {
             position: absolute;
@@ -103,22 +131,30 @@
             <div class="flex justify-between h-20 items-center">
                 <div class="flex-shrink-0 flex items-center gap-3">
                     <img src="static/img/guana_logo_dark.png" alt="Guana Cloud Logo" class="h-10 w-auto">
-                    <span class="font-heading font-bold text-2xl text-white tracking-tight">DirIA</span>
+                    <span class="font-heading font-bold text-2xl text-white tracking-tight">Guana Cloud</span>
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#product"
-                        class="text-sm font-medium text-diria-muted hover:text-white transition">Producto</a>
-                    <a href="#architecture"
-                        class="text-sm font-medium text-diria-muted hover:text-white transition">Arquitectura</a>
-                    <a href="#pricing"
-                        class="text-sm font-medium text-diria-muted hover:text-white transition">Precios</a>
-                    <a href="#about"
-                        class="text-sm font-medium text-diria-muted hover:text-white transition">Nosotros</a>
+                    <a href="#product" class="text-sm font-medium text-diria-muted hover:text-white transition"
+                        data-i18n="nav_product">Producto</a>
+                    <a href="#services" class="text-sm font-medium text-diria-muted hover:text-white transition"
+                        data-i18n="nav_services">Servicios</a>
+                    <a href="#architecture" class="text-sm font-medium text-diria-muted hover:text-white transition"
+                        data-i18n="nav_architecture">Arquitectura</a>
+                    <a href="#about" class="text-sm font-medium text-diria-muted hover:text-white transition"
+                        data-i18n="nav_about">Nosotros</a>
+
+                    <!-- Language Toggle -->
+                    <button id="lang-toggle"
+                        class="text-sm font-bold text-diria-neonBlue hover:text-white transition border border-diria-neonBlue/30 px-3 py-1 rounded-full">
+                        EN
+                    </button>
+
                     <a href="/console.html"
-                        class="text-sm font-semibold text-diria-neonBlue hover:text-white transition">Login</a>
+                        class="text-sm font-semibold text-diria-neonBlue hover:text-white transition"
+                        data-i18n="nav_login">Login</a>
                     <a href="#demo"
-                        class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-diria-neonGreen transition shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(0,255,157,0.5)]">Ver
-                        Demo</a>
+                        class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-diria-neonGreen transition shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(0,255,157,0.5)]"
+                        data-i18n="nav_demo">Ver Demo</a>
                 </div>
             </div>
         </div>
@@ -138,13 +174,13 @@
             </div>
 
             <h1 class="text-5xl md:text-8xl font-heading font-extrabold text-white tracking-tight mb-8 leading-tight">
-                Inteligencia <br>
-                <span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue">Desde
-                    las Alturas</span>
+                <span data-i18n="hero_title_1">Inteligencia</span> <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue"
+                    data-i18n="hero_title_2">Desde las Alturas</span>
             </h1>
 
-            <p class="mt-6 max-w-2xl mx-auto text-xl text-diria-muted font-light leading-relaxed">
+            <p class="mt-6 max-w-2xl mx-auto text-xl text-diria-muted font-light leading-relaxed"
+                data-i18n="hero_subtitle">
                 Orquestación multi-agente inspirada en la naturaleza. Coordinación perfecta, perspectiva total y
                 ejecución precisa.
             </p>
@@ -152,7 +188,7 @@
             <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4">
                 <a href="#demo"
                     class="px-8 py-4 bg-diria-neonGreen text-black rounded-full font-bold text-lg hover:bg-white transition shadow-[0_0_20px_rgba(0,255,157,0.4)] flex items-center justify-center gap-2 group">
-                    Ver Demo
+                    <span data-i18n="hero_cta_demo">Ver Demo</span>
                     <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -160,7 +196,8 @@
                     </svg>
                 </a>
                 <a href="/console.html"
-                    class="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:border-white hover:bg-white/5 transition flex items-center justify-center">
+                    class="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:border-white hover:bg-white/5 transition flex items-center justify-center"
+                    data-i18n="hero_cta_console">
                     Acceder a Consola
                 </a>
             </div>
@@ -187,12 +224,86 @@
         </div>
     </section>
 
+    <!-- Guana Cloud Services Section (Bento Grid) -->
+    <section id="services" class="py-24 bg-black border-t border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-0 w-96 h-96 bg-diria-neonGreen/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-0 w-96 h-96 bg-diria-neonBlue/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4" data-i18n="services_title">
+                    Servicios Guana Cloud</h2>
+                <p class="text-diria-muted max-w-2xl mx-auto text-lg" data-i18n="services_subtitle">Más allá de DirIA,
+                    potenciamos tu transformación digital con expertise de clase mundial.</p>
+            </div>
+
+            <div class="bento-grid">
+                <!-- Service 1: Data Engineering (Large) -->
+                <div
+                    class="bento-item-large bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10 hover:border-diria-neonGreen/50 transition-all group relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-diria-neonGreen/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">🏗️</div>
+                        <h3 class="text-3xl font-bold text-white mb-4" data-i18n="service_de_title">Data Engineering
+                        </h3>
+                        <p class="text-diria-muted text-lg leading-relaxed" data-i18n="service_de_desc">Arquitecturas
+                            robustas y escalables. Pipelines de datos modernos que alimentan la inteligencia de tu
+                            negocio. Construimos la base sólida que tu IA necesita.</p>
+                    </div>
+                </div>
+
+                <!-- Service 2: ML (Tall) -->
+                <div
+                    class="bg-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10 hover:border-pink-500/50 transition-all group hover:-translate-y-2">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">🤖</div>
+                    <h3 class="text-xl font-bold text-white mb-3" data-i18n="service_ml_title">Machine Learning</h3>
+                    <p class="text-diria-muted text-sm leading-relaxed" data-i18n="service_ml_desc">Implementación de IA
+                        y ML en producción. MLOps y automatización inteligente para procesos críticos.</p>
+                </div>
+
+                <!-- Service 3: Data Analyst -->
+                <div
+                    class="bg-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10 hover:border-diria-neonBlue/50 transition-all group hover:-translate-y-2">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">📈</div>
+                    <h3 class="text-xl font-bold text-white mb-3" data-i18n="service_da_title">Data Analyst</h3>
+                    <p class="text-diria-muted text-sm leading-relaxed" data-i18n="service_da_desc">Transformamos datos
+                        crudos en insights accionables. Dashboards intuitivos y storytelling con datos.</p>
+                </div>
+
+                <!-- Service 4: Data Scientist -->
+                <div
+                    class="bg-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10 hover:border-purple-500/50 transition-all group hover:-translate-y-2">
+                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">🔬</div>
+                    <h3 class="text-xl font-bold text-white mb-3" data-i18n="service_ds_title">Data Scientist</h3>
+                    <p class="text-diria-muted text-sm leading-relaxed" data-i18n="service_ds_desc">Modelos predictivos
+                        y análisis avanzado para resolver problemas complejos y anticipar tendencias.</p>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <div
+                    class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition">
+                    <span class="text-white font-medium">Multi-Cloud Native</span>
+                    <span class="text-diria-muted">|</span>
+                    <span class="text-diria-neonGreen font-bold">GCP Specialists</span>
+                    <span class="text-diria-muted">|</span>
+                    <span class="text-diria-muted text-sm">AWS & Azure Ready</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Dynamic Architecture Section -->
     <section id="architecture" class="py-24 bg-diria-darker relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-            <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4">Arquitectura Viva</h2>
-            <p class="text-diria-muted max-w-2xl mx-auto">Visualiza en tiempo real cómo nuestros agentes colaboran y
-                procesan información.</p>
+            <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4" data-i18n="arch_title">Arquitectura
+                Viva</h2>
+            <p class="text-diria-muted max-w-2xl mx-auto" data-i18n="arch_subtitle">Visualiza en tiempo real cómo
+                nuestros agentes colaboran y procesan información.</p>
         </div>
 
         <!-- Embed Architecture HTML -->
@@ -219,8 +330,8 @@
                         🏺</div>
                     <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Guaitil</h3>
                     <p class="text-sm font-mono text-diria-neonGreen mb-4">Support Agent (L0)</p>
-                    <p class="text-diria-muted leading-relaxed">Resolución automática de tickets con precisión
-                        artesanal. Entiende contexto, sentimiento y urgencia.</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_guaitil_desc">Resolución automática de
+                        tickets con precisión artesanal. Entiende contexto, sentimiento y urgencia.</p>
                 </div>
 
                 <!-- Agent Card 2 -->
@@ -233,8 +344,8 @@
                         🌟</div>
                     <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Nicoya</h3>
                     <p class="text-sm font-mono text-yellow-400 mb-4">Knowledge Agent</p>
-                    <p class="text-diria-muted leading-relaxed">Base de conocimiento viva. Aprende de cada interacción y
-                        mantiene la sabiduría de la organización.</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_nicoya_desc">Base de conocimiento viva.
+                        Aprende de cada interacción y mantiene la sabiduría de la organización.</p>
                 </div>
 
                 <!-- Agent Card 3 -->
@@ -247,8 +358,8 @@
                         📊</div>
                     <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Santa Cruz</h3>
                     <p class="text-sm font-mono text-diria-neonBlue mb-4">Analytics Agent</p>
-                    <p class="text-diria-muted leading-relaxed">Transforma preguntas en SQL y dashboards en tiempo real.
-                        Democratiza el acceso a los datos.</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_santacruz_desc">Transforma preguntas en
+                        SQL y dashboards en tiempo real. Democratiza el acceso a los datos.</p>
                 </div>
 
                 <!-- Agent Card 4 -->
@@ -261,8 +372,8 @@
                         🗓️</div>
                     <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Nandayure</h3>
                     <p class="text-sm font-mono text-red-400 mb-4">Personal Assistant</p>
-                    <p class="text-diria-muted leading-relaxed">Tu copiloto ejecutivo. Gestiona agenda, prioridades y
-                        alertas proactivas.</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_nandayure_desc">Tu copiloto ejecutivo.
+                        Gestiona agenda, prioridades y alertas proactivas.</p>
                 </div>
             </div>
         </div>
@@ -273,14 +384,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
                 <div>
-                    <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-8">Sabiduría
-                        Ancestral,<br>Tecnología Futura</h2>
+                    <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-8" data-i18n="about_title">
+                        Sabiduría Ancestral,<br>Tecnología Futura</h2>
                     <div class="space-y-6 text-lg text-diria-muted font-light">
-                        <p>
+                        <p data-i18n="about_p1">
                             En Guanacaste, el Cerro Diriá ha sido guía por 1,500 años. Para los Chorotegas, representaba
                             la <span class="text-white font-medium">perspectiva total</span>.
                         </p>
-                        <p>
+                        <p data-i18n="about_p2">
                             <strong class="text-white">Guana Cloud</strong> trae esa filosofía al mundo digital.
                             <strong>DirIA</strong> es nuestro producto estrella, pero nuestra misión va más allá:
                             orquestar sistemas que ven el panorama completo.
@@ -298,15 +409,17 @@
 
             <!-- Team Section -->
             <div class="text-center mb-16">
-                <h3 class="text-2xl font-heading font-bold text-white mb-12">Liderazgo Visionario</h3>
+                <h3 class="text-2xl font-heading font-bold text-white mb-12" data-i18n="team_title">Liderazgo Visionario
+                </h3>
                 <div class="flex flex-col md:flex-row justify-center gap-12 md:gap-24">
                     <div class="flex flex-col items-center group">
                         <div class="relative mb-6">
                             <div
                                 class="absolute inset-0 bg-diria-neonGreen/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 opacity-50 group-hover:opacity-100">
                             </div>
-                            <img src="static/img/jose_solano.jpg" alt="Jose Solano"
-                                class="relative w-40 h-40 rounded-full object-cover border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20 shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                            <!-- Fixed: Use jose_solano.png and object-top -->
+                            <img src="static/img/jose_solano.png" alt="Jose Solano"
+                                class="relative w-48 h-48 rounded-full object-cover object-top border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20 shadow-2xl group-hover:scale-105 transition-transform duration-500">
                         </div>
                         <div class="text-white font-bold text-xl">Jose Solano</div>
                         <div class="text-sm text-diria-neonGreen uppercase tracking-widest font-medium mt-1">CEO</div>
@@ -316,78 +429,14 @@
                             <div
                                 class="absolute inset-0 bg-diria-neonBlue/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 opacity-50 group-hover:opacity-100">
                             </div>
+                            <!-- Fixed: object-top for better framing -->
                             <img src="static/img/alejandra_restrepo_new.png" alt="Alejandra Restrepo"
-                                class="relative w-40 h-40 rounded-full object-cover border-2 border-diria-neonBlue ring-4 ring-diria-neonBlue/20 shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                                class="relative w-48 h-48 rounded-full object-cover object-top border-2 border-diria-neonBlue ring-4 ring-diria-neonBlue/20 shadow-2xl group-hover:scale-105 transition-transform duration-500">
                         </div>
                         <div class="text-white font-bold text-xl">Alejandra Restrepo</div>
                         <div class="text-sm text-diria-neonBlue uppercase tracking-widest font-medium mt-1">Chief of
                             Staff</div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Guana Cloud Services Section -->
-    <section id="services" class="py-24 bg-black border-t border-white/5 relative overflow-hidden">
-        <!-- Background decorative elements -->
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div class="absolute top-1/4 left-0 w-96 h-96 bg-diria-neonGreen/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-1/4 right-0 w-96 h-96 bg-diria-neonBlue/5 rounded-full blur-3xl"></div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4">Servicios Guana Cloud</h2>
-                <p class="text-diria-muted max-w-2xl mx-auto text-lg">Más allá de DirIA, potenciamos tu transformación
-                    digital con expertise de clase mundial.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Service 1 -->
-                <div
-                    class="bg-white/5 backdrop-blur-sm p-8 rounded-2xl border border-white/10 hover:border-diria-neonGreen/50 transition-colors group">
-                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">🏗️</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Data Engineering</h3>
-                    <p class="text-diria-muted text-sm leading-relaxed">Arquitecturas robustas y escalables. Pipelines
-                        de datos modernos que alimentan la inteligencia de tu negocio.</p>
-                </div>
-
-                <!-- Service 2 -->
-                <div
-                    class="bg-white/5 backdrop-blur-sm p-8 rounded-2xl border border-white/10 hover:border-diria-neonBlue/50 transition-colors group">
-                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">📈</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Data Analyst</h3>
-                    <p class="text-diria-muted text-sm leading-relaxed">Transformamos datos crudos en insights
-                        accionables. Dashboards intuitivos y storytelling con datos.</p>
-                </div>
-
-                <!-- Service 3 -->
-                <div
-                    class="bg-white/5 backdrop-blur-sm p-8 rounded-2xl border border-white/10 hover:border-purple-500/50 transition-colors group">
-                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">🔬</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Data Scientist</h3>
-                    <p class="text-diria-muted text-sm leading-relaxed">Modelos predictivos y análisis avanzado para
-                        resolver problemas complejos y anticipar tendencias.</p>
-                </div>
-
-                <!-- Service 4 -->
-                <div
-                    class="bg-white/5 backdrop-blur-sm p-8 rounded-2xl border border-white/10 hover:border-pink-500/50 transition-colors group">
-                    <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">🤖</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Machine Learning</h3>
-                    <p class="text-diria-muted text-sm leading-relaxed">Implementación de IA y ML en producción. MLOps y
-                        automatización inteligente.</p>
-                </div>
-            </div>
-
-            <div class="mt-16 text-center">
-                <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-                    <span class="text-white font-medium">Multi-Cloud Native</span>
-                    <span class="text-diria-muted">|</span>
-                    <span class="text-diria-neonGreen font-bold">GCP Specialists</span>
-                    <span class="text-diria-muted">|</span>
-                    <span class="text-diria-muted text-sm">AWS & Azure Ready</span>
                 </div>
             </div>
         </div>
@@ -429,6 +478,99 @@
             },
             "retina_detect": true
         });
+
+        // Internationalization Logic
+        const translations = {
+            es: {
+                nav_product: "Producto",
+                nav_services: "Servicios",
+                nav_architecture: "Arquitectura",
+                nav_about: "Nosotros",
+                nav_login: "Login",
+                nav_demo: "Ver Demo",
+                hero_title_1: "Inteligencia",
+                hero_title_2: "Desde las Alturas",
+                hero_subtitle: "Orquestación multi-agente inspirada en la naturaleza. Coordinación perfecta, perspectiva total y ejecución precisa.",
+                hero_cta_demo: "Ver Demo",
+                hero_cta_console: "Acceder a Consola",
+                services_title: "Servicios Guana Cloud",
+                services_subtitle: "Más allá de DirIA, potenciamos tu transformación digital con expertise de clase mundial.",
+                service_de_title: "Data Engineering",
+                service_de_desc: "Arquitecturas robustas y escalables. Pipelines de datos modernos que alimentan la inteligencia de tu negocio. Construimos la base sólida que tu IA necesita.",
+                service_ml_title: "Machine Learning",
+                service_ml_desc: "Implementación de IA y ML en producción. MLOps y automatización inteligente para procesos críticos.",
+                service_da_title: "Data Analyst",
+                service_da_desc: "Transformamos datos crudos en insights accionables. Dashboards intuitivos y storytelling con datos.",
+                service_ds_title: "Data Scientist",
+                service_ds_desc: "Modelos predictivos y análisis avanzado para resolver problemas complejos y anticipar tendencias.",
+                arch_title: "Arquitectura Viva",
+                arch_subtitle: "Visualiza en tiempo real cómo nuestros agentes colaboran y procesan información.",
+                agent_guaitil_desc: "Resolución automática de tickets con precisión artesanal. Entiende contexto, sentimiento y urgencia.",
+                agent_nicoya_desc: "Base de conocimiento viva. Aprende de cada interacción y mantiene la sabiduría de la organización.",
+                agent_santacruz_desc: "Transforma preguntas en SQL y dashboards en tiempo real. Democratiza el acceso a los datos.",
+                agent_nandayure_desc: "Tu copiloto ejecutivo. Gestiona agenda, prioridades y alertas proactivas.",
+                about_title: "Sabiduría Ancestral,\nTecnología Futura",
+                about_p1: "En Guanacaste, el Cerro Diriá ha sido guía por 1,500 años. Para los Chorotegas, representaba la <span class=\"text-white font-medium\">perspectiva total</span>.",
+                about_p2: "<strong class=\"text-white\">Guana Cloud</strong> trae esa filosofía al mundo digital. <strong>DirIA</strong> es nuestro producto estrella, pero nuestra misión va más allá: orquestar sistemas que ven el panorama completo.",
+                team_title: "Liderazgo Visionario"
+            },
+            en: {
+                nav_product: "Product",
+                nav_services: "Services",
+                nav_architecture: "Architecture",
+                nav_about: "About Us",
+                nav_login: "Login",
+                nav_demo: "View Demo",
+                hero_title_1: "Intelligence",
+                hero_title_2: "From the Heights",
+                hero_subtitle: "Nature-inspired multi-agent orchestration. Perfect coordination, total perspective, and precise execution.",
+                hero_cta_demo: "View Demo",
+                hero_cta_console: "Access Console",
+                services_title: "Guana Cloud Services",
+                services_subtitle: "Beyond DirIA, we empower your digital transformation with world-class expertise.",
+                service_de_title: "Data Engineering",
+                service_de_desc: "Robust and scalable architectures. Modern data pipelines that fuel your business intelligence. We build the solid foundation your AI needs.",
+                service_ml_title: "Machine Learning",
+                service_ml_desc: "AI and ML implementation in production. MLOps and intelligent automation for critical processes.",
+                service_da_title: "Data Analyst",
+                service_da_desc: "Transforming raw data into actionable insights. Intuitive dashboards and data storytelling.",
+                service_ds_title: "Data Scientist",
+                service_ds_desc: "Predictive models and advanced analysis to solve complex problems and anticipate trends.",
+                arch_title: "Living Architecture",
+                arch_subtitle: "Visualize in real-time how our agents collaborate and process information.",
+                agent_guaitil_desc: "Automatic ticket resolution with artisanal precision. Understands context, sentiment, and urgency.",
+                agent_nicoya_desc: "Living knowledge base. Learns from every interaction and maintains organizational wisdom.",
+                agent_santacruz_desc: "Transforms questions into SQL and real-time dashboards. Democratizes access to data.",
+                agent_nandayure_desc: "Your executive copilot. Manages agenda, priorities, and proactive alerts.",
+                about_title: "Ancestral Wisdom,\nFuture Technology",
+                about_p1: "In Guanacaste, Cerro Diriá has been a guide for 1,500 years. For the Chorotegas, it represented <span class=\"text-white font-medium\">total perspective</span>.",
+                about_p2: "<strong class=\"text-white\">Guana Cloud</strong> brings that philosophy to the digital world. <strong>DirIA</strong> is our flagship product, but our mission goes further: orchestrating systems that see the whole picture.",
+                team_title: "Visionary Leadership"
+            }
+        };
+
+        let currentLang = 'es';
+        const langToggle = document.getElementById('lang-toggle');
+
+        langToggle.addEventListener('click', () => {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            langToggle.textContent = currentLang === 'es' ? 'EN' : 'ES';
+            updateLanguage();
+        });
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    // Check if the translation contains HTML (for spans/strong tags)
+                    if (translations[currentLang][key].includes('<')) {
+                        element.innerHTML = translations[currentLang][key];
+                    } else {
+                        element.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+        }
     </script>
 </body>
 
