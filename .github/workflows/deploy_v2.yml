@@ -94,11 +94,4 @@ jobs:
             KNOWLEDGE_BASE_BUCKET=diria-knowledge-base
             
           secrets: |-
-            DB_PASS=${{ env.DB_PASS_SECRET_NAME }}:latest
-            ASANA_PERSONAL_ACCESS_TOKEN=asana-pat:latest
-            GITHUB_PAT=GITHUB_PAT:latest
-            GITHUB_WEBHOOK_SECRET=GITHUB_WEBHOOK_SECRET:latest
-            LOOKERSDK_CLIENT_ID=LOOKERSDK_CLIENT_ID:latest
-            LOOKERSDK_CLIENT_SECRET=LOOKERSDK_CLIENT_SECRET:latest
-            GOOGLE_CHAT_WEBHOOK_URL=GOOGLE_CHAT_WEBHOOK_URL:latest
-            TI_GOOGLE_CHAT_WEBHOOK_URL=TI_GOOGLE_CHAT_WEBHOOK_URL:latest
+            DB_PASS=${{ env.DB_PASS_SECRET_NAME }}:latest        
