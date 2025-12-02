@@ -13,7 +13,7 @@ def reasignar_tiquete_tool(ticket_id: str, nuevo_responsable_email: str, solicit
     return ticket_manager.reasignar_tiquete(ticket_id, nuevo_responsable_email, solicitante_email)
 
 def consultar_estado_tool(ticket_id: str) -> str:
-    """Consulta el estado actual de un tiquete por su ID (ej. KAI-2025-XXXX)."""
+    """Consulta el estado actual de un tiquete por su ID (ej. dir-2025-XXXX)."""
     return ticket_manager.consultar_estado_tiquete(ticket_id)
 
 tools_list = [crear_tiquete_tool, cerrar_tiquete_tool, reasignar_tiquete_tool, consultar_estado_tool]

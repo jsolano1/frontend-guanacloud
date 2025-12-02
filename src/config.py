@@ -1,4 +1,3 @@
-# kai-corev2-api/src/config.py
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -20,8 +19,8 @@ class Settings(BaseSettings):
     DB_PASS: str
 
     # --- Firestore ---
-    FIRESTORE_DATABASE_ID: str = "agentkai-corev2" 
-    FIRESTORE_SESSION_COLLECTION: str = "kai_v2_graph_state"
+    FIRESTORE_DATABASE_ID: str = "agentdiria-core" 
+    FIRESTORE_SESSION_COLLECTION: str = "diria_graph_state"
 
     # --- Integraciones ---
     GOOGLE_CHAT_WEBHOOK_URL: str
@@ -29,9 +28,9 @@ class Settings(BaseSettings):
     APP_EMAIL_SENDER_IDENTITY: str
     
     # --- Storage & Recursos (AGREGADOS) ---
-    GCS_ATTACHMENT_BUCKET: str = "kai-tiquete-attachments"
-    KNOWLEDGE_BASE_BUCKET: str = "kai-knowledge-base"
-    GCS_CLAIMS_BUCKET: str = os.getenv("GCS_CLAIMS_BUCKET", "kai-claims-dev")
+    GCS_ATTACHMENT_BUCKET: str = "diria-tiquete-attachments"
+    KNOWLEDGE_BASE_BUCKET: str = "diria-knowledge-base"
+    GCS_CLAIMS_BUCKET: str = os.getenv("GCS_CLAIMS_BUCKET", "diria-claims-dev")
     
     # --- Pool DB ---
     DB_POOL_SIZE: int = 5

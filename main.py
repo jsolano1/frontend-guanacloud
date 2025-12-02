@@ -16,7 +16,7 @@ from src.logic_graph import get_compiled_graph
 from src.utils.logging_utils import log_structured
 from src.tools.claims_tools import analyze_claim_image_async, save_batch_claim_data
 
-app = FastAPI(title="DirIA Core", version="3.3.0-prod-hybrid")
+app = FastAPI(title="DirIA Core", version="1.1.0")
 
 app.add_middleware(
     CORSMiddleware,

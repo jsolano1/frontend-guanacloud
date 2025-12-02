@@ -35,7 +35,7 @@ def crear_tiquete(descripcion: str, prioridad: str, equipo_asignado: str, solici
     
     ai_data = _get_ai_classification(descripcion)
     titulo = ai_data.get("titulo", "Tiquete de Soporte")
-    ticket_id = f"KAI-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4().hex)[:4].upper()}"
+    ticket_id = f"dir-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4().hex)[:4].upper()}"
     
     engine = get_db_connection()
     try:

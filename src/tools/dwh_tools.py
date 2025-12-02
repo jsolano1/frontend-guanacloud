@@ -34,7 +34,7 @@ def _run_dwh_async_secure(pregunta, email, space_name):
     log_structured("AsyncDWHStart", user=email)
     try:
         resultado = dwh_query_service.consultar_dwh(pregunta, email)
-        msg = f"📊 *Reporte DWH Kai*\n\n{resultado}"
+        msg = f"📊 *Reporte DWH Diria*\n\n{resultado}"
         enviar_mensaje_directo_chat(space_name, {"text": msg})
     except Exception as e:
         enviar_mensaje_directo_chat(space_name, {"text": f"❌ Error DWH: {str(e)}"})
