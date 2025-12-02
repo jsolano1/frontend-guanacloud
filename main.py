@@ -31,12 +31,22 @@ claims_router = APIRouter(prefix="/api/v1/claims", tags=["claims"])
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = os.path.join(BASE_DIR, "src", "static")
 INDEX_FILE = os.path.join(STATIC_PATH, "index.html")
+CONSOLE_FILE = os.path.join(STATIC_PATH, "console.html")
+
+# Mount static files
+app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 
 @app.get("/", tags=["UI"])
 async def serve_ui():
     if os.path.exists(INDEX_FILE):
         return FileResponse(INDEX_FILE)
     return JSONResponse(status_code=404, content={"error": "UI no encontrada"})
+
+@app.get("/console.html", tags=["UI"])
+async def serve_console():
+    if os.path.exists(CONSOLE_FILE):
+        return FileResponse(CONSOLE_FILE)
+    return JSONResponse(status_code=404, content={"error": "Consola no encontrada"})
 
 @app.get("/health")
 async def health():

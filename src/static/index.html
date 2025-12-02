@@ -1,468 +1,358 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DirIA - Inteligencia Empresarial desde las Alturas</title>
-    <meta name="description" content="DirIA orquesta agentes de IA especializados que trabajan juntos como los picos de una montaña: coordinados, elevados, con perspectiva total.">
-    
+    <meta name="description"
+        content="DirIA orquesta agentes de IA especializados que trabajan juntos como los picos de una montaña.">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         diria: {
                             green: '#2D5016',
+                            neonGreen: '#00ff9d',
                             blue: '#0077BE',
-                            stone: '#3A3F47',
-                            yellow: '#FFB800',
-                            lightGreen: '#7FA650',
-                            terracotta: '#C1440E',
-                            light: '#F5F7FA',
-                            medium: '#8B9299',
-                            dark: '#1A1D1F'
+                            neonBlue: '#00ccff',
+                            dark: '#0a0a0a',
+                            darker: '#050505',
+                            card: '#111111',
+                            text: '#e5e5e5',
+                            muted: '#a3a3a3'
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         heading: ['Montserrat', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
                     }
                 }
             }
         }
     </script>
-    
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(45, 80, 22, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 157, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(0, 255, 157, 0.1);
+        }
+
+        /* Dynamic Background Particles */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
-<body class="bg-white text-diria-stone font-sans antialiased">
+
+<body class="font-sans antialiased selection:bg-diria-neonGreen selection:text-black">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <div class="flex-shrink-0 flex items-center gap-2">
-                    <img src="img/guana_logo_primary.png" alt="Guana Cloud Logo" class="h-10 w-auto">
-                    <span class="font-heading font-bold text-2xl text-diria-green tracking-tight">DirIA</span>
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <img src="static/img/guana_logo_dark.png" alt="Guana Cloud Logo" class="h-10 w-auto">
+                    <span class="font-heading font-bold text-2xl text-white tracking-tight">DirIA</span>
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#product" class="text-diria-stone hover:text-diria-blue font-medium transition">Producto</a>
-                    <a href="#solutions" class="text-diria-stone hover:text-diria-blue font-medium transition">Soluciones</a>
-                    <a href="#pricing" class="text-diria-stone hover:text-diria-blue font-medium transition">Precios</a>
-                    <a href="#about" class="text-diria-stone hover:text-diria-blue font-medium transition">Nosotros</a>
-                    <a href="/console.html" class="text-diria-blue font-semibold hover:text-diria-green transition">Login</a>
-                    <a href="#demo" class="bg-diria-green text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-opacity-90 transition shadow-lg shadow-diria-green/20">Ver Demo</a>
+                    <a href="#product"
+                        class="text-sm font-medium text-diria-muted hover:text-white transition">Producto</a>
+                    <a href="#architecture"
+                        class="text-sm font-medium text-diria-muted hover:text-white transition">Arquitectura</a>
+                    <a href="#pricing"
+                        class="text-sm font-medium text-diria-muted hover:text-white transition">Precios</a>
+                    <a href="#about"
+                        class="text-sm font-medium text-diria-muted hover:text-white transition">Nosotros</a>
+                    <a href="/console.html"
+                        class="text-sm font-semibold text-diria-neonBlue hover:text-white transition">Login</a>
+                    <a href="#demo"
+                        class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-diria-neonGreen transition shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(0,255,157,0.5)]">Ver
+                        Demo</a>
                 </div>
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-diria-stone hover:text-diria-green focus:outline-none">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#product" class="block px-3 py-2 rounded-md text-base font-medium text-diria-stone hover:text-diria-green hover:bg-gray-50">Producto</a>
-                <a href="#solutions" class="block px-3 py-2 rounded-md text-base font-medium text-diria-stone hover:text-diria-green hover:bg-gray-50">Soluciones</a>
-                <a href="#pricing" class="block px-3 py-2 rounded-md text-base font-medium text-diria-stone hover:text-diria-green hover:bg-gray-50">Precios</a>
-                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-diria-stone hover:text-diria-green hover:bg-gray-50">Nosotros</a>
-                <a href="/console.html" class="block px-3 py-2 rounded-md text-base font-medium text-diria-blue hover:bg-gray-50">Login</a>
-                <a href="#demo" class="block px-3 py-2 rounded-md text-base font-medium bg-diria-green text-white hover:bg-opacity-90">Ver Demo</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-gray-50 to-white">
-        <div class="absolute inset-0 z-0 opacity-10">
-            <img src="img/guana_logo_secondary.png" alt="Background Pattern" class="w-full h-full object-cover">
-        </div>
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div id="particles-js"></div> <!-- Dynamic BG Container -->
+        <div class="absolute inset-0 hero-gradient z-0"></div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <div class="inline-flex items-center justify-center p-2 bg-diria-green/10 rounded-full mb-8">
-                <span class="px-3 py-1 text-xs font-bold text-diria-green uppercase tracking-wide">Nuevo</span>
-                <span class="ml-2 text-sm text-diria-stone">DirIA Core v3.3 ya está disponible</span>
+            <div
+                class="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8 animate-fade-in-up">
+                <span class="w-2 h-2 rounded-full bg-diria-neonGreen animate-pulse mr-2"></span>
+                <span class="text-xs font-medium text-diria-neonGreen tracking-wide uppercase">DirIA Core v3.3
+                    Live</span>
             </div>
-            <h1 class="text-5xl md:text-7xl font-heading font-extrabold text-diria-dark tracking-tight mb-6">
-                Inteligencia Empresarial <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-diria-green to-diria-blue">desde las Alturas</span>
+
+            <h1 class="text-5xl md:text-8xl font-heading font-extrabold text-white tracking-tight mb-8 leading-tight">
+                Inteligencia <br>
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue">Desde
+                    las Alturas</span>
             </h1>
-            <p class="mt-4 max-w-2xl mx-auto text-xl text-diria-medium">
-                DirIA orquesta agentes de IA especializados que trabajan juntos como los picos de una montaña: coordinados, elevados, con perspectiva total.
+
+            <p class="mt-6 max-w-2xl mx-auto text-xl text-diria-muted font-light leading-relaxed">
+                Orquestación multi-agente inspirada en la naturaleza. Coordinación perfecta, perspectiva total y
+                ejecución precisa.
             </p>
-            <div class="mt-10 flex justify-center gap-4">
-                <a href="#demo" class="px-8 py-4 bg-diria-green text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition shadow-xl shadow-diria-green/30 flex items-center gap-2">
+
+            <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#demo"
+                    class="px-8 py-4 bg-diria-neonGreen text-black rounded-full font-bold text-lg hover:bg-white transition shadow-[0_0_20px_rgba(0,255,157,0.4)] flex items-center justify-center gap-2 group">
                     Ver Demo
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
                 </a>
-                <a href="#contact" class="px-8 py-4 bg-white text-diria-stone border border-gray-200 rounded-xl font-bold text-lg hover:border-diria-blue hover:text-diria-blue transition shadow-sm">
-                    Hablar con Ventas
+                <a href="/console.html"
+                    class="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:border-white hover:bg-white/5 transition flex items-center justify-center">
+                    Acceder a Consola
                 </a>
             </div>
-            
-            <!-- Stats Bar -->
-            <div class="mt-20 grid grid-cols-2 gap-8 md:grid-cols-4 border-t border-gray-100 pt-10">
+
+            <!-- Stats -->
+            <div class="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/5 pt-12">
                 <div>
-                    <div class="text-3xl font-heading font-bold text-diria-dark">50,000+</div>
-                    <div class="text-sm text-diria-medium mt-1">Queries/Day</div>
+                    <div class="text-3xl font-heading font-bold text-white">50k+</div>
+                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Queries/Day</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-heading font-bold text-diria-dark">99.9%</div>
-                    <div class="text-sm text-diria-medium mt-1">Uptime</div>
+                    <div class="text-3xl font-heading font-bold text-diria-neonGreen">99.9%</div>
+                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Uptime</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-heading font-bold text-diria-dark">40%</div>
-                    <div class="text-sm text-diria-medium mt-1">Cost Saved</div>
+                    <div class="text-3xl font-heading font-bold text-white">40%</div>
+                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Cost Saved</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-heading font-bold text-diria-dark">&lt;2s</div>
-                    <div class="text-sm text-diria-medium mt-1">Avg Response</div>
+                    <div class="text-3xl font-heading font-bold text-diria-neonBlue">&lt;2s</div>
+                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Latency</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Product Overview -->
-    <section id="product" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-diria-dark mb-4">Una Plataforma. Cuatro Cimas. Infinitas Posibilidades.</h2>
-                <p class="text-lg text-diria-medium max-w-3xl mx-auto">
-                    Así como el Cerro Diriá emerge de Guanacaste con múltiples picos que trabajan como un solo ecosistema, DirIA coordina agentes especializados de IA para transformar tu operación empresarial.
-                </p>
+    <!-- Dynamic Architecture Section -->
+    <section id="architecture" class="py-24 bg-diria-darker relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
+            <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4">Arquitectura Viva</h2>
+            <p class="text-diria-muted max-w-2xl mx-auto">Visualiza en tiempo real cómo nuestros agentes colaboran y
+                procesan información.</p>
+        </div>
+
+        <!-- Embed Architecture HTML -->
+        <div class="w-full h-[600px] border-y border-white/5 relative overflow-hidden group">
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-transparent via-diria-neonGreen/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10">
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Agent 1 -->
-                <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-xl hover:border-diria-green/30 transition group">
-                    <div class="w-12 h-12 bg-diria-green/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-diria-green group-hover:text-white transition text-diria-green">
-                        <span class="text-2xl">🏺</span>
-                    </div>
-                    <h3 class="text-xl font-heading font-bold text-diria-dark mb-2">Cima Guaitil</h3>
-                    <p class="text-sm font-semibold text-diria-green mb-4">Support Agent (Level 0)</p>
-                    <p class="text-diria-medium mb-6">Resuelve tickets automáticamente con precisión artesanal.</p>
-                    <ul class="space-y-2 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 70% tickets resueltos</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 24/7 disponibilidad</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Escalación inteligente</li>
-                    </ul>
-                </div>
-
-                <!-- Agent 2 -->
-                <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-xl hover:border-diria-yellow/30 transition group">
-                    <div class="w-12 h-12 bg-diria-yellow/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-diria-yellow group-hover:text-white transition text-diria-yellow">
-                        <span class="text-2xl">🌟</span>
-                    </div>
-                    <h3 class="text-xl font-heading font-bold text-diria-dark mb-2">Cima Nicoya</h3>
-                    <p class="text-sm font-semibold text-diria-yellow mb-4">Knowledge Agent</p>
-                    <p class="text-diria-medium mb-6">Base de conocimiento inteligente que aprende y evoluciona.</p>
-                    <ul class="space-y-2 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Búsqueda semántica</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Auto-indexación</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Multi-language</li>
-                    </ul>
-                </div>
-
-                <!-- Agent 3 -->
-                <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-xl hover:border-diria-blue/30 transition group">
-                    <div class="w-12 h-12 bg-diria-blue/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-diria-blue group-hover:text-white transition text-diria-blue">
-                        <span class="text-2xl">📊</span>
-                    </div>
-                    <h3 class="text-xl font-heading font-bold text-diria-dark mb-2">Cima Santa Cruz</h3>
-                    <p class="text-sm font-semibold text-diria-blue mb-4">Analytics Agent</p>
-                    <p class="text-diria-medium mb-6">Consultas a DWH y analytics en tiempo real.</p>
-                    <ul class="space-y-2 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> SQL natural language</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Predictive insights</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> BI integration</li>
-                    </ul>
-                </div>
-
-                <!-- Agent 4 -->
-                <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-xl hover:border-diria-terracotta/30 transition group">
-                    <div class="w-12 h-12 bg-diria-terracotta/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-diria-terracotta group-hover:text-white transition text-diria-terracotta">
-                        <span class="text-2xl">🗓️</span>
-                    </div>
-                    <h3 class="text-xl font-heading font-bold text-diria-dark mb-2">Cima Nandayure</h3>
-                    <p class="text-sm font-semibold text-diria-terracotta mb-4">Personal Assistant Agent</p>
-                    <p class="text-diria-medium mb-6">Gestión inteligente de calendario y alertas.</p>
-                    <ul class="space-y-2 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Context-aware scheduling</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Proactive notifications</li>
-                        <li class="flex items-center gap-2"><svg class="w-4 h-4 text-diria-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Priority management</li>
-                    </ul>
-                </div>
-            </div>
+            <iframe src="static/arquitectura_diria.html" class="w-full h-full border-0"
+                title="DirIA Architecture"></iframe>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="py-20 bg-diria-light">
+    <!-- Product / Agents Section -->
+    <section id="product" class="py-24 bg-diria-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-diria-dark mb-4">Construido con la Filosofía Blue Zone</h2>
-                <p class="text-lg text-diria-medium max-w-3xl mx-auto">
-                    De la región más longeva del planeta, traemos principios de resiliencia, colaboración y sostenibilidad al enterprise AI.
-                </p>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Agent Card 1 -->
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-diria-neonGreen/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-diria-neonGreen/20">
+                    </div>
+                    <div
+                        class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
+                        🏺</div>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Guaitil</h3>
+                    <p class="text-sm font-mono text-diria-neonGreen mb-4">Support Agent (L0)</p>
+                    <p class="text-diria-muted leading-relaxed">Resolución automática de tickets con precisión
+                        artesanal. Entiende contexto, sentimiento y urgencia.</p>
+                </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm">
-                    <div class="text-4xl mb-4">🌳</div>
-                    <h3 class="text-xl font-bold text-diria-dark mb-2">Resiliente</h3>
-                    <p class="text-diria-medium mb-4">Auto-healing y auto-scaling. Diseñado para durar generaciones.</p>
-                    <ul class="text-sm text-diria-stone space-y-1">
-                        <li>• 99.9% uptime SLA</li>
-                        <li>• Failover automático</li>
-                        <li>• Version rollback</li>
-                    </ul>
+                <!-- Agent Card 2 -->
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-yellow-500/20">
+                    </div>
+                    <div
+                        class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
+                        🌟</div>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Nicoya</h3>
+                    <p class="text-sm font-mono text-yellow-400 mb-4">Knowledge Agent</p>
+                    <p class="text-diria-muted leading-relaxed">Base de conocimiento viva. Aprende de cada interacción y
+                        mantiene la sabiduría de la organización.</p>
                 </div>
-                <!-- Feature 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm">
-                    <div class="text-4xl mb-4">🤝</div>
-                    <h3 class="text-xl font-bold text-diria-dark mb-2">Colaborativo</h3>
-                    <p class="text-diria-medium mb-4">Agentes que comparten contexto y aprenden juntos, no aislados.</p>
-                    <ul class="text-sm text-diria-stone space-y-1">
-                        <li>• Shared memory layer</li>
-                        <li>• Cross-agent learning</li>
-                        <li>• Unified orchestration</li>
-                    </ul>
-                </div>
-                <!-- Feature 3 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm">
-                    <div class="text-4xl mb-4">📈</div>
-                    <h3 class="text-xl font-bold text-diria-dark mb-2">Escalable</h3>
-                    <p class="text-diria-medium mb-4">De 100 a 100,000 queries sin reconfig. Cloud-native desde cero.</p>
-                    <ul class="text-sm text-diria-stone space-y-1">
-                        <li>• Multi-cloud ready</li>
-                        <li>• Serverless capable</li>
-                        <li>• Edge deployment</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- How It Works -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-diria-dark mb-4">De la Pregunta a la Acción en Segundos</h2>
-            </div>
-            
-            <div class="relative">
-                <!-- Timeline Line -->
-                <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-                    <!-- Step 1 -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 text-center">
-                        <div class="w-10 h-10 bg-diria-green text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-                        <h4 class="font-bold text-lg mb-2">Input</h4>
-                        <p class="text-sm text-diria-medium">Usuario pregunta</p>
+                <!-- Agent Card 3 -->
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-diria-neonBlue/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-diria-neonBlue/20">
                     </div>
-                    <!-- Step 2 -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 text-center">
-                        <div class="w-10 h-10 bg-diria-green text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-                        <h4 class="font-bold text-lg mb-2">Analyze</h4>
-                        <p class="text-sm text-diria-medium">DirIA decide qué agentes</p>
+                    <div
+                        class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
+                        📊</div>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Santa Cruz</h3>
+                    <p class="text-sm font-mono text-diria-neonBlue mb-4">Analytics Agent</p>
+                    <p class="text-diria-muted leading-relaxed">Transforma preguntas en SQL y dashboards en tiempo real.
+                        Democratiza el acceso a los datos.</p>
+                </div>
+
+                <!-- Agent Card 4 -->
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-red-500/20">
                     </div>
-                    <!-- Step 3 -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 text-center">
-                        <div class="w-10 h-10 bg-diria-green text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-                        <h4 class="font-bold text-lg mb-2">Execute</h4>
-                        <p class="text-sm text-diria-medium">Agentes trabajan juntos</p>
-                    </div>
-                    <!-- Step 4 -->
-                    <div class="bg-white p-6 rounded-xl border border-gray-200 text-center">
-                        <div class="w-10 h-10 bg-diria-green text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
-                        <h4 class="font-bold text-lg mb-2">Respond</h4>
-                        <p class="text-sm text-diria-medium">Usuario recibe respuesta unificada</p>
-                    </div>
+                    <div
+                        class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
+                        🗓️</div>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Nandayure</h3>
+                    <p class="text-sm font-mono text-red-400 mb-4">Personal Assistant</p>
+                    <p class="text-diria-muted leading-relaxed">Tu copiloto ejecutivo. Gestiona agenda, prioridades y
+                        alertas proactivas.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Origin Story -->
-    <section id="about" class="py-20 bg-diria-dark text-white">
+    <section id="about" class="py-24 bg-diria-darker border-t border-white/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div>
-                    <h2 class="text-3xl md:text-4xl font-heading font-bold mb-6">De las Montañas de Guanacaste al Cloud Global</h2>
-                    <div class="space-y-4 text-gray-300">
+                    <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-8">Sabiduría
+                        Ancestral,<br>Tecnología Futura</h2>
+                    <div class="space-y-6 text-lg text-diria-muted font-light">
                         <p>
-                            En el corazón de Guanacaste, Costa Rica, se alza el Cerro Diriá—una montaña que ha guiado a los habitantes de la región durante más de 1,500 años.
+                            En Guanacaste, el Cerro Diriá ha sido guía por 1,500 años. Para los Chorotegas, representaba
+                            la <span class="text-white font-medium">perspectiva total</span>.
                         </p>
                         <p>
-                            Para los Chorotegas, los pueblos indígenas originales, "Diriá" significaba mucho más que "montaña". Era perspectiva. Era coordinación. Era la capacidad de ver todo el ecosistema y tomar decisiones sabias.
-                        </p>
-                        <p>
-                            Hoy, DirIA trae esa sabiduría ancestral al enterprise cloud: agentes especializados que colaboran con perspectiva total, coordinados desde las alturas.
-                        </p>
-                        <p class="font-semibold text-white">
-                            No somos "otro producto de IA". Somos una filosofía de 1,500 años aplicada a tecnología del siglo XXI.
+                            Hoy, traemos esa filosofía al cloud. No construimos simples chatbots; orquestamos sistemas
+                            que ven el panorama completo.
                         </p>
                     </div>
-                    <div class="mt-8 flex gap-4">
-                         <div class="flex flex-col items-center">
-                            <img src="img/jose_solano.png" alt="Jose Solano" class="w-20 h-20 rounded-full object-cover border-2 border-diria-green mb-2">
-                            <span class="text-sm font-bold">Jose Solano</span>
-                            <span class="text-xs text-gray-400">CEO</span>
+
+                    <div class="mt-12 flex gap-8">
+                        <div class="flex items-center gap-4">
+                            <img src="static/img/jose_solano.jpg" alt="Jose Solano"
+                                class="w-16 h-16 rounded-full object-cover border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20">
+                            <div>
+                                <div class="text-white font-bold">Jose Solano</div>
+                                <div class="text-xs text-diria-neonGreen uppercase tracking-wider">CEO</div>
+                            </div>
                         </div>
-                        <div class="flex flex-col items-center">
-                            <img src="img/maria_alejandra.png" alt="Maria Alejandra" class="w-20 h-20 rounded-full object-cover border-2 border-diria-green mb-2">
-                            <span class="text-sm font-bold">Maria Alejandra</span>
-                            <span class="text-xs text-gray-400">Chief of Staff</span>
+                        <div class="flex items-center gap-4">
+                            <img src="static/img/maria_alejandra.png" alt="Maria Alejandra"
+                                class="w-16 h-16 rounded-full object-cover border-2 border-diria-neonBlue ring-4 ring-diria-neonBlue/20">
+                            <div>
+                                <div class="text-white font-bold">Maria Alejandra</div>
+                                <div class="text-xs text-diria-neonBlue uppercase tracking-wider">Chief of Staff</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="relative">
-                    <img src="img/guana_logo_colorful.png" alt="Guana Cloud Philosophy" class="w-full h-auto rounded-2xl shadow-2xl opacity-90">
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000">
+                    </div>
+                    <img src="static/img/guana_cloud_graphic.png" alt="Guana Cloud Philosophy"
+                        class="relative rounded-2xl shadow-2xl w-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Pricing -->
-    <section id="pricing" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-heading font-bold text-diria-dark mb-4">Precios Tan Claros Como la Vista Desde Diriá</h2>
-                <p class="text-lg text-diria-medium">Sin sorpresas. Sin letra pequeña. Escala según creces.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Tier 1 -->
-                <div class="border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition">
-                    <h3 class="text-xl font-bold text-diria-dark mb-2">🌱 SEMILLA</h3>
-                    <p class="text-sm text-diria-medium mb-4">Para Startups</p>
-                    <div class="text-4xl font-bold text-diria-dark mb-6">$499<span class="text-lg font-normal text-diria-medium">/mes</span></div>
-                    <ul class="space-y-3 mb-8 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2">✓ 2 agentes activos</li>
-                        <li class="flex items-center gap-2">✓ 2,000 queries/mes</li>
-                        <li class="flex items-center gap-2">✓ Email support</li>
-                        <li class="flex items-center gap-2">✓ 2 integraciones</li>
-                    </ul>
-                    <a href="#" class="block w-full py-3 text-center border border-diria-green text-diria-green font-bold rounded-xl hover:bg-diria-green hover:text-white transition">Empezar gratis</a>
-                </div>
-                <!-- Tier 2 -->
-                <div class="border-2 border-diria-green rounded-2xl p-8 shadow-xl relative transform scale-105">
-                    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-diria-green text-white px-4 py-1 rounded-full text-sm font-bold">Más Popular</div>
-                    <h3 class="text-xl font-bold text-diria-dark mb-2">🌳 ÁRBOL</h3>
-                    <p class="text-sm text-diria-medium mb-4">Para Growth</p>
-                    <div class="text-4xl font-bold text-diria-dark mb-6">$1,999<span class="text-lg font-normal text-diria-medium">/mes</span></div>
-                    <ul class="space-y-3 mb-8 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2">✓ 4 agentes activos</li>
-                        <li class="flex items-center gap-2">✓ 15,000 queries/mes</li>
-                        <li class="flex items-center gap-2">✓ Priority support</li>
-                        <li class="flex items-center gap-2">✓ 10 integraciones</li>
-                    </ul>
-                    <a href="#" class="block w-full py-3 text-center bg-diria-green text-white font-bold rounded-xl hover:bg-opacity-90 transition">Agendar demo</a>
-                </div>
-                <!-- Tier 3 -->
-                <div class="border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition">
-                    <h3 class="text-xl font-bold text-diria-dark mb-2">🏔️ MONTAÑA</h3>
-                    <p class="text-sm text-diria-medium mb-4">Para Enterprise</p>
-                    <div class="text-4xl font-bold text-diria-dark mb-6">Custom</div>
-                    <ul class="space-y-3 mb-8 text-sm text-diria-stone">
-                        <li class="flex items-center gap-2">✓ Agentes ilimitados</li>
-                        <li class="flex items-center gap-2">✓ Queries ilimitadas</li>
-                        <li class="flex items-center gap-2">✓ 24/7 phone support</li>
-                        <li class="flex items-center gap-2">✓ Custom integration</li>
-                    </ul>
-                    <a href="#" class="block w-full py-3 text-center border border-diria-stone text-diria-stone font-bold rounded-xl hover:bg-diria-stone hover:text-white transition">Hablar con ventas</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="py-20 bg-diria-green text-white text-center">
-        <div class="max-w-4xl mx-auto px-4">
-            <h2 class="text-3xl md:text-5xl font-heading font-bold mb-6">🏔️ Elévate con DirIA Hoy</h2>
-            <p class="text-xl mb-10 opacity-90">Miles de queries procesadas. Cero compromisos requeridos.</p>
-            <a href="#" class="inline-block px-10 py-4 bg-white text-diria-green rounded-xl font-bold text-lg hover:bg-gray-100 transition shadow-xl">
-                Empezar Free Trial
-            </a>
-            <p class="mt-8 italic opacity-80">
-                "DirIA transformó nuestro soporte en 2 semanas. Mejor inversión tech del año." <br>
-                — María González, CTO, FinTech CR
-            </p>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-diria-stone text-gray-300 py-12">
+    <footer class="bg-black border-t border-white/10 py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center gap-2 mb-4">
-                        <img src="img/guana_logo_primary.png" alt="Logo" class="h-8 w-auto brightness-0 invert">
-                        <span class="font-heading font-bold text-xl text-white">DirIA</span>
-                    </div>
-                    <p class="text-sm mb-4">Inteligencia empresarial desde las alturas. De Guanacaste, Costa Rica 🇨🇷 para el mundo.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="hover:text-white">LinkedIn</a>
-                        <a href="#" class="hover:text-white">Twitter</a>
-                        <a href="#" class="hover:text-white">GitHub</a>
-                    </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <img src="static/img/guana_logo_dark.png" alt="Logo" class="h-8 w-auto">
+                    <span class="font-heading font-bold text-xl text-white">DirIA</span>
                 </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">Producto</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">Overview</a></li>
-                        <li><a href="#" class="hover:text-white">Agentes</a></li>
-                        <li><a href="#" class="hover:text-white">Integración</a></li>
-                        <li><a href="#" class="hover:text-white">Pricing</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">Soluciones</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">Financial</a></li>
-                        <li><a href="#" class="hover:text-white">Technology</a></li>
-                        <li><a href="#" class="hover:text-white">BPO</a></li>
-                        <li><a href="#" class="hover:text-white">Analytics</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">Compañía</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">Sobre Nosotros</a></li>
-                        <li><a href="#" class="hover:text-white">Historia Chorotega</a></li>
-                        <li><a href="#" class="hover:text-white">Carreras</a></li>
-                        <li><a href="#" class="hover:text-white">Contacto</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 pt-8 text-sm text-center md:text-left flex flex-col md:flex-row justify-between items-center">
-                <p>© 2025 DirIA by GuanaCloud. All rights reserved.</p>
-                <div class="flex space-x-4 mt-4 md:mt-0">
-                    <span>🌱 Carbon Neutral Hosting</span>
-                    <span>🔒 SOC 2 Type II Certified</span>
+                <div class="text-diria-muted text-sm text-center md:text-right">
+                    <p>&copy; 2025 DirIA by GuanaCloud. San José, Costa Rica.</p>
+                    <p class="mt-2 text-xs opacity-50">Carbon Neutral Hosting • SOC 2 Type II</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Chat Widget (Placeholder) -->
-    <div class="fixed bottom-6 right-6 z-50">
-        <button id="chat-widget-btn" class="bg-diria-green text-white p-4 rounded-full shadow-2xl hover:bg-opacity-90 transition transform hover:scale-105">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-        </button>
-    </div>
-
-    <script src="js/main.js"></script>
+    <!-- Particles Script -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 40, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.1, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.05, "width": 1 },
+                "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.3 } } }
+            },
+            "retina_detect": true
+        });
+    </script>
 </body>
+
 </html>
