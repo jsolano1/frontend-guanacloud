@@ -27,10 +27,14 @@ export const Navbar: React.FC = () => {
         <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-nav h-20' : 'h-24 bg-transparent'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex justify-between items-center h-full">
-                    {/* Logo con Link al Home */}
-                    <Link to="/" className="flex-shrink-0 flex items-center gap-3 cursor-pointer group">
-                        <img src="/img/guana_logo_primary.png" alt="Guana Cloud Logo" className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" />
-                        <span className="font-heading font-bold text-2xl text-white tracking-tight group-hover:text-diria-neonGreen transition-colors">Guana Cloud</span>
+                    {/* Logo con Link al Home (SIN TEXTO) */}
+                    <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer group">
+                        {/* Se aumentó un poco el tamaño (h-14) para que se lea bien el texto de la imagen */}
+                        <img
+                            src="/img/guana_cloud_square.png"
+                            alt="Guana Cloud"
+                            className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
+                        />
                     </Link>
 
                     {/* Desktop Menu */}
