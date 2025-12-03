@@ -1,3 +1,9 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
+import { ArrowRight } from 'lucide-react';
+
 export const Hero: React.FC = () => {
     const { t } = useLanguage();
 
