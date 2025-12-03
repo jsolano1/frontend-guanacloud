@@ -1,15 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useLanguage } from '../../context/LanguageContext';
-import { ArrowRight } from 'lucide-react';
-
 export const Hero: React.FC = () => {
     const { t } = useLanguage();
 
     return (
         <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-            {/* Drone AI Background */}
+            {/* Background */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.img
                     src="/img/hero_drone_ai_diria.png"
@@ -24,20 +18,18 @@ export const Hero: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
 
-                {/* BADGE CORREGIDO: Verde vivo forzado */}
+                {/* BADGE: Punto más pequeño (h-2 w-2) */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-black/40 backdrop-blur-md mb-8 shadow-lg"
                 >
-                    {/* Punto verde parpadeante */}
-                    <span className="relative flex h-3 w-3 mr-2">
+                    <span className="relative flex h-2 w-2 mr-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#00ff9d' }}></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: '#00ff9d' }}></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#00ff9d' }}></span>
                     </span>
 
-                    {/* Texto del badge en verde */}
                     <span className="text-xs font-bold tracking-wide uppercase" style={{ color: '#00ff9d' }}>
                         DirIA Core v1.2 Live
                     </span>

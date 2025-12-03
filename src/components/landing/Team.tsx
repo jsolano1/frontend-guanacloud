@@ -7,7 +7,6 @@ export const Team: React.FC = () => {
     const { t } = useLanguage();
     const [isContactOpen, setIsContactOpen] = useState(false);
 
-    // Función de envío de formulario (Formspree)
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -96,7 +95,6 @@ export const Team: React.FC = () => {
                             </div>
                             <div className="text-white font-bold text-2xl mb-2">Alejandra Restrepo</div>
                             <div className="text-sm uppercase tracking-widest font-bold mb-6" style={{ color: '#00ccff' }}>Founder & Chief of Staff</div>
-                            {/* AQUI AGREGAMOS LA RESEÑA DE ALEJANDRA */}
                             <p
                                 className="text-gray-400 text-sm text-center leading-relaxed"
                                 dangerouslySetInnerHTML={{ __html: t('team_bio_alejandra' as any) }}
@@ -104,7 +102,7 @@ export const Team: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Contact CTA */}
+                    {/* Botón que abre el Modal */}
                     <div className="flex justify-center">
                         <button
                             onClick={() => setIsContactOpen(true)}
@@ -118,7 +116,7 @@ export const Team: React.FC = () => {
                 </div>
             </div>
 
-            {/* Modal Logic */}
+            {/* Modal con Formulario */}
             <AnimatePresence>
                 {isContactOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 px-4 bg-black/80 backdrop-blur-sm">
