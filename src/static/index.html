@@ -43,6 +43,7 @@
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'glow': 'glow 2s ease-in-out infinite alternate',
+                        'pan-zoom': 'panZoom 30s linear infinite alternate',
                     },
                     keyframes: {
                         float: {
@@ -52,6 +53,10 @@
                         glow: {
                             'from': { boxShadow: '0 0 10px -10px rgba(0, 255, 157, 0)' },
                             'to': { boxShadow: '0 0 20px 5px rgba(0, 255, 157, 0.3)' }
+                        },
+                        panZoom: {
+                            '0%': { transform: 'scale(1) translate(0, 0)' },
+                            '100%': { transform: 'scale(1.1) translate(-2%, -2%)' }
                         }
                     }
                 }
@@ -72,8 +77,8 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .hero-gradient {
-            background: radial-gradient(circle at 50% 50%, rgba(45, 80, 22, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(5, 5, 5, 0.3) 0%, rgba(5, 5, 5, 0.8) 100%);
         }
 
         .card-hover {
@@ -124,13 +129,41 @@
         /* Scroll Zoom Effect */
         .scroll-zoom {
             opacity: 0;
-            transform: scale(0.9);
+            transform: scale(0.95);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
 
         .scroll-zoom.visible {
             opacity: 1;
             transform: scale(1);
+        }
+
+        /* Tab Styles for Pillars */
+        .pillar-tab.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: #00ff9d;
+            color: white;
+        }
+
+        .pillar-content {
+            display: none;
+        }
+
+        .pillar-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -156,7 +189,7 @@
                     <a href="#architecture" class="text-sm font-medium text-diria-muted hover:text-white transition"
                         data-i18n="nav_architecture">Arquitectura</a>
                     <a href="#about" class="text-sm font-medium text-diria-muted hover:text-white transition"
-                        data-i18n="nav_about">Nosotros</a>
+                        data-i18n="nav_about">Filosofía</a>
 
                     <!-- Language Toggle -->
                     <button id="lang-toggle"
@@ -176,8 +209,13 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden scroll-zoom">
-        <div class="absolute inset-0 hero-gradient z-0"></div>
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Drone AI Background -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img src="static/img/hero_drone_ai_diria.png" alt="Cerro Diria AI Network"
+                class="w-full h-full object-cover animate-pan-zoom opacity-60">
+            <div class="absolute inset-0 hero-overlay"></div>
+        </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             <div
@@ -187,16 +225,17 @@
                     Live</span>
             </div>
 
-            <h1 class="text-5xl md:text-8xl font-heading font-extrabold text-white tracking-tight mb-8 leading-tight">
-                <span data-i18n="hero_title_1">Inteligencia</span> <br>
+            <h1
+                class="text-5xl md:text-8xl font-heading font-extrabold text-white tracking-tight mb-8 leading-tight drop-shadow-2xl">
+                <span data-i18n="hero_title_1">Perspectiva Inteligente</span> <br>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue"
-                    data-i18n="hero_title_2">Desde las Alturas</span>
+                    data-i18n="hero_title_2">Desde Todas las Alturas</span>
             </h1>
 
-            <p class="mt-6 max-w-2xl mx-auto text-xl text-diria-muted font-light leading-relaxed"
+            <p class="mt-6 max-w-2xl mx-auto text-xl text-gray-200 font-light leading-relaxed drop-shadow-md"
                 data-i18n="hero_subtitle">
-                Orquestación multi-agente inspirada en la naturaleza. Coordinación perfecta, perspectiva total y
-                ejecución precisa.
+                Donde la sabiduría ancestral de Guanacaste encuentra la Inteligencia Artificial. Un ecosistema vivo que
+                protege y sustenta tu negocio.
             </p>
 
             <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4">
@@ -210,30 +249,10 @@
                     </svg>
                 </a>
                 <a href="/console.html"
-                    class="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:border-white hover:bg-white/5 transition flex items-center justify-center"
+                    class="px-8 py-4 bg-black/30 border border-white/20 text-white rounded-full font-bold text-lg hover:border-white hover:bg-white/10 transition flex items-center justify-center backdrop-blur-md"
                     data-i18n="hero_cta_console">
                     Acceder a Consola
                 </a>
-            </div>
-
-            <!-- Stats -->
-            <div class="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-white/5 pt-12">
-                <div>
-                    <div class="text-3xl font-heading font-bold text-white">50k+</div>
-                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Queries/Day</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-heading font-bold text-diria-neonGreen">99.9%</div>
-                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Uptime</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-heading font-bold text-white">40%</div>
-                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Cost Saved</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-heading font-bold text-diria-neonBlue">&lt;2s</div>
-                    <div class="text-xs text-diria-muted uppercase tracking-wider mt-1">Latency</div>
-                </div>
             </div>
         </div>
     </section>
@@ -312,21 +331,10 @@
                 </div>
             </div>
 
-            <div class="mt-16 text-center">
-                <div
-                    class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition backdrop-blur-md">
-                    <span class="text-white font-medium">Multi-Cloud Native</span>
-                    <span class="text-diria-muted">|</span>
-                    <span class="text-diria-neonGreen font-bold">GCP Specialists</span>
-                    <span class="text-diria-muted">|</span>
-                    <span class="text-diria-muted text-sm">AWS & Azure Ready</span>
-                </div>
-            </div>
-
             <!-- Regional Presence -->
             <div class="mt-12 text-center">
-                <p class="text-diria-muted text-sm uppercase tracking-widest mb-4" data-i18n="presence_label">Presencia
-                    Regional</p>
+                <p class="text-diria-muted text-sm uppercase tracking-widest mb-4" data-i18n="presence_label">Proyectos
+                    Desarrollados en</p>
                 <div class="flex flex-wrap justify-center gap-4 text-white font-medium">
                     <span class="px-3 py-1 bg-white/5 rounded-lg border border-white/5">🇨🇷 Costa Rica</span>
                     <span class="px-3 py-1 bg-white/5 rounded-lg border border-white/5">🇵🇷 Puerto Rico</span>
@@ -338,13 +346,13 @@
         </div>
     </section>
 
-    <!-- Dynamic Architecture Section -->
+    <!-- Dynamic Architecture Section (Product/Ecosystem) -->
     <section id="architecture" class="py-24 bg-diria-darker/80 relative scroll-zoom">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-            <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4" data-i18n="arch_title">Arquitectura
-                Viva</h2>
-            <p class="text-diria-muted max-w-2xl mx-auto" data-i18n="arch_subtitle">Visualiza en tiempo real cómo
-                nuestros agentes colaboran y procesan información.</p>
+            <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4" data-i18n="arch_title">DirIA:
+                Producto & Ecosistema</h2>
+            <p class="text-diria-muted max-w-2xl mx-auto" data-i18n="arch_subtitle">Una plataforma multi-agente capaz de
+                resolver desde tareas sencillas hasta orquestaciones complejas.</p>
         </div>
 
         <!-- Embed Architecture HTML -->
@@ -357,9 +365,16 @@
         </div>
     </section>
 
-    <!-- Product / Agents Section -->
+    <!-- Product / Agents Section (Renamed) -->
     <section id="product" class="py-24 bg-diria-dark/80 scroll-zoom">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4" data-i18n="agents_title">Las
+                    Cimas de DirIA</h2>
+                <p class="text-diria-muted max-w-2xl mx-auto" data-i18n="agents_subtitle">Cada agente es una cumbre
+                    especializada. Juntos, forman una montaña de inteligencia.</p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Agent Card 1 -->
                 <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
@@ -369,10 +384,10 @@
                     <div
                         class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
                         🏺</div>
-                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Guaitil</h3>
-                    <p class="text-sm font-mono text-diria-neonGreen mb-4">Support Agent (L0)</p>
-                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_guaitil_desc">Resolución automática de
-                        tickets con precisión artesanal. Entiende contexto, sentimiento y urgencia.</p>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Support Agent (L0)</h3>
+                    <p class="text-sm font-mono text-diria-neonGreen mb-4">Cima Guaitil</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_guaitil_desc">Tu helpdesk level 0
+                        siempre vigilante. Resolución automática de tickets con precisión artesanal.</p>
                 </div>
 
                 <!-- Agent Card 2 -->
@@ -383,10 +398,10 @@
                     <div
                         class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
                         🌟</div>
-                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Nicoya</h3>
-                    <p class="text-sm font-mono text-yellow-400 mb-4">Knowledge Agent</p>
-                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_nicoya_desc">Base de conocimiento viva.
-                        Aprende de cada interacción y mantiene la sabiduría de la organización.</p>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Knowledge Agent</h3>
+                    <p class="text-sm font-mono text-yellow-400 mb-4">Cima Nicoya</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_nicoya_desc">Base de conocimiento que
+                        no olvida. Aprende de cada interacción y mantiene la sabiduría.</p>
                 </div>
 
                 <!-- Agent Card 3 -->
@@ -397,10 +412,10 @@
                     <div
                         class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
                         📊</div>
-                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Santa Cruz</h3>
-                    <p class="text-sm font-mono text-diria-neonBlue mb-4">Analytics Agent</p>
-                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_santacruz_desc">Transforma preguntas en
-                        SQL y dashboards en tiempo real. Democratiza el acceso a los datos.</p>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Analytics Agent</h3>
+                    <p class="text-sm font-mono text-diria-neonBlue mb-4">Cima Santa Cruz</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_santacruz_desc">Consultas DWH y
+                        real-time insights. Transforma preguntas en SQL y dashboards.</p>
                 </div>
 
                 <!-- Agent Card 4 -->
@@ -411,40 +426,187 @@
                     <div
                         class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-2xl border border-white/10 group-hover:scale-110 transition-transform duration-300">
                         🗓️</div>
-                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Cima Nandayure</h3>
-                    <p class="text-sm font-mono text-red-400 mb-4">Personal Assistant</p>
-                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_nandayure_desc">Tu copiloto ejecutivo.
-                        Gestiona agenda, prioridades y alertas proactivas.</p>
+                    <h3 class="text-2xl font-heading font-bold text-white mb-2">Personal Assistant</h3>
+                    <p class="text-sm font-mono text-red-400 mb-4">Cima Nandayure</p>
+                    <p class="text-diria-muted leading-relaxed" data-i18n="agent_nandayure_desc">Asistente con
+                        calendario y alertas inteligentes. Tu copiloto ejecutivo.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Origin Story & Team -->
+    <!-- Philosophy / About Section (Major Expansion) -->
     <section id="about" class="py-24 bg-diria-darker/90 border-t border-white/5 scroll-zoom">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
-                <div>
-                    <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-8" data-i18n="about_title">
-                        Sabiduría Ancestral,<br>Tecnología Futura</h2>
-                    <div class="space-y-6 text-lg text-diria-muted font-light">
-                        <p data-i18n="about_p1">
-                            En Guanacaste, el Cerro Diriá ha sido guía por 1,500 años. Para los Chorotegas, representaba
-                            la <span class="text-white font-medium">perspectiva total</span>.
-                        </p>
-                        <p data-i18n="about_p2">
-                            <strong class="text-white">Guana Cloud</strong> trae esa filosofía al mundo digital.
-                            <strong>DirIA</strong> es nuestro producto estrella, pero nuestra misión va más allá:
-                            orquestar sistemas que ven el panorama completo.
-                        </p>
+
+            <!-- Intro: El Origen -->
+            <div class="text-center mb-20">
+                <span class="text-diria-neonGreen font-mono text-sm tracking-widest uppercase mb-4 block">De la
+                    Provincia Más Sabia del Planeta</span>
+                <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-8" data-i18n="about_origin_title">
+                    Sabiduría Ancestral,<br>Tecnología Futura</h2>
+                <div class="max-w-4xl mx-auto text-lg text-diria-muted font-light space-y-6 leading-relaxed">
+                    <p data-i18n="about_origin_p1">
+                        En el corazón de Guanacaste, el <strong>Cerro Diriá</strong> ha sido testigo de la vida durante
+                        milenios. Para los chorotega, "Diriá" significaba más que "montaña" — representaba elevación,
+                        perspectiva y visión desde las alturas.
+                    </p>
+                    <p data-i18n="about_origin_p2">
+                        Aquí, en una de las cinco <strong>Blue Zones</strong> del planeta, la naturaleza ha
+                        perfeccionado sistemas de colaboración y resiliencia. GuanaCloud nació aquí porque entendimos
+                        algo fundamental: los sistemas más inteligentes no son monolíticos, son redes de especialistas
+                        que colaboran.
+                    </p>
+                </div>
+            </div>
+
+            <!-- The 3 Pillars Tabs -->
+            <div class="mb-24">
+                <div class="flex flex-wrap justify-center gap-4 mb-12">
+                    <button onclick="switchTab('nature')" id="tab-nature"
+                        class="pillar-tab active px-6 py-3 rounded-full border border-white/10 text-diria-muted font-medium hover:text-white transition">
+                        🌳 Naturaleza
+                    </button>
+                    <button onclick="switchTab('heritage')" id="tab-heritage"
+                        class="pillar-tab px-6 py-3 rounded-full border border-white/10 text-diria-muted font-medium hover:text-white transition">
+                        🏺 Herencia
+                    </button>
+                    <button onclick="switchTab('cloud')" id="tab-cloud"
+                        class="pillar-tab px-6 py-3 rounded-full border border-white/10 text-diria-muted font-medium hover:text-white transition">
+                        ☁️ Tecnología
+                    </button>
+                </div>
+
+                <!-- Content: Nature -->
+                <div id="content-nature"
+                    class="pillar-content active max-w-5xl mx-auto bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6" data-i18n="pillar_nature_title">El Bosque
+                                Tropical Seco</h3>
+                            <p class="text-diria-muted mb-6" data-i18n="pillar_nature_desc">
+                                Un ecosistema que sobrevive 6 meses sin lluvia mediante redes de raíces interconectadas.
+                            </p>
+                            <ul class="space-y-4 text-gray-300">
+                                <li class="flex gap-3">
+                                    <span class="text-diria-neonGreen">🌿</span>
+                                    <span><strong>Raíces Micorrízicas:</strong> Comparten recursos. Así nuestros agentes
+                                        comparten memoria y contexto.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-diria-neonGreen">🦜</span>
+                                    <span><strong>La Lapa Roja:</strong> Comunicación constante es supervivencia.
+                                        Orquestación en tiempo real.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-diria-neonGreen">🐒</span>
+                                    <span><strong>El Mono Congo:</strong> Sistema de alerta temprana. Notificaciones
+                                        proactivas antes del problema.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="relative h-64 md:h-full rounded-2xl overflow-hidden">
+                            <img src="static/img/guana_cloud_graphic.png" alt="Nature Ecosystem"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80">
+                        </div>
                     </div>
                 </div>
-                <div class="relative group">
-                    <div
-                        class="absolute -inset-1 bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000">
+
+                <!-- Content: Heritage -->
+                <div id="content-heritage"
+                    class="pillar-content max-w-5xl mx-auto bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6" data-i18n="pillar_heritage_title">La Red
+                                Chorotega</h3>
+                            <p class="text-diria-muted mb-6" data-i18n="pillar_heritage_desc">
+                                1,500 años antes del Cloud Computing, los Chorotegas inventaron la arquitectura
+                                distribuida.
+                            </p>
+                            <ul class="space-y-4 text-gray-300">
+                                <li class="flex gap-3">
+                                    <span class="text-yellow-500">🏺</span>
+                                    <span><strong>Guaitil (Cerámica):</strong> Almacenamiento de información y
+                                        precisión.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-yellow-500">🌟</span>
+                                    <span><strong>Nicoya (Astronomía):</strong> Predicción de ciclos y sabiduría.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-yellow-500">📊</span>
+                                    <span><strong>Santa Cruz (Comercio):</strong> Intercambio y flujo de datos.</span>
+                                </li>
+                            </ul>
+                            <p class="mt-6 text-sm text-diria-muted italic">"DirIA no es solo inspirado en los
+                                Chorotegas. Es la red Chorotega en el cloud."</p>
+                        </div>
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-9xl opacity-20">🏺</div>
+                        </div>
                     </div>
-                    <img src="static/img/guana_cloud_graphic.png" alt="Guana Cloud Philosophy"
-                        class="relative rounded-2xl shadow-2xl w-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                </div>
+
+                <!-- Content: Cloud -->
+                <div id="content-cloud"
+                    class="pillar-content max-w-5xl mx-auto bg-white/5 rounded-3xl p-8 md:p-12 border border-white/10">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-6" data-i18n="pillar_cloud_title">Escalando la
+                                Sabiduría</h3>
+                            <p class="text-diria-muted mb-6" data-i18n="pillar_cloud_desc">
+                                El cloud permite que los sistemas distribuidos operen a escala planetaria con la
+                                elegancia de un bosque tropical.
+                            </p>
+                            <ul class="space-y-4 text-gray-300">
+                                <li class="flex gap-3">
+                                    <span class="text-diria-neonBlue">☁️</span>
+                                    <span><strong>Elasticidad:</strong> Como el bosque se adapta a la sequía, el cloud
+                                        escala según demanda.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-diria-neonBlue">🌍</span>
+                                    <span><strong>Distribución Global:</strong> Sabiduría local, alcance mundial.</span>
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="text-diria-neonBlue">🛡️</span>
+                                    <span><strong>Resiliencia:</strong> Failover automático y redundancia
+                                        natural.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-9xl opacity-20">☁️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Ecosystem Diagram -->
+            <div class="text-center mb-24">
+                <h3 class="text-2xl font-heading font-bold text-white mb-12" data-i18n="ecosystem_title">El Ecosistema
+                    GuanaCloud</h3>
+                <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <div class="p-6 rounded-2xl border border-white/10 bg-white/5">
+                        <div class="text-4xl mb-4">🔧</div>
+                        <h4 class="text-xl font-bold text-white mb-2">Ingeniería</h4>
+                        <p class="text-sm text-diria-muted">Data Engineering, Analytics, Cloud Architecture. La base
+                            sólida.</p>
+                    </div>
+                    <div class="p-6 rounded-2xl border border-diria-neonGreen/30 bg-diria-neonGreen/5 relative">
+                        <div
+                            class="absolute -top-3 left-1/2 -translate-x-1/2 bg-diria-neonGreen text-black text-xs font-bold px-3 py-1 rounded-full">
+                            CORE</div>
+                        <div class="text-4xl mb-4">🤖</div>
+                        <h4 class="text-xl font-bold text-white mb-2">DirIA Platform</h4>
+                        <p class="text-sm text-diria-muted">Orquestación Multi-Agente. La capa de inteligencia.</p>
+                    </div>
+                    <div class="p-6 rounded-2xl border border-white/10 bg-white/5">
+                        <div class="text-4xl mb-4">🌱</div>
+                        <h4 class="text-xl font-bold text-white mb-2">Filosofía</h4>
+                        <p class="text-sm text-diria-muted">Blue Zone Thinking. Longevidad, Resiliencia, Colaboración.
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -546,18 +708,30 @@
             observer.observe(section);
         });
 
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.pillar-tab').forEach(tab => tab.classList.remove('active'));
+            // Hide all content
+            document.querySelectorAll('.pillar-content').forEach(content => content.classList.remove('active'));
+
+            // Activate selected tab and content
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.getElementById(`content-${tabName}`).classList.add('active');
+        }
+
         // Internationalization Logic
         const translations = {
             es: {
                 nav_product: "Producto",
                 nav_services: "Servicios",
                 nav_architecture: "Arquitectura",
-                nav_about: "Nosotros",
+                nav_about: "Filosofía",
                 nav_login: "Login",
                 nav_demo: "Ver Demo",
-                hero_title_1: "Inteligencia",
-                hero_title_2: "Desde las Alturas",
-                hero_subtitle: "Orquestación multi-agente inspirada en la naturaleza. Coordinación perfecta, perspectiva total y ejecución precisa.",
+                hero_title_1: "Perspectiva Inteligente",
+                hero_title_2: "Desde Todas las Alturas",
+                hero_subtitle: "Donde la sabiduría ancestral de Guanacaste encuentra la Inteligencia Artificial. Un ecosistema vivo que protege y sustenta tu negocio.",
                 hero_cta_demo: "Ver Demo",
                 hero_cta_console: "Acceder a Consola",
                 services_title: "Servicios Guana Cloud",
@@ -570,16 +744,25 @@
                 service_da_desc: "Transformamos datos crudos en insights accionables. Dashboards intuitivos y storytelling con datos.",
                 service_ds_title: "Data Scientist",
                 service_ds_desc: "Modelos predictivos y análisis avanzado para resolver problemas complejos y anticipar tendencias.",
-                presence_label: "Presencia Regional",
-                arch_title: "Arquitectura Viva",
-                arch_subtitle: "Visualiza en tiempo real cómo nuestros agentes colaboran y procesan información.",
-                agent_guaitil_desc: "Resolución automática de tickets con precisión artesanal. Entiende contexto, sentimiento y urgencia.",
-                agent_nicoya_desc: "Base de conocimiento viva. Aprende de cada interacción y mantiene la sabiduría de la organización.",
-                agent_santacruz_desc: "Transforma preguntas en SQL y dashboards en tiempo real. Democratiza el acceso a los datos.",
-                agent_nandayure_desc: "Tu copiloto ejecutivo. Gestiona agenda, prioridades y alertas proactivas.",
-                about_title: "Sabiduría Ancestral,\nTecnología Futura",
-                about_p1: "En Guanacaste, el Cerro Diriá ha sido guía por 1,500 años. Para los Chorotegas, representaba la <span class=\"text-white font-medium\">perspectiva total</span>.",
-                about_p2: "<strong class=\"text-white\">Guana Cloud</strong> trae esa filosofía al mundo digital. <strong>DirIA</strong> es nuestro producto estrella, pero nuestra misión va más allá: orquestar sistemas que ven el panorama completo.",
+                presence_label: "Proyectos Desarrollados en",
+                arch_title: "DirIA: Producto & Ecosistema",
+                arch_subtitle: "Una plataforma multi-agente capaz de resolver desde tareas sencillas hasta orquestaciones complejas.",
+                agents_title: "Las Cimas de DirIA",
+                agents_subtitle: "Cada agente es una cumbre especializada. Juntos, forman una montaña de inteligencia.",
+                agent_guaitil_desc: "Tu helpdesk level 0 siempre vigilante. Resolución automática de tickets con precisión artesanal.",
+                agent_nicoya_desc: "Base de conocimiento que no olvida. Aprende de cada interacción y mantiene la sabiduría.",
+                agent_santacruz_desc: "Consultas DWH y real-time insights. Transforma preguntas en SQL y dashboards.",
+                agent_nandayure_desc: "Asistente con calendario y alertas inteligentes. Tu copiloto ejecutivo.",
+                about_origin_title: "Sabiduría Ancestral,\nTecnología Futura",
+                about_origin_p1: "En el corazón de Guanacaste, el <strong>Cerro Diriá</strong> ha sido testigo de la vida durante milenios. Para los chorotega, \"Diriá\" significaba más que \"montaña\" — representaba elevación, perspectiva y visión desde las alturas.",
+                about_origin_p2: "Aquí, en una de las cinco <strong>Blue Zones</strong> del planeta, la naturaleza ha perfeccionado sistemas de colaboración y resiliencia. GuanaCloud nació aquí porque entendimos algo fundamental: los sistemas más inteligentes no son monolíticos, son redes de especialistas que colaboran.",
+                pillar_nature_title: "El Bosque Tropical Seco",
+                pillar_nature_desc: "Un ecosistema que sobrevive 6 meses sin lluvia mediante redes de raíces interconectadas.",
+                pillar_heritage_title: "La Red Chorotega",
+                pillar_heritage_desc: "1,500 años antes del Cloud Computing, los Chorotegas inventaron la arquitectura distribuida.",
+                pillar_cloud_title: "Escalando la Sabiduría",
+                pillar_cloud_desc: "El cloud permite que los sistemas distribuidos operen a escala planetaria con la elegancia de un bosque tropical.",
+                ecosystem_title: "El Ecosistema GuanaCloud",
                 team_title: "Liderazgo Visionario",
                 footer_sustainability: "Comprometidos con la Naturaleza"
             },
@@ -587,12 +770,12 @@
                 nav_product: "Product",
                 nav_services: "Services",
                 nav_architecture: "Architecture",
-                nav_about: "About Us",
+                nav_about: "Philosophy",
                 nav_login: "Login",
                 nav_demo: "View Demo",
-                hero_title_1: "Intelligence",
-                hero_title_2: "From the Heights",
-                hero_subtitle: "Nature-inspired multi-agent orchestration. Perfect coordination, total perspective, and precise execution.",
+                hero_title_1: "Intelligent Perspective",
+                hero_title_2: "From All Heights",
+                hero_subtitle: "Where ancient Guanacaste wisdom meets Artificial Intelligence. A living ecosystem that protects and sustains your business.",
                 hero_cta_demo: "View Demo",
                 hero_cta_console: "Access Console",
                 services_title: "Guana Cloud Services",
@@ -605,16 +788,25 @@
                 service_da_desc: "Transforming raw data into actionable insights. Intuitive dashboards and data storytelling.",
                 service_ds_title: "Data Scientist",
                 service_ds_desc: "Predictive models and advanced analysis to solve complex problems and anticipate trends.",
-                presence_label: "Regional Presence",
-                arch_title: "Living Architecture",
-                arch_subtitle: "Visualize in real-time how our agents collaborate and process information.",
-                agent_guaitil_desc: "Automatic ticket resolution with artisanal precision. Understands context, sentiment, and urgency.",
-                agent_nicoya_desc: "Living knowledge base. Learns from every interaction and maintains organizational wisdom.",
-                agent_santacruz_desc: "Transforms questions into SQL and real-time dashboards. Democratizes access to data.",
-                agent_nandayure_desc: "Your executive copilot. Manages agenda, priorities, and proactive alerts.",
-                about_title: "Ancestral Wisdom,\nFuture Technology",
-                about_p1: "In Guanacaste, Cerro Diriá has been a guide for 1,500 years. For the Chorotegas, it represented <span class=\"text-white font-medium\">total perspective</span>.",
-                about_p2: "<strong class=\"text-white\">Guana Cloud</strong> brings that philosophy to the digital world. <strong>DirIA</strong> is our flagship product, but our mission goes further: orchestrating systems that see the whole picture.",
+                presence_label: "Projects Developed In",
+                arch_title: "DirIA: Product & Ecosystem",
+                arch_subtitle: "A multi-agent platform capable of solving from simple tasks to complex orchestrations.",
+                agents_title: "The Peaks of DirIA",
+                agents_subtitle: "Each agent is a specialized peak. Together, they form a mountain of intelligence.",
+                agent_guaitil_desc: "Your always-vigilant level 0 helpdesk. Automatic ticket resolution with artisanal precision.",
+                agent_nicoya_desc: "Knowledge base that never forgets. Learns from every interaction and maintains wisdom.",
+                agent_santacruz_desc: "DWH queries and real-time insights. Transforms questions into SQL and dashboards.",
+                agent_nandayure_desc: "Assistant with calendar and intelligent alerts. Your executive copilot.",
+                about_origin_title: "Ancestral Wisdom,\nFuture Technology",
+                about_origin_p1: "In the heart of Guanacaste, <strong>Cerro Diriá</strong> has witnessed life for millennia. For the Chorotegas, \"Diriá\" meant more than \"mountain\" — it represented elevation, perspective, and vision from the heights.",
+                about_origin_p2: "Here, in one of the planet's five <strong>Blue Zones</strong>, nature has perfected systems of collaboration and resilience. GuanaCloud was born here because we understood something fundamental: the smartest systems are not monolithic, they are networks of collaborating specialists.",
+                pillar_nature_title: "The Tropical Dry Forest",
+                pillar_nature_desc: "An ecosystem that survives 6 months without rain through interconnected root networks.",
+                pillar_heritage_title: "The Chorotega Network",
+                pillar_heritage_desc: "1,500 years before Cloud Computing, the Chorotegas invented distributed architecture.",
+                pillar_cloud_title: "Scaling Wisdom",
+                pillar_cloud_desc: "Cloud allows distributed systems to operate at planetary scale with the elegance of a tropical forest.",
+                ecosystem_title: "The GuanaCloud Ecosystem",
                 team_title: "Visionary Leadership",
                 footer_sustainability: "Committed to Nature"
             }
