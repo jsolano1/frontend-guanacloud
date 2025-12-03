@@ -7,11 +7,10 @@ export const translations = {
         nav_login: "Login",
         nav_demo: "Ver Demo",
         hero_title_1: "Perspectiva Inteligente",
-        hero_title_2: "Con AI Agents", // <--- CAMBIO AQUÍ
+        hero_title_2: "Con AI Multi-Agents",
         hero_subtitle: "Infraestructura Cloud de última generación y Agentes de IA orquestados para transformar tus datos en decisiones inteligentes.",
         hero_cta_demo: "Ver Demo",
         hero_cta_console: "Acceder a Consola",
-        // ... (resto de servicios igual)
         services_title: "Servicios Guana Cloud",
         services_subtitle: "Más allá de DirIA, potenciamos tu transformación digital con expertise de clase mundial.",
         service_de_title: "Data Engineering",

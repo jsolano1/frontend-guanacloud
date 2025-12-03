@@ -11,11 +11,12 @@ export const Footer: React.FC = () => {
 
                     {/* Logo Guana Cloud */}
                     <div className="flex items-center gap-3">
+                        {/* Asegúrate que esta imagen exista en tu carpeta public/img */}
                         <img src="/img/guana_logo_dark.png" alt="Logo" className="h-8 w-auto" />
                         <span className="font-heading font-bold text-xl text-white">Guana Cloud</span>
                     </div>
 
-                    {/* Sustainability Badge */}
+                    {/* Sustainability Badge - Usa la traducción 'footer_sustainability' */}
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-900/20 border border-green-500/30">
                         <span className="text-xl">🌿</span>
                         <span className="text-green-400 text-xs font-medium uppercase tracking-wide">
@@ -23,7 +24,7 @@ export const Footer: React.FC = () => {
                         </span>
                     </div>
 
-                    {/* Información Copyright y Certificaciones */}
+                    {/* Información Copyright y Certificaciones SOLICITADAS */}
                     <div className="text-diria-muted text-sm text-center md:text-right">
                         <p>&copy; 2025 Guana Cloud. San José, Costa Rica.</p>
                         <p className="mt-2 text-xs opacity-50">Carbon Neutral Hosting • SOC 2 Type II</p>
