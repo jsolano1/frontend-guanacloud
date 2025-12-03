@@ -7,7 +7,7 @@ export const translations = {
         nav_login: "Login",
         nav_demo: "Ver Demo",
         hero_title_1: "Perspectiva Inteligente",
-        hero_title_2: "Con AI Multi-Agents",
+        hero_title_2: "Con AI Multi-Agents", // <--- TEXTO CORREGIDO
         hero_subtitle: "Infraestructura Cloud de última generación y Agentes de IA orquestados para transformar tus datos en decisiones inteligentes.",
         hero_cta_demo: "Ver Demo",
         hero_cta_console: "Acceder a Consola",
@@ -41,12 +41,10 @@ export const translations = {
         pillar_cloud_desc: "El cloud permite que los sistemas distribuidos operen a escala planetaria con la elegancia de un bosque tropical.",
         ecosystem_title: "El Ecosistema GuanaCloud",
         team_title: "Liderazgo Visionario",
-        // NUEVA BIO DE JOSE:
         team_bio_jose: "Con 20 años transformando datos en decisiones, José ha liderado equipos de data engineering, analytics y data science en empresas globales como Intel, Movistar, Grupo Cuestamoras, Premier Insurance y Connect Assistant.<br/><br/>Su expertise abarca el espectro completo de la evolución de datos: desde arquitecturas on-premise hasta implementaciones cloud-native en AWS, Azure y GCP. En Telefónica, trabajó en la vanguardia del big data, procesando volúmenes masivos antes de que el término entrara al mainstream tech. Más recientemente, lideró la integración de infraestructuras de datos con IA en 5 países de Latinoamérica, conectando una variedad de sistemas con inteligencia artificial moderna.<br/><br/>Fundó GuanaCloud inspirado por la Blue Zone de Guanacaste: construir tecnología que no solo escala, sino que perdura generaciones.<br/><br/>Más allá del código: Su familia es el motor de cada día. Los fines de semana lo encuentras celebrando (o sufriendo) con sus Boston Celtics 🏀, o pedaleando por las montañas de Costa Rica 🚴‍♂️",
         footer_sustainability: "Comprometidos con la Naturaleza"
     },
     en: {
-        // Mantener inglés igual o actualizar si se desea
         nav_product: "Product",
         nav_services: "Services",
         nav_architecture: "Architecture",
@@ -54,7 +52,7 @@ export const translations = {
         nav_login: "Login",
         nav_demo: "View Demo",
         hero_title_1: "Intelligent Perspective",
-        hero_title_2: "With AI Agents", // Actualizado simple
+        hero_title_2: "With AI Multi-Agents",
         hero_subtitle: "Where ancient Guanacaste wisdom meets Artificial Intelligence. A living ecosystem that protects and sustains your business.",
         hero_cta_demo: "View Demo",
         hero_cta_console: "Access Console",
