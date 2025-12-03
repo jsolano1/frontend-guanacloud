@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
 
 export const DashboardLayout: React.FC<{ children: ReactNode }> = ({ children }) => {

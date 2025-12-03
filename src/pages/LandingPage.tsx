@@ -1,11 +1,11 @@
 import React from 'react';
-import { Navbar } from '../layout/Navbar';
-import { Hero } from './Hero';
-import { Services } from './Services';
-import { Architecture } from './Architecture';
-import { Agents } from './Agents';
-import { Philosophy } from './Philosophy';
-import { Footer } from '../layout/Footer';
+import { Navbar } from '../components/layout/Navbar';
+import { Hero } from '../components/landing/Hero';
+import { Services } from '../components/landing/Services';
+import { Architecture } from '../components/landing/Architecture';
+import { Agents } from '../components/landing/Agents';
+import { Philosophy } from '../components/landing/Philosophy';
+import { Footer } from '../components/layout/Footer';
 
 export const LandingPage: React.FC = () => {
     return (
