@@ -23,18 +23,16 @@ interface Connection {
 }
 
 const NODES: NodeConfig[] = [
-    // -- COLUMNA 1: CANALES (Usuarios) --
     { id: 'app', label: 'Mobile App', sub: 'iOS / Android', icon: '📱', x: 0.1, y: 0.25, mx: 0.2, my: 0.1, type: 'user', status: 'active' },
     { id: 'wa', label: 'WhatsApp/GChat', sub: 'Business API', icon: '💬', x: 0.1, y: 0.5, mx: 0.5, my: 0.1, type: 'user', status: 'active' },
     { id: 'web', label: 'APIs', sub: 'Integraciones', icon: '💻', x: 0.1, y: 0.75, mx: 0.8, my: 0.1, type: 'user', status: 'active' },
 
-    // -- COLUMNA 2: CORE (Gateway & Orchestrator) --
     {
         id: 'gateway',
         label: 'API Gateway',
         sub: 'Cloud Run',
         icon: '🛡️',
-        image: '/img/guana_logo_primary.png',
+        image: '/img/logo-guanacloud-arbol.png',
         x: 0.28, y: 0.5,
         mx: 0.3, my: 0.25,
         type: 'core', status: 'active', class: 'is-core'
@@ -49,20 +47,17 @@ const NODES: NodeConfig[] = [
         type: 'core', status: 'active', class: 'is-core'
     },
 
-    // -- COLUMNA 3: ENJAMBRE DE AGENTES (Specialists) --
     { id: 'ag_vision', label: 'Vision', sub: 'Daños Vehiculares', icon: '📸', x: 0.6, y: 0.15, mx: 0.2, my: 0.42, type: 'agent', status: 'dev' },
     { id: 'ag_claims', label: 'Claims', sub: 'Reglas de Negocio', icon: '🚗', x: 0.6, y: 0.32, mx: 0.5, my: 0.42, type: 'agent', status: 'active' },
     { id: 'ag_auditor', label: 'Auditor', sub: 'Compliance & QA', icon: '⚖️', x: 0.6, y: 0.5, mx: 0.8, my: 0.42, type: 'agent', status: 'dev' },
     { id: 'ag_support', label: 'Support', sub: 'Helpdesk / KB', icon: '🎧', x: 0.6, y: 0.68, mx: 0.35, my: 0.55, type: 'agent', status: 'active' },
     { id: 'ag_home', label: 'Home', sub: 'Hogar & Pólizas', icon: '🏠', x: 0.6, y: 0.85, mx: 0.65, my: 0.55, type: 'agent', status: 'plan', class: 'is-future' },
 
-    // -- COLUMNA 4: INFRAESTRUCTURA --
     { id: 'vertex', label: 'Vertex AI', sub: 'Gemini 2.5 Flash/Pro', icon: '✨', x: 0.85, y: 0.12, mx: 0.2, my: 0.75, type: 'ai', status: 'active' },
     { id: 'firestore', label: 'Firestore', sub: 'Memoria', icon: '🔥', x: 0.85, y: 0.24, mx: 0.5, my: 0.75, type: 'infra', status: 'active' },
     { id: 'bq', label: 'BigQuery', sub: 'Analytics', icon: '📊', x: 0.85, y: 0.36, mx: 0.8, my: 0.75, type: 'infra', status: 'active' },
     { id: 'looker', label: 'Looker', sub: 'Dashboards', icon: '📈', x: 0.85, y: 0.48, mx: 0.2, my: 0.88, type: 'infra', status: 'active' },
 
-    // -- COLUMNA 4: TOOLS --
     { id: 'github', label: 'GitHub', sub: 'CI/CD', icon: '🐙', x: 0.85, y: 0.62, mx: 0.4, my: 0.88, type: 'tool', status: 'active' },
     { id: 'asana', label: 'Asana', sub: 'Tasks', icon: '✅', x: 0.85, y: 0.74, mx: 0.6, my: 0.88, type: 'tool', status: 'active' },
     { id: 'reminders', label: 'Reminders', sub: 'Alertas', icon: '⏰', x: 0.85, y: 0.86, mx: 0.8, my: 0.88, type: 'tool', status: 'active' },
