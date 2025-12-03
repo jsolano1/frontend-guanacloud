@@ -13,14 +13,14 @@ export const Ecosystem: React.FC = () => {
 
                     <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
 
-                        {/* Ingeniería - Tono Azul */}
-                        <div className="group relative p-1 rounded-3xl bg-gradient-to-b from-white/10 to-transparent hover:to-diria-neonBlue/20 transition-all duration-500">
-                            <div className="relative h-full bg-[#0a0a0a] rounded-[22px] p-8 overflow-hidden border border-white/5 hover:border-diria-neonBlue/50 transition-colors duration-300 flex flex-col items-center">
+                        {/* Ingeniería - MEJORADO: Más vida con bordes y sombras azules */}
+                        <div className="group relative p-1 rounded-3xl bg-gradient-to-b from-diria-neonBlue/20 to-transparent hover:to-diria-neonBlue/30 transition-all duration-500">
+                            <div className="relative h-full bg-[#0a0a0a] rounded-[22px] p-8 overflow-hidden border border-diria-neonBlue/30 hover:border-diria-neonBlue transition-colors duration-300 flex flex-col items-center shadow-[0_0_20px_rgba(0,204,255,0.05)] hover:shadow-[0_0_30px_rgba(0,204,255,0.15)]">
                                 {/* Gradient Glow Background */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-diria-neonBlue/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-diria-neonBlue/10 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                                 <div className="relative z-10 flex flex-col items-center">
-                                    <div className="mb-6 p-4 rounded-2xl bg-diria-neonBlue/10 border border-diria-neonBlue/20 text-diria-neonBlue group-hover:scale-110 transition-transform duration-300">
+                                    <div className="mb-6 p-4 rounded-2xl bg-diria-neonBlue/10 border border-diria-neonBlue/20 text-diria-neonBlue group-hover:scale-110 transition-transform duration-300 shadow-inner">
                                         <Layers size={40} strokeWidth={1.5} />
                                     </div>
                                     <h4 className="text-xl font-bold text-white mb-3 group-hover:text-diria-neonBlue transition-colors">Ingeniería</h4>

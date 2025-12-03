@@ -24,16 +24,16 @@ export const Navbar: React.FC = () => {
     ];
 
     return (
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-nav h-20' : 'h-24 bg-transparent'}`}>
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-nav h-24' : 'h-28 bg-transparent'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex justify-between items-center h-full">
-                    {/* Logo con Link al Home (SIN TEXTO) */}
-                    <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer group">
-                        {/* Se aumentó un poco el tamaño (h-14) para que se lea bien el texto de la imagen */}
+                    {/* Logo con Link al Home */}
+                    <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer group py-2">
+                        {/* CAMBIO: Logo mucho más grande (h-16 en móvil, h-20 en desktop) */}
                         <img
                             src="/img/guana_cloud_square.png"
                             alt="Guana Cloud"
-                            className="h-14 w-auto transition-transform duration-300 group-hover:scale-105"
+                            className="h-16 md:h-20 w-auto transition-transform duration-300 group-hover:scale-105 filter drop-shadow-lg"
                         />
                     </Link>
 
