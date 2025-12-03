@@ -73,7 +73,7 @@ export const translations = {
 
         agents_title: "Specialized Intelligent Agents",
         agents_subtitle: "A network of digital experts working in harmony to empower your business.",
-        agent_guaitil_desc: "Your always-vigilant level 0 helpdesk. Automatic ticket resolution with artisanal precision.",
+        agent_guaitil_desc: "Your always-vigilant L0 helpdesk. Automated resolution with artisanal precision.",
         agent_nicoya_desc: "Knowledge base that never forgets. Learns from every interaction and maintains wisdom.",
         agent_santacruz_desc: "DWH queries and real-time insights. Transforms questions into SQL and dashboards.",
         agent_nandayure_desc: "Assistant with calendar and intelligent alerts. Your executive copilot.",
