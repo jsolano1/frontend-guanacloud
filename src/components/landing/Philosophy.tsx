@@ -41,8 +41,8 @@ export const Philosophy: React.FC = () => {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`px-6 py-3 rounded-full border transition font-medium flex items-center gap-2 ${activeTab === tab.id
-                                        ? 'bg-white/10 border-diria-neonGreen text-white'
-                                        : 'border-white/10 text-diria-muted hover:text-white'
+                                    ? 'bg-white/10 border-diria-neonGreen text-white'
+                                    : 'border-white/10 text-diria-muted hover:text-white'
                                     }`}
                             >
                                 <span>{tab.icon}</span>
@@ -137,7 +137,10 @@ export const Philosophy: React.FC = () => {
                                 <img src="/img/jose_solano.png" alt="Jose Solano" className="relative w-48 h-48 rounded-full object-cover object-top border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20 shadow-2xl group-hover:scale-105 transition-transform duration-500" />
                             </div>
                             <div className="text-white font-bold text-xl">Jose Solano</div>
-                            <div className="text-sm text-diria-neonGreen uppercase tracking-widest font-medium mt-1">CEO</div>
+                            <div className="text-sm text-diria-neonGreen uppercase tracking-widest font-medium mt-1 mb-4">CEO</div>
+                            <p className="text-diria-muted text-sm max-w-md text-center leading-relaxed">
+                                {t('team_bio_jose' as any)}
+                            </p>
                         </div>
                         <div className="flex flex-col items-center group">
                             <div className="relative mb-6">

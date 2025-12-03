@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosistema DirIA - Ecosistema Cognitivo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+
+            /* Palette */
+            --col-user: #38bdf8;
+            /* Celeste */
+            --col-core: #818cf8;
+            /* Indigo */
+            --col-agent: #34d399;
+            /* Emerald */
+            --col-ai: #f472b6;
+            /* Pink/Gemini */
+            --col-infra: #fbbf24;
+            /* Amber */
+            --col-tool: #a78bfa;
+            /* Violet */
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Header Flotante */
+        header {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            z-index: 100;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 800;
+            font-size: 28px;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 span {
+            font-weight: 300;
+            color: var(--col-core);
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        h2 {
+            margin: 5px 0 0 0;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--col-user);
+            opacity: 0.9;
+            letter-spacing: 0.5px;
+        }
+
+        /* Créditos */
+        .credits {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            text-align: right;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .credits-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            letter-spacing: 0.5px;
+        }
+
+        .credits-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* Leyenda */
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            font-size: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Canvas Fullscreen */
+        #canvas-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Capa de Nodos (HTML sobre Canvas) */
+        #node-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            /* Permitir clicks al fondo */
+        }
+
+        /* Estilos de Nodo */
+        .node {
+            position: absolute;
+            width: 130px;
+            padding: 8px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transform: translate(-50%, -50%);
+            /* Centrar exacto */
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            cursor: default;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .node:hover {
+            transform: translate(-50%, -55%) scale(1.1);
+            border-color: var(--col-user);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+            z-index: 50;
+        }
+
+        .node-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .node-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 5px;
+            border: 2px solid #fff;
+            background: #fff;
+        }
+
+        .node-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+        }
+
+        .node-sub {
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Estados del Nodo */
+        .status-indicator {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-color);
+        }
+
+        .st-active {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .st-dev {
+            background: #f59e0b;
+            animation: pulse-amber 2s infinite;
+        }
+
+        .st-plan {
+            background: #64748b;
+            border: 1px solid #fff;
+        }
+
+        .node.is-future {
+            border-style: dashed;
+            opacity: 0.7;
+        }
+
+        .node.is-core {
+            border-color: var(--col-core);
+            background: rgba(129, 140, 248, 0.15);
+            width: 150px;
+            padding: 12px;
+        }
+
+        @keyframes pulse-amber {
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
+        }
+
+        /* Etiquetas de Zona */
+        .zone {
+            position: absolute;
+            bottom: 20px;
+            font-size: 60px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.12);
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: 4px;
+            transition: all 0.5s;
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 768px) {
+            header {
+                top: 10px;
+                left: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            h2 {
+                font-size: 12px;
+            }
+
+            .node {
+                width: 100px;
+                padding: 6px;
+            }
+
+            .node.is-core {
+                width: 110px;
+            }
+
+            .node-icon {
+                font-size: 18px;
+            }
+
+            .node-title {
+                font-size: 10px;
+            }
+
+            .node-sub {
+                display: none;
+            }
+
+            /* Ocultar subtítulos en móvil */
+            .node-img {
+                width: 28px;
+                height: 28px;
+            }
+
+            .credits {
+                bottom: 10px;
+                right: 15px;
+            }
+
+            .credits-name {
+                font-size: 10px;
+            }
+
+            .credits-role {
+                font-size: 9px;
+            }
+
+            /* Ocultar leyenda y zonas en móvil para limpiar */
+            .legend {
+                display: none;
+            }
+
+            .zone {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="dot st-active"></div> Producción
+        </div>
+        <div class="legend-item">
+            <div class="dot st-dev"></div> En Desarrollo
+        </div>
+        <div class="legend-item">
+            <div class="dot st-plan"></div> Plan Futuro
+        </div>
+        <div class="legend-item"
+            style="grid-column: span 2; margin-top:5px; border-top:1px solid #333; padding-top:5px;">
+            Flujos de datos en tiempo real
+        </div>
+    </div>
+
+    <canvas id="canvas-layer"></canvas>
+    <div id="node-layer"></div>
+
+    <script>
+        // === 1. DEFINICIÓN DEL ECOSISTEMA (NODOS) ===
+        const NODES = [
+            // -- COLUMNA 1: CANALES (Usuarios) --
+            { id: 'app', label: 'Mobile App', sub: 'iOS / Android', icon: '📱', x: 0.1, y: 0.25, mx: 0.2, my: 0.1, type: 'user', status: 'active' },
+            { id: 'wa', label: 'WhatsApp/GChat', sub: 'Business API', icon: '💬', x: 0.1, y: 0.5, mx: 0.5, my: 0.1, type: 'user', status: 'active' },
+            { id: 'web', label: 'APIs', sub: 'Integraciones', icon: '💻', x: 0.1, y: 0.75, mx: 0.8, my: 0.1, type: 'user', status: 'active' },
+
+            // -- COLUMNA 2: CORE (Gateway & Orchestrator) --
+            {
+                id: 'gateway',
+                label: 'API Gateway',
+                sub: 'Cloud Run',
+                icon: '🛡️',
+                image: 'img/guana_logo_primary.png',
+                x: 0.28, y: 0.5,
+                mx: 0.3, my: 0.25,
+                type: 'core', status: 'active', class: 'is-core'
+            },
+            {
+                id: 'langgraph',
+                label: 'Orquestador',
+                sub: 'LangGraph State',
+                icon: '🧠',
+                x: 0.42, y: 0.5,
+                mx: 0.7, my: 0.25,
+                type: 'core', status: 'active', class: 'is-core'
+            },
+
+            // -- COLUMNA 3: ENJAMBRE DE AGENTES (Specialists) --
+            { id: 'ag_vision', label: 'Vision', sub: 'Daños Vehiculares', icon: '📸', x: 0.6, y: 0.15, mx: 0.2, my: 0.42, type: 'agent', status: 'dev' },
+            { id: 'ag_claims', label: 'Claims', sub: 'Reglas de Negocio', icon: '🚗', x: 0.6, y: 0.32, mx: 0.5, my: 0.42, type: 'agent', status: 'active' },
+            { id: 'ag_auditor', label: 'Auditor', sub: 'Compliance & QA', icon: '⚖️', x: 0.6, y: 0.5, mx: 0.8, my: 0.42, type: 'agent', status: 'dev' },
+            { id: 'ag_support', label: 'Support', sub: 'Helpdesk / KB', icon: '🎧', x: 0.6, y: 0.68, mx: 0.35, my: 0.55, type: 'agent', status: 'active' },
+            { id: 'ag_home', label: 'Home', sub: 'Hogar & Pólizas', icon: '🏠', x: 0.6, y: 0.85, mx: 0.65, my: 0.55, type: 'agent', status: 'plan', class: 'is-future' },
+
+            // -- COLUMNA 4: INFRAESTRUCTURA --
+            { id: 'vertex', label: 'Vertex AI', sub: 'Gemini 2.5 Flash/Pro', icon: '✨', x: 0.85, y: 0.12, mx: 0.2, my: 0.75, type: 'ai', status: 'active' },
+            { id: 'firestore', label: 'Firestore', sub: 'Memoria', icon: '🔥', x: 0.85, y: 0.24, mx: 0.5, my: 0.75, type: 'infra', status: 'active' },
+            { id: 'bq', label: 'BigQuery', sub: 'Analytics', icon: '📊', x: 0.85, y: 0.36, mx: 0.8, my: 0.75, type: 'infra', status: 'active' },
+            { id: 'looker', label: 'Looker', sub: 'Dashboards', icon: '📈', x: 0.85, y: 0.48, mx: 0.2, my: 0.88, type: 'infra', status: 'active' },
+
+            // -- COLUMNA 4: TOOLS --
+            { id: 'github', label: 'GitHub', sub: 'CI/CD', icon: '🐙', x: 0.85, y: 0.62, mx: 0.4, my: 0.88, type: 'tool', status: 'active' },
+            { id: 'asana', label: 'Asana', sub: 'Tasks', icon: '✅', x: 0.85, y: 0.74, mx: 0.6, my: 0.88, type: 'tool', status: 'active' },
+            { id: 'reminders', label: 'Reminders', sub: 'Alertas', icon: '⏰', x: 0.85, y: 0.86, mx: 0.8, my: 0.88, type: 'tool', status: 'active' },
+            { id: 'gmail', label: 'Email/Chat', sub: 'Notify', icon: '📩', x: 0.95, y: 0.80, mx: 0.5, my: 0.96, type: 'tool', status: 'active' },
+        ];
+
+        const CONNECTIONS = [
+            { from: 'app', to: 'gateway', color: '#38bdf8' },
+            { from: 'wa', to: 'gateway', color: '#38bdf8' },
+            { from: 'web', to: 'gateway', color: '#38bdf8' },
+            { from: 'gateway', to: 'langgraph', color: '#818cf8' },
+            { from: 'langgraph', to: 'ag_vision', color: '#fff', dashed: true },
+            { from: 'langgraph', to: 'ag_claims', color: '#fff' },
+            { from: 'langgraph', to: 'ag_auditor', color: '#fff', dashed: true },
+            { from: 'langgraph', to: 'ag_support', color: '#fff' },
+            { from: 'langgraph', to: 'ag_home', color: '#64748b', dashed: true },
+            { from: 'ag_vision', to: 'vertex', color: '#f472b6' },
+            { from: 'ag_claims', to: 'firestore', color: '#fbbf24' },
+            { from: 'ag_claims', to: 'vertex', color: '#f472b6' },
+            { from: 'ag_auditor', to: 'bq', color: '#34d399' },
+            { from: 'ag_auditor', to: 'looker', color: '#34d399' },
+            { from: 'ag_auditor', to: 'vertex', color: '#f472b6' },
+            { from: 'ag_support', to: 'github', color: '#a78bfa' },
+            { from: 'ag_support', to: 'asana', color: '#a78bfa' },
+            { from: 'ag_support', to: 'reminders', color: '#a78bfa' },
+            { from: 'ag_support', to: 'gmail', color: '#a78bfa' },
+            { from: 'ag_support', to: 'looker', color: '#34d399' },
+            { from: 'bq', to: 'looker', color: '#fbbf24', dashed: true },
+            { from: 'langgraph', to: 'firestore', color: '#fbbf24' }
+        ];
+
+        // === 3. MOTOR GRÁFICO ===
+        const canvas = document.getElementById('canvas-layer');
+        const ctx = canvas.getContext('2d');
+        const nodeLayer = document.getElementById('node-layer');
+
+        let width, height;
+        let nodeElements = {};
+        let particles = [];
+        let isMobile = false;
+
+        window.onload = () => {
+            resize();
+            renderNodes();
+            initParticles();
+            animate();
+            window.addEventListener('resize', () => {
+                resize();
+                updateNodePositions();
+            });
+        };
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            // Detectar modo móvil
+            isMobile = width < 768;
+        }
+
+        function renderNodes() {
+            nodeLayer.innerHTML = '';
+            NODES.forEach(n => {
+                const el = document.createElement('div');
+                el.className = `node ${n.class || ''}`;
+
+                let visualContent;
+                if (n.image) {
+                    visualContent = `<img src="${n.image}" class="node-img" alt="${n.label}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">`;
+                    visualContent += `<div class="node-icon" style="display:none">${n.icon}</div>`;
+                } else {
+                    visualContent = `<div class="node-icon">${n.icon}</div>`;
+                }
+
+                el.innerHTML = `
+                    <div class="status-indicator st-${n.status}"></div>
+                    ${visualContent}
+                    <div class="node-title">${n.label}</div>
+                    <div class="node-sub">${n.sub}</div>
+                `;
+                nodeLayer.appendChild(el);
+                nodeElements[n.id] = { el, config: n };
+            });
+            updateNodePositions();
+        }
+
+        function updateNodePositions() {
+            Object.keys(nodeElements).forEach(id => {
+                const node = nodeElements[id];
+                // Switch lógico: Usar coords móviles o desktop
+                const targetX = isMobile ? node.config.mx : node.config.x;
+                const targetY = isMobile ? node.config.my : node.config.y;
+
+                const px = targetX * width;
+                const py = targetY * height;
+
+                node.x = px;
+                node.y = py;
+                node.el.style.left = px + 'px';
+                node.el.style.top = py + 'px';
+            });
+        }
+
+        // === 4. FÍSICA DE PARTÍCULAS (Cinemática) ===
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                const route = CONNECTIONS[Math.floor(Math.random() * CONNECTIONS.length)];
+                this.source = nodeElements[route.from];
+                this.target = nodeElements[route.to];
+                this.color = route.color;
+                this.progress = 0;
+
+                // VELOCIDAD REDUCIDA: Antes 0.004 -> Ahora 0.0015 (60% más lento)
+                this.speed = 0.0015 + Math.random() * 0.0015;
+
+                if (!this.source || !this.target) this.reset();
+            }
+
+            update() {
+                this.progress += this.speed;
+                if (this.progress >= 1) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                if (!this.source || !this.target) return;
+
+                const sx = this.source.x;
+                const sy = this.source.y;
+                const tx = this.target.x;
+                const ty = this.target.y;
+
+                // Curva Bezier inteligente
+                let cp1x, cp1y, cp2x, cp2y;
+
+                if (isMobile) {
+                    // Lógica Vertical para Móvil (Curvas salen por arriba/abajo)
+                    cp1x = sx;
+                    cp1y = sy + (ty - sy) * 0.5;
+                    cp2x = tx;
+                    cp2y = sy + (ty - sy) * 0.5;
+                } else {
+                    // Lógica Horizontal para Desktop (Curvas salen por lados)
+                    cp1x = sx + (tx - sx) * 0.5;
+                    cp1y = sy;
+                    cp2x = sx + (tx - sx) * 0.5;
+                    cp2y = ty;
+                }
+
+                const t = this.progress;
+                const cx = Math.pow(1 - t, 3) * sx + 3 * Math.pow(1 - t, 2) * t * cp1x + 3 * (1 - t) * Math.pow(t, 2) * cp2x + Math.pow(t, 3) * tx;
+                const cy = Math.pow(1 - t, 3) * sy + 3 * Math.pow(1 - t, 2) * t * cp1y + 3 * (1 - t) * Math.pow(t, 2) * cp2y + Math.pow(t, 3) * ty;
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 3, 0, Math.PI * 2); // Partícula un poco más grande
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 60; i++) { // Menos partículas en móvil para performance? No, mantenemos 60
+                particles.push(new Particle());
+            }
+        }
+
+        // === 5. LOOP DE RENDERIZADO ===
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            CONNECTIONS.forEach(conn => {
+                const n1 = nodeElements[conn.from];
+                const n2 = nodeElements[conn.to];
+                if (n1 && n2) {
+                    ctx.beginPath();
+                    ctx.moveTo(n1.x, n1.y);
+
+                    let cp1x, cp1y, cp2x, cp2y;
+
+                    if (isMobile) {
+                        cp1x = n1.x;
+                        cp1y = n1.y + (n2.y - n1.y) * 0.5;
+                        cp2x = n2.x;
+                        cp2y = n1.y + (n2.y - n1.y) * 0.5;
+                    } else {
+                        cp1x = n1.x + (n2.x - n1.x) * 0.5;
+                        cp1y = n1.y;
+                        cp2x = n1.x + (n2.x - n1.x) * 0.5;
+                        cp2y = n2.y;
+                    }
+
+                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, n2.x, n2.y);
+
+                    ctx.strokeStyle = conn.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.globalAlpha = 0.15; // Líneas aún más sutiles
+                    if (conn.dashed) ctx.setLineDash([5, 5]);
+                    else ctx.setLineDash([]);
+
+                    ctx.stroke();
+                    ctx.globalAlpha = 1.0;
+                }
+            });
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+    </script>
+</body>
+
+</html>

@@ -14,7 +14,7 @@
 }
 
 .hero-overlay {
-  background: linear-gradient(to bottom, rgba(5, 5, 5, 0.3) 0%, rgba(5, 5, 5, 0.8) 100%);
+  background: linear-gradient(to bottom, rgba(5, 5, 5, 0.7) 0%, rgba(5, 5, 5, 0.95) 100%);
 }
 
 .card-hover {

@@ -8,7 +8,7 @@ export const translations = {
         nav_demo: "Ver Demo",
         hero_title_1: "Perspectiva Inteligente",
         hero_title_2: "Desde Todas las Alturas",
-        hero_subtitle: "Donde la sabiduría ancestral de Guanacaste encuentra la Inteligencia Artificial. Un ecosistema vivo que protege y sustenta tu negocio.",
+        hero_subtitle: "Infraestructura Cloud de última generación y Agentes de IA orquestados para transformar tus datos en decisiones inteligentes.",
         hero_cta_demo: "Ver Demo",
         hero_cta_console: "Acceder a Consola",
         services_title: "Servicios Guana Cloud",
@@ -24,8 +24,8 @@ export const translations = {
         presence_label: "Proyectos Desarrollados en",
         arch_title: "DirIA: Producto & Ecosistema",
         arch_subtitle: "Una plataforma multi-agente capaz de resolver desde tareas sencillas hasta orquestaciones complejas.",
-        agents_title: "Las Cimas de DirIA",
-        agents_subtitle: "Cada agente es una cumbre especializada. Juntos, forman una montaña de inteligencia.",
+        agents_title: "Agentes Inteligentes Especializados",
+        agents_subtitle: "Una red de expertos digitales trabajando en armonía para potenciar tu negocio.",
         agent_guaitil_desc: "Tu helpdesk level 0 siempre vigilante. Resolución automática de tickets con precisión artesanal.",
         agent_nicoya_desc: "Base de conocimiento que no olvida. Aprende de cada interacción y mantiene la sabiduría.",
         agent_santacruz_desc: "Consultas DWH y real-time insights. Transforma preguntas en SQL y dashboards.",
@@ -41,6 +41,7 @@ export const translations = {
         pillar_cloud_desc: "El cloud permite que los sistemas distribuidos operen a escala planetaria con la elegancia de un bosque tropical.",
         ecosystem_title: "El Ecosistema GuanaCloud",
         team_title: "Liderazgo Visionario",
+        team_bio_jose: "Jose cuenta con 20 años trabajando como ingeniero en datos y liderando equipos de data analyst, data engineering y data scientist en grandes empresas como Intel, Movistar y Connect Assistant. Desarrollando equipos y modelos de datos desde el Onpremise hasta On Cloud en las 3 grandes plataformas como lo son AWS, Azure y GCP. Durante su paso por Telefónica trabajó con modelos de big data para el procesamiento de grandes volúmenes de datos. Los últimos años estuvo inmerso en la integración de todas las estructuras de datos con el AI en los 5 países de Latinoamérica que opera Connect. En lo personal es un amante del baloncesto y gran fan de los Celtics, y practica regularmente el ciclismo como deporte.",
         footer_sustainability: "Comprometidos con la Naturaleza"
     },
     en: {
@@ -85,6 +86,7 @@ export const translations = {
         pillar_cloud_desc: "Cloud allows distributed systems to operate at planetary scale with the elegance of a tropical forest.",
         ecosystem_title: "The GuanaCloud Ecosystem",
         team_title: "Visionary Leadership",
+        team_bio_jose: "Jose has 20 years of experience working as a data engineer and leading data analyst, data engineering, and data scientist teams in large companies such as Intel, Movistar, and Connect Assistant. Developing teams and data models from On-premise to On Cloud on the 3 major platforms: AWS, Azure, and GCP. During his time at Telefónica, he worked with big data models for processing large volumes of data. In recent years, he has been immersed in integrating all data structures with AI in the 5 Latin American countries where Connect operates. Personally, he is a basketball lover and a big Celtics fan, and regularly practices cycling.",
         footer_sustainability: "Committed to Nature"
     }
 };
