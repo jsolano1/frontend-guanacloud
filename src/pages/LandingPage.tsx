@@ -4,7 +4,9 @@ import { Hero } from '../components/landing/Hero';
 import { Services } from '../components/landing/Services';
 import { Architecture } from '../components/landing/Architecture';
 import { Agents } from '../components/landing/Agents';
+import { Ecosystem } from '../components/landing/Ecosystem';
 import { Philosophy } from '../components/landing/Philosophy';
+import { Team } from '../components/landing/Team';
 import { Footer } from '../components/layout/Footer';
 
 export const LandingPage: React.FC = () => {
@@ -16,7 +18,9 @@ export const LandingPage: React.FC = () => {
                 <Services />
                 <Architecture />
                 <Agents />
+                <Ecosystem />
                 <Philosophy />
+                <Team />
             </main>
             <Footer />
         </div>

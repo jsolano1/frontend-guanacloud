@@ -14,7 +14,7 @@ export const Hero: React.FC = () => {
                 <motion.img
                     src="/img/hero_drone_ai_diria.png"
                     alt="Cerro Diria AI Network"
-                    className="w-full h-full object-cover opacity-60"
+                    className="w-full h-full object-cover opacity-30"
                     initial={{ scale: 1 }}
                     animate={{ scale: 1.1, x: '-2%', y: '-2%' }}
                     transition={{ duration: 30, repeat: Infinity, repeatType: "reverse", ease: "linear" }}

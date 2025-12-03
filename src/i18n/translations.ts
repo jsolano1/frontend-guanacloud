@@ -7,7 +7,7 @@ export const translations = {
         nav_login: "Login",
         nav_demo: "Ver Demo",
         hero_title_1: "Perspectiva Inteligente",
-        hero_title_2: "Desde Todas las Alturas",
+        hero_title_2: "Desde Todas las Alturas con AI Agents",
         hero_subtitle: "Infraestructura Cloud de última generación y Agentes de IA orquestados para transformar tus datos en decisiones inteligentes.",
         hero_cta_demo: "Ver Demo",
         hero_cta_console: "Acceder a Consola",

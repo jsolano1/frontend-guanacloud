@@ -55,17 +55,16 @@ export const Services: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className={`relative rounded-3xl border border-white/10 overflow-hidden group hover:border-diria-neonGreen/50 transition-all ${service.className}`}
+                            className={`relative rounded-3xl border border-white/10 overflow-hidden group hover:border-diria-neonGreen/50 transition-all duration-500 ${service.className}`}
                         >
                             <div
                                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                                 style={{ backgroundImage: `url('${service.img}')` }}
                             ></div>
-                            <div className="absolute inset-0 bg-black/70 group-hover:bg-black/60 transition-colors duration-300"></div>
-                            <div className="relative z-10 p-8 h-full flex flex-col justify-end">
-                                <div className="text-4xl mb-4">{service.icon}</div>
-                                <h3 className="text-xl md:text-3xl font-bold text-white mb-3">{t(service.titleKey as any)}</h3>
-                                <p className="text-gray-200 text-sm md:text-lg leading-relaxed">{t(service.descKey as any)}</p>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:via-black/40 transition-all duration-500"></div>
+                            <div className="relative z-10 p-8 h-full flex flex-col justify-end transform transition-transform duration-500 group-hover:-translate-y-2">
+                                <h3 className="text-xl md:text-3xl font-bold text-white mb-3 group-hover:text-diria-neonGreen transition-colors">{t(service.titleKey as any)}</h3>
+                                <p className="text-gray-200 text-sm md:text-lg leading-relaxed opacity-90 group-hover:opacity-100">{t(service.descKey as any)}</p>
                             </div>
                         </motion.div>
                     ))}

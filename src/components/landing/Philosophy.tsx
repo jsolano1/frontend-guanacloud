@@ -104,54 +104,6 @@ export const Philosophy: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Ecosystem Diagram */}
-                <div className="text-center mb-24">
-                    <h3 className="text-2xl font-heading font-bold text-white mb-12">{t('ecosystem_title')}</h3>
-                    <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        <div className="p-6 rounded-2xl border border-white/10 bg-white/5">
-                            <div className="text-4xl mb-4">🔧</div>
-                            <h4 className="text-xl font-bold text-white mb-2">Ingeniería</h4>
-                            <p className="text-sm text-diria-muted">Data Engineering, Analytics, Cloud Architecture.</p>
-                        </div>
-                        <div className="p-6 rounded-2xl border border-diria-neonGreen/30 bg-diria-neonGreen/5 relative">
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-diria-neonGreen text-black text-xs font-bold px-3 py-1 rounded-full">CORE</div>
-                            <div className="text-4xl mb-4">🤖</div>
-                            <h4 className="text-xl font-bold text-white mb-2">DirIA Platform</h4>
-                            <p className="text-sm text-diria-muted">Orquestación Multi-Agente.</p>
-                        </div>
-                        <div className="p-6 rounded-2xl border border-white/10 bg-white/5">
-                            <div className="text-4xl mb-4">🌱</div>
-                            <h4 className="text-xl font-bold text-white mb-2">Filosofía</h4>
-                            <p className="text-sm text-diria-muted">Blue Zone Thinking.</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Team */}
-                <div className="text-center mb-16">
-                    <h3 className="text-2xl font-heading font-bold text-white mb-12">{t('team_title')}</h3>
-                    <div className="flex flex-col md:flex-row justify-center gap-12 md:gap-24">
-                        <div className="flex flex-col items-center group">
-                            <div className="relative mb-6">
-                                <div className="absolute inset-0 bg-diria-neonGreen/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 opacity-50 group-hover:opacity-100"></div>
-                                <img src="/img/jose_solano.png" alt="Jose Solano" className="relative w-48 h-48 rounded-full object-cover object-top border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20 shadow-2xl group-hover:scale-105 transition-transform duration-500" />
-                            </div>
-                            <div className="text-white font-bold text-xl">Jose Solano</div>
-                            <div className="text-sm text-diria-neonGreen uppercase tracking-widest font-medium mt-1 mb-4">CEO</div>
-                            <p className="text-diria-muted text-sm max-w-md text-center leading-relaxed">
-                                {t('team_bio_jose' as any)}
-                            </p>
-                        </div>
-                        <div className="flex flex-col items-center group">
-                            <div className="relative mb-6">
-                                <div className="absolute inset-0 bg-diria-neonBlue/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 opacity-50 group-hover:opacity-100"></div>
-                                <img src="/img/alejandra_restrepo_new.png" alt="Alejandra Restrepo" className="relative w-48 h-48 rounded-full object-cover object-top border-2 border-diria-neonBlue ring-4 ring-diria-neonBlue/20 shadow-2xl group-hover:scale-105 transition-transform duration-500" />
-                            </div>
-                            <div className="text-white font-bold text-xl">Alejandra Restrepo</div>
-                            <div className="text-sm text-diria-neonBlue uppercase tracking-widest font-medium mt-1">Chief of Staff</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
     );
