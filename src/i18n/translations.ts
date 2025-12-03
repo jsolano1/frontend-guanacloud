@@ -70,12 +70,14 @@ export const translations = {
         presence_label: "Projects Developed In",
         arch_title: "DirIA: Product & Ecosystem",
         arch_subtitle: "A multi-agent platform capable of solving from simple tasks to complex orchestrations.",
-        agents_title: "The Peaks of DirIA",
-        agents_subtitle: "Each agent is a specialized peak. Together, they form a mountain of intelligence.",
+
+        agents_title: "Specialized Intelligent Agents",
+        agents_subtitle: "A network of digital experts working in harmony to empower your business.",
         agent_guaitil_desc: "Your always-vigilant level 0 helpdesk. Automatic ticket resolution with artisanal precision.",
         agent_nicoya_desc: "Knowledge base that never forgets. Learns from every interaction and maintains wisdom.",
         agent_santacruz_desc: "DWH queries and real-time insights. Transforms questions into SQL and dashboards.",
         agent_nandayure_desc: "Assistant with calendar and intelligent alerts. Your executive copilot.",
+
         about_origin_title: "Ancestral Wisdom,\nFuture Technology",
         about_origin_p1: "In the heart of Guanacaste, <strong>Cerro Diriá</strong> has witnessed life for millennia. For the Chorotegas, \"Diriá\" meant more than \"mountain\" — it represented elevation, perspective, and vision from the heights.",
         about_origin_p2: "Here, in one of the planet's five <strong>Blue Zones</strong>, nature has perfected systems of collaboration and resilience. GuanaCloud was born here because we understood something fundamental: the smartest systems are not monolithic, they are networks of collaborating specialists.",
@@ -87,8 +89,9 @@ export const translations = {
         pillar_cloud_desc: "Cloud allows distributed systems to operate at planetary scale with the elegance of a tropical forest.",
         ecosystem_title: "The GuanaCloud Ecosystem",
         team_title: "Visionary Leadership",
-        team_bio_jose: "Jose has 20 years of experience working as a data engineer and leading data analyst, data engineering, and data scientist teams in large companies such as Intel, Movistar, and Connect Assistant. Developing teams and data models from On-premise to On Cloud on the 3 major platforms: AWS, Azure, and GCP. During his time at Telefónica, he worked with big data models for processing large volumes of data. In recent years, he has been immersed in integrating all data structures with AI in the 5 Latin American countries where Connect operates. Personally, he is a basketball lover and a big Celtics fan, and regularly practices cycling.",
-        team_bio_alejandra: "Con más de 10 años transformando operaciones empresariales a través de datos, Alejandra ha liderado iniciativas de gestión, análisis y arquitectura de datos en los sectores de banca y tecnología, donde la precisión no es negociable y la agilidad marca la diferencia.<br/><br/>Su expertise combina lo técnico con lo estratégico: ha dirigido equipos multidisciplinarios, construido plataformas digitales desde cero y automatizado procesos que antes consumían semanas en horas. Su enfoque va más allá de implementar tecnología—se trata de diseñar sistemas que las personas realmente usan, que escalan sin quebrarse, y que convierten la complejidad en claridad operativa.<br/><br/>Cofundó GuanaCloud con una convicción clara: que toda empresa, sin importar su tamaño, merece acceder a tecnología de clase mundial. Herramientas que antes solo tenían las corporaciones, ahora al alcance de equipos que quieren competir en serio.",
+        team_bio_jose: "With 20 years transforming data into decisions, Jose has led data engineering, analytics, and data science teams in global companies such as Intel, Movistar, Grupo Cuestamoras, Premier Insurance, and Connect Assistant.<br/><br/>His expertise covers the full spectrum of data evolution: from on-premise architectures to cloud-native implementations on AWS, Azure, and GCP. At Telefónica, he worked at the forefront of big data, processing massive volumes before the term entered the tech mainstream. More recently, he led the integration of data infrastructures with AI in 5 Latin American countries, connecting a variety of systems with modern artificial intelligence.<br/><br/>He founded GuanaCloud inspired by the Guanacaste Blue Zone: building technology that not only scales but endures for generations.<br/><br/>Beyond the code: His family is his daily engine. On weekends you find him celebrating (or suffering) with his Boston Celtics 🏀, or cycling through the mountains of Costa Rica 🚴‍♂️",
+        team_bio_alejandra: "With over 10 years transforming business operations through data, Alejandra has led management, analysis, and data architecture initiatives in the banking and technology sectors, where precision is non-negotiable and agility makes the difference.<br/><br/>Her expertise combines the technical with the strategic: she has directed multidisciplinary teams, built digital platforms from scratch, and automated processes that used to consume weeks into hours. Her approach goes beyond implementing technology—it's about designing systems that people actually use, that scale without breaking, and that turn complexity into operational clarity.<br/><br/>She co-founded GuanaCloud with a clear conviction: that every company, regardless of its size, deserves access to world-class technology. Tools that were once only available to corporations are now within reach of teams that want to compete seriously.",
+
         footer_sustainability: "Committed to Nature"
     }
 };

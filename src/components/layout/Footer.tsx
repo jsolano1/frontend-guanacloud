@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <footer className="bg-black border-t border-white/10 py-16 scroll-zoom relative z-10">
+        <footer className="bg-black border-t border-white/10 py-16 relative z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-start gap-12">
 
@@ -24,12 +24,13 @@ export const Footer: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Columna 2: Enlaces Rápidos (Nuevo) */}
+                    {/* Columna 2: Enlaces Rápidos (Funcionales para validar páginas) */}
                     <div className="grid grid-cols-2 gap-12 text-sm">
                         <div>
                             <h4 className="font-bold text-white mb-4">Compañía</h4>
                             <ul className="space-y-3 text-diria-muted">
-                                <li><a href="#about" className="hover:text-diria-neonGreen transition">Filosofía</a></li>
+                                <li><a href="/#about" className="hover:text-diria-neonGreen transition">Filosofía</a></li>
+                                {/* Link a la página de Carreras */}
                                 <li><Link to="/careers" className="hover:text-diria-neonGreen transition">Carreras</Link></li>
                                 <li><a href="mailto:info@guanacloud.com" className="hover:text-diria-neonGreen transition">Contacto</a></li>
                             </ul>
@@ -37,6 +38,7 @@ export const Footer: React.FC = () => {
                         <div>
                             <h4 className="font-bold text-white mb-4">Legal</h4>
                             <ul className="space-y-3 text-diria-muted">
+                                {/* Links a las páginas Legales */}
                                 <li><Link to="/legal/privacy" className="hover:text-white transition">Privacidad</Link></li>
                                 <li><Link to="/legal/terms" className="hover:text-white transition">Términos</Link></li>
                                 <li><span className="opacity-50">SOC 2 Type II</span></li>
