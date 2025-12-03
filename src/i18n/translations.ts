@@ -7,7 +7,7 @@ export const translations = {
         nav_login: "Login",
         nav_demo: "Ver Demo",
         hero_title_1: "Perspectiva Inteligente",
-        hero_title_2: "Con AI Multi-Agents", // <--- TEXTO CORREGIDO
+        hero_title_2: "Con AI Multi-Agents",
         hero_subtitle: "Infraestructura Cloud de última generación y Agentes de IA orquestados para transformar tus datos en decisiones inteligentes.",
         hero_cta_demo: "Ver Demo",
         hero_cta_console: "Acceder a Consola",
@@ -42,6 +42,7 @@ export const translations = {
         ecosystem_title: "El Ecosistema GuanaCloud",
         team_title: "Liderazgo Visionario",
         team_bio_jose: "Con 20 años transformando datos en decisiones, José ha liderado equipos de data engineering, analytics y data science en empresas globales como Intel, Movistar, Grupo Cuestamoras, Premier Insurance y Connect Assistant.<br/><br/>Su expertise abarca el espectro completo de la evolución de datos: desde arquitecturas on-premise hasta implementaciones cloud-native en AWS, Azure y GCP. En Telefónica, trabajó en la vanguardia del big data, procesando volúmenes masivos antes de que el término entrara al mainstream tech. Más recientemente, lideró la integración de infraestructuras de datos con IA en 5 países de Latinoamérica, conectando una variedad de sistemas con inteligencia artificial moderna.<br/><br/>Fundó GuanaCloud inspirado por la Blue Zone de Guanacaste: construir tecnología que no solo escala, sino que perdura generaciones.<br/><br/>Más allá del código: Su familia es el motor de cada día. Los fines de semana lo encuentras celebrando (o sufriendo) con sus Boston Celtics 🏀, o pedaleando por las montañas de Costa Rica 🚴‍♂️",
+        team_bio_alejandra: "Con más de 10 años transformando operaciones empresariales a través de datos, Alejandra ha liderado iniciativas de gestión, análisis y arquitectura de datos en los sectores de banca y tecnología, donde la precisión no es negociable y la agilidad marca la diferencia.<br/><br/>Su expertise combina lo técnico con lo estratégico: ha dirigido equipos multidisciplinarios, construido plataformas digitales desde cero y automatizado procesos que antes consumían semanas en horas. Su enfoque va más allá de implementar tecnología—se trata de diseñar sistemas que las personas realmente usan, que escalan sin quebrarse, y que convierten la complejidad en claridad operativa.<br/><br/>Cofundó GuanaCloud con una convicción clara: que toda empresa, sin importar su tamaño, merece acceder a tecnología de clase mundial. Herramientas que antes solo tenían las corporaciones, ahora al alcance de equipos que quieren competir en serio.",
         footer_sustainability: "Comprometidos con la Naturaleza"
     },
     en: {
@@ -87,6 +88,7 @@ export const translations = {
         ecosystem_title: "The GuanaCloud Ecosystem",
         team_title: "Visionary Leadership",
         team_bio_jose: "Jose has 20 years of experience working as a data engineer and leading data analyst, data engineering, and data scientist teams in large companies such as Intel, Movistar, and Connect Assistant. Developing teams and data models from On-premise to On Cloud on the 3 major platforms: AWS, Azure, and GCP. During his time at Telefónica, he worked with big data models for processing large volumes of data. In recent years, he has been immersed in integrating all data structures with AI in the 5 Latin American countries where Connect operates. Personally, he is a basketball lover and a big Celtics fan, and regularly practices cycling.",
+        team_bio_alejandra: "Con más de 10 años transformando operaciones empresariales a través de datos, Alejandra ha liderado iniciativas de gestión, análisis y arquitectura de datos en los sectores de banca y tecnología, donde la precisión no es negociable y la agilidad marca la diferencia.<br/><br/>Su expertise combina lo técnico con lo estratégico: ha dirigido equipos multidisciplinarios, construido plataformas digitales desde cero y automatizado procesos que antes consumían semanas en horas. Su enfoque va más allá de implementar tecnología—se trata de diseñar sistemas que las personas realmente usan, que escalan sin quebrarse, y que convierten la complejidad en claridad operativa.<br/><br/>Cofundó GuanaCloud con una convicción clara: que toda empresa, sin importar su tamaño, merece acceder a tecnología de clase mundial. Herramientas que antes solo tenían las corporaciones, ahora al alcance de equipos que quieren competir en serio.",
         footer_sustainability: "Committed to Nature"
     }
 };

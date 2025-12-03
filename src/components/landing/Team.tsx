@@ -7,6 +7,7 @@ export const Team: React.FC = () => {
     const { t } = useLanguage();
     const [isContactOpen, setIsContactOpen] = useState(false);
 
+    // Función de envío de formulario (Formspree)
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -78,7 +79,7 @@ export const Team: React.FC = () => {
                         </div>
 
                         {/* Alejandra Restrepo */}
-                        <div className="flex flex-col items-center group">
+                        <div className="flex flex-col items-center group max-w-lg">
                             <div className="relative mb-8">
                                 <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-3xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
                                 <div className="relative">
@@ -94,7 +95,12 @@ export const Team: React.FC = () => {
                                 </div>
                             </div>
                             <div className="text-white font-bold text-2xl mb-2">Alejandra Restrepo</div>
-                            <div className="text-sm uppercase tracking-widest font-bold mb-6" style={{ color: '#00ccff' }}>Co-Founder & Chief of Staff</div>
+                            <div className="text-sm uppercase tracking-widest font-bold mb-6" style={{ color: '#00ccff' }}>Founder & Chief of Staff</div>
+                            {/* AQUI AGREGAMOS LA RESEÑA DE ALEJANDRA */}
+                            <p
+                                className="text-gray-400 text-sm text-center leading-relaxed"
+                                dangerouslySetInnerHTML={{ __html: t('team_bio_alejandra' as any) }}
+                            />
                         </div>
                     </div>
 
@@ -130,7 +136,6 @@ export const Team: React.FC = () => {
                             <p className="text-gray-400 mb-6">Envíanos un mensaje y nuestro equipo te contactará pronto.</p>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* IMPORTANTE: Se agregaron los atributos name="..." */}
                                 <input
                                     type="text"
                                     name="name"
