@@ -8,12 +8,14 @@ import { Ecosystem } from '../components/landing/Ecosystem';
 import { Philosophy } from '../components/landing/Philosophy';
 import { Team } from '../components/landing/Team';
 import { Footer } from '../components/layout/Footer';
+import { ParticlesBackground } from '../components/layout/ParticlesBackground'; // <--- Importar
 
 export const LandingPage: React.FC = () => {
     return (
-        <div className="min-h-screen bg-diria-darker text-white">
+        <div className="min-h-screen bg-diria-darker text-white relative"> {/* relative es importante */}
+            <ParticlesBackground /> {/* <--- Agregar aquí al inicio */}
             <Navbar />
-            <main>
+            <main className="relative z-10"> {/* z-10 para que el contenido esté sobre los puntos */}
                 <Hero />
                 <Services />
                 <Architecture />

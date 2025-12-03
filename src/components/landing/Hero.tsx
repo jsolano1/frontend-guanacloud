@@ -14,7 +14,7 @@ export const Hero: React.FC = () => {
                 <motion.img
                     src="/img/hero_drone_ai_diria.png"
                     alt="Cerro Diria AI Network"
-                    className="w-full h-full object-cover opacity-30"
+                    className="w-full h-full object-cover opacity-60" // Opacidad ajustada
                     initial={{ scale: 1 }}
                     animate={{ scale: 1.1, x: '-2%', y: '-2%' }}
                     transition={{ duration: 30, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
@@ -27,6 +27,7 @@ export const Hero: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
+                    // Badge Actualizado: Estilo más limpio
                     className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8"
                 >
                     <span className="w-2 h-2 rounded-full bg-diria-neonGreen animate-pulse mr-2"></span>
@@ -59,7 +60,8 @@ export const Hero: React.FC = () => {
                     transition={{ duration: 0.8, delay: 0.6 }}
                     className="mt-12 flex flex-col sm:flex-row justify-center gap-4"
                 >
-                    <a href="#demo" className="px-8 py-4 bg-diria-neonGreen text-black rounded-full font-bold text-lg hover:bg-white transition shadow-[0_0_20px_rgba(0,255,157,0.4)] flex items-center justify-center gap-2 group">
+                    {/* Botón Ver Demo actualizado con fondo blanco y efecto shadow */}
+                    <a href="#demo" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-diria-neonGreen transition shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(0,255,157,0.5)] flex items-center justify-center gap-2 group">
                         <span>{t('hero_cta_demo')}</span>
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </a>

@@ -9,8 +9,6 @@ export const Team: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, this would send data to a backend.
-        // For now, we'll simulate a mailto action or just close the modal.
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
         const name = formData.get('name');
@@ -29,22 +27,24 @@ export const Team: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row justify-center gap-16 md:gap-32 mb-24">
                         {/* Jose Solano */}
-                        <div className="flex flex-col items-center group">
+                        <div className="flex flex-col items-center group max-w-lg">
                             <div className="relative mb-8">
                                 <div className="absolute inset-0 bg-diria-neonGreen/20 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500 opacity-50 group-hover:opacity-80"></div>
                                 <div className="relative p-1 rounded-full bg-gradient-to-br from-diria-neonGreen to-transparent">
                                     <img
                                         src="/img/jose_solano.png"
                                         alt="Jose Solano"
-                                        className="w-56 h-56 rounded-full object-cover object-top border-4 border-diria-darker shadow-2xl group-hover:scale-105 transition-transform duration-500"
+                                        // AQUI LOS BORDES: border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20
+                                        className="w-56 h-56 rounded-full object-cover object-top border-2 border-diria-neonGreen ring-4 ring-diria-neonGreen/20 shadow-2xl group-hover:scale-105 transition-transform duration-500"
                                     />
                                 </div>
                             </div>
                             <div className="text-white font-bold text-2xl mb-2">Jose Solano</div>
-                            <div className="text-sm text-diria-neonGreen uppercase tracking-widest font-bold mb-6">CEO</div>
-                            <p className="text-diria-muted text-sm max-w-md text-center leading-relaxed">
-                                {t('team_bio_jose' as any)}
-                            </p>
+                            <div className="text-sm text-diria-neonGreen uppercase tracking-widest font-bold mb-6">Founder & CEO</div>
+                            <p
+                                className="text-diria-muted text-sm text-center leading-relaxed"
+                                dangerouslySetInnerHTML={{ __html: t('team_bio_jose' as any) }}
+                            />
                         </div>
 
                         {/* Alejandra Restrepo */}
@@ -55,12 +55,14 @@ export const Team: React.FC = () => {
                                     <img
                                         src="/img/alejandra_restrepo_new.png"
                                         alt="Alejandra Restrepo"
-                                        className="w-56 h-56 rounded-full object-cover object-top border-4 border-diria-darker shadow-2xl group-hover:scale-105 transition-transform duration-500"
+                                        // AQUI LOS BORDES: border-2 border-diria-neonBlue ring-4 ring-diria-neonBlue/20
+                                        className="w-56 h-56 rounded-full object-cover object-top border-2 border-diria-neonBlue ring-4 ring-diria-neonBlue/20 shadow-2xl group-hover:scale-105 transition-transform duration-500"
                                     />
                                 </div>
                             </div>
                             <div className="text-white font-bold text-2xl mb-2">Alejandra Restrepo</div>
-                            <div className="text-sm text-diria-neonBlue uppercase tracking-widest font-bold mb-6">Chief of Staff</div>
+                            {/* TITULO ACTUALIZADO: */}
+                            <div className="text-sm text-diria-neonBlue uppercase tracking-widest font-bold mb-6">Founder & Chief of Staff</div>
                         </div>
                     </div>
 
@@ -78,7 +80,7 @@ export const Team: React.FC = () => {
                 </div>
             </div>
 
-            {/* Contact Modal */}
+            {/* Modal de Contacto (sin cambios en la lógica) */}
             <AnimatePresence>
                 {isContactOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 px-4">
