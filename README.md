@@ -144,6 +144,18 @@ En el `package.json` encontrarás los siguientes comandos:
 
 ---
 
+## 📌 Roadmap & To-Do
+
+- [ ] Completar Policys en legal
+- [ ] Agregar redes sociales
+- [ ] SEO
+- [ ] Login para user Google/MS365 o crear usuario en plataforma
+- [ ] Instrumentación del sitio (validar el uso de GA4)
+- [ ] Revisar el diseño general del sitio
+- [ ] Ajustar como llegan los correos desde el form de contáctenos
+
+---
+
 ## 🤝 Guía para Contribuidores
 
 ### Flujo de Trabajo
