@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { Menu, X } from 'lucide-react';
+import { useContact } from '../../context/ContactContext';
 
 export const Navbar: React.FC = () => {
     const { language, toggleLanguage, t } = useLanguage();
+    const { openContact } = useContact();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -27,9 +29,8 @@ export const Navbar: React.FC = () => {
         <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-nav h-24' : 'h-28 bg-transparent'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex justify-between items-center h-full">
-                    {/* Logo con Link al Home */}
+                    {/* Logo */}
                     <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer group py-2">
-                        {/* CAMBIO: Logo mucho más grande (h-16 en móvil, h-20 en desktop) */}
                         <img
                             src="/img/guana_cloud_square.png"
                             alt="Guana Cloud"
@@ -47,9 +48,14 @@ export const Navbar: React.FC = () => {
 
                         <button
                             onClick={toggleLanguage}
-                            className="text-sm font-bold text-diria-neonBlue hover:text-white transition border border-diria-neonBlue/30 px-3 py-1 rounded-full"
+                            className="text-sm font-bold text-diria-neonBlue hover:text-white transition border border-diria-neonBlue/30 px-3 py-1 rounded-full flex items-center gap-2"
                         >
-                            {language === 'es' ? 'EN' : 'ES'}
+                            {/* BANDERAS AGREGADAS */}
+                            {language === 'es' ? (
+                                <><span>🇺🇸</span> EN</>
+                            ) : (
+                                <><span>🇪🇸</span> ES</>
+                            )}
                         </button>
 
                         <Link to="/console" className="text-sm font-semibold text-diria-neonBlue hover:text-white transition">
@@ -61,13 +67,49 @@ export const Navbar: React.FC = () => {
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden flex items-center">
+                    <div className="md:hidden flex items-center gap-4">
+                        {/* Botón de idioma también visible en móvil fuera del menú para acceso rápido */}
+                        <button
+                            onClick={toggleLanguage}
+                            className="text-sm font-bold text-white border border-white/20 px-2 py-1 rounded-full"
+                        >
+                            {language === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
+                        </button>
                         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
-                            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                            {isMobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div className="md:hidden absolute top-24 left-0 w-full bg-[#0a0a0a] border-b border-white/10 p-6 flex flex-col gap-6 shadow-2xl animate-fade-in-down">
+                    {navLinks.map((link) => (
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-lg font-medium text-white hover:text-diria-neonGreen"
+                        >
+                            {link.name}
+                        </a>
+                    ))}
+                    <div className="h-px bg-white/10 my-2"></div>
+                    <Link to="/console" className="text-lg font-semibold text-diria-neonBlue">
+                        {t('nav_login')}
+                    </Link>
+                    <button
+                        onClick={() => { openContact(); setIsMobileMenuOpen(false); }}
+                        className="text-left text-lg font-semibold text-white"
+                    >
+                        {t('contact_cta')}
+                    </button>
+                    <a href="#demo" className="bg-diria-neonGreen text-black px-6 py-3 rounded-xl text-center font-bold">
+                        {t('nav_demo')}
+                    </a>
+                </div>
+            )}
         </nav>
     );
 };
