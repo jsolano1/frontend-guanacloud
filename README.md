@@ -116,7 +116,7 @@ Asegúrate de tener [Node.js](https://nodejs.org/) (v18+ recomendado) instalado.
 
 1.  **Clonar el repositorio**
     ```bash
-    git clone <url-del-repo>
+    git clone https://github.com/jsolano1/frontend-guanacloud.git
     cd Frontend-guanacloud
     ```
 
