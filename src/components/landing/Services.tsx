@@ -8,7 +8,7 @@ export const Services: React.FC = () => {
     const services = [
         {
             id: 'de',
-            icon: '🏗️',
+            icon: '',
             titleKey: 'service_de_title',
             descKey: 'service_de_desc',
             img: '/img/service_data_eng.png',
@@ -16,7 +16,7 @@ export const Services: React.FC = () => {
         },
         {
             id: 'ml',
-            icon: '🤖',
+            icon: '',
             titleKey: 'service_ml_title',
             descKey: 'service_ml_desc',
             img: '/img/service_ml.png',
@@ -24,7 +24,7 @@ export const Services: React.FC = () => {
         },
         {
             id: 'da',
-            icon: '📈',
+            icon: '',
             titleKey: 'service_da_title',
             descKey: 'service_da_desc',
             img: '/img/service_data_analyst.png',
@@ -32,7 +32,7 @@ export const Services: React.FC = () => {
         },
         {
             id: 'ds',
-            icon: '🔬',
+            icon: '',
             titleKey: 'service_ds_title',
             descKey: 'service_ds_desc',
             img: '/img/service_data_science.png',
@@ -40,7 +40,7 @@ export const Services: React.FC = () => {
         },
         {
             id: 'consulting',
-            icon: '🧭',
+            icon: '',
             titleKey: 'service_consulting_title',
             descKey: 'service_consulting_desc',
             img: '/img/service_ai.png',
