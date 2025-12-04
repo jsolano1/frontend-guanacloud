@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
+import { useContact } from '../../context/ContactContext';
 
 export const Footer: React.FC = () => {
     const { t } = useLanguage();
+    const { openContact } = useContact();
 
     return (
         <footer className="bg-black border-t border-white/10 py-16 relative z-50">
@@ -13,8 +15,8 @@ export const Footer: React.FC = () => {
                     {/* Brand */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            {/* CAMBIO: Logo más grande (h-12) */}
-                            <img src="/img/guana_logo_dark.png" alt="Logo" className="h-12 w-auto" />
+                            {/* CAMBIO: Logo aún más grande (h-16) */}
+                            <img src="/img/guana_logo_dark.png" alt="Logo" className="h-16 w-auto" />
                             <span className="font-heading font-bold text-2xl text-white">Guana Cloud</span>
                         </div>
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-900/20 border border-green-500/30 w-fit">
@@ -32,7 +34,8 @@ export const Footer: React.FC = () => {
                             <ul className="space-y-3 text-diria-muted">
                                 <li><a href="/#about" className="hover:text-diria-neonGreen transition">Filosofía</a></li>
                                 <li><Link to="/careers" className="hover:text-diria-neonGreen transition">Carreras</Link></li>
-                                <li><a href="mailto:info@guanacloud.com" className="hover:text-diria-neonGreen transition">Contacto</a></li>
+                                {/* CAMBIO: Contacto ahora abre el modal */}
+                                <li><button onClick={openContact} className="hover:text-diria-neonGreen transition text-left">Contacto</button></li>
                             </ul>
                         </div>
                         <div>

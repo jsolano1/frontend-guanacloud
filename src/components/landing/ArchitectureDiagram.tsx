@@ -30,7 +30,7 @@ const NODES: NodeConfig[] = [
     {
         id: 'gateway',
         label: 'API Gateway',
-        sub: 'Cloud Run',
+        sub: 'DirIA Core',
         icon: '🛡️',
         image: '/img/logo-guanacloud-arbol.png',
         x: 0.28, y: 0.5,
@@ -40,7 +40,7 @@ const NODES: NodeConfig[] = [
     {
         id: 'langgraph',
         label: 'Orquestador',
-        sub: 'LangGraph State',
+        sub: 'LangGraph',
         icon: '🧠',
         x: 0.42, y: 0.5,
         mx: 0.7, my: 0.25,
