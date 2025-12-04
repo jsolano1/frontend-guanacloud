@@ -22,6 +22,9 @@ export const translations = {
         service_da_desc: "Transformamos datos crudos en insights accionables. Dashboards intuitivos y storytelling con datos.",
         service_ds_title: "Data Scientist",
         service_ds_desc: "Modelos predictivos y análisis avanzado para resolver problemas complejos y anticipar tendencias.",
+        service_consulting_title: "Auditoría y Estrategia AI",
+        service_consulting_desc: "¿Listo para la IA? Evaluamos tu infraestructura, datos y procesos. Diseñamos roadmaps claros y gobernanza ética para que tu adopción tecnológica sea segura y rentable.",
+
         presence_label: "Proyectos Desarrollados en",
         arch_title: "DirIA: Producto & Ecosistema",
         arch_subtitle: "Una plataforma multi-agente capaz de resolver desde tareas sencillas hasta orquestaciones complejas.",
@@ -69,13 +72,16 @@ export const translations = {
         service_da_desc: "Transforming raw data into actionable insights. Intuitive dashboards and data storytelling.",
         service_ds_title: "Data Scientist",
         service_ds_desc: "Predictive models and advanced analysis to solve complex problems and anticipate trends.",
+        service_consulting_title: "AI Audit & Strategy",
+        service_consulting_desc: "Ready for AI? We assess your infrastructure, data, and processes. We design clear roadmaps and ethical governance to make your tech adoption secure and profitable.",
+
         presence_label: "Projects Developed In",
         arch_title: "DirIA: Product & Ecosystem",
         arch_subtitle: "A multi-agent platform capable of solving from simple tasks to complex orchestrations.",
 
         agents_title: "Specialized Intelligent Agents",
         agents_subtitle: "A network of digital experts working in harmony to empower your business.",
-        agent_guaitil_desc: "Your always-vigilant L0 helpdesk. Automated resolution with artisanal precision.",
+        agent_guaitil_desc: "Your always-vigilant level 0 helpdesk. Automatic ticket resolution with artisanal precision.",
         agent_nicoya_desc: "Knowledge base that never forgets. Learns from every interaction and maintains wisdom.",
         agent_santacruz_desc: "DWH queries and real-time insights. Transforms questions into SQL and dashboards.",
         agent_nandayure_desc: "Assistant with calendar and intelligent alerts. Your executive copilot.",

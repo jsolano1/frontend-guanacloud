@@ -8,7 +8,7 @@ export const Services: React.FC = () => {
     const services = [
         {
             id: 'de',
-            icon: '🏗️',
+            icon: '',
             titleKey: 'service_de_title',
             descKey: 'service_de_desc',
             img: '/img/service_data_eng.png',
@@ -16,7 +16,7 @@ export const Services: React.FC = () => {
         },
         {
             id: 'ml',
-            icon: '🤖',
+            icon: '',
             titleKey: 'service_ml_title',
             descKey: 'service_ml_desc',
             img: '/img/service_ml.png',
@@ -24,7 +24,7 @@ export const Services: React.FC = () => {
         },
         {
             id: 'da',
-            icon: '📈',
+            icon: '',
             titleKey: 'service_da_title',
             descKey: 'service_da_desc',
             img: '/img/service_data_analyst.png',
@@ -32,10 +32,18 @@ export const Services: React.FC = () => {
         },
         {
             id: 'ds',
-            icon: '🔬',
+            icon: '',
             titleKey: 'service_ds_title',
             descKey: 'service_ds_desc',
             img: '/img/service_data_science.png',
+            className: ''
+        },
+        {
+            id: 'consulting',
+            icon: '',
+            titleKey: 'service_consulting_title',
+            descKey: 'service_consulting_desc',
+            img: '/img/service_ai.png',
             className: ''
         }
     ];
@@ -63,8 +71,9 @@ export const Services: React.FC = () => {
                             ></div>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:via-black/40 transition-all duration-500"></div>
                             <div className="relative z-10 p-8 h-full flex flex-col justify-end transform transition-transform duration-500 group-hover:-translate-y-2">
-                                <h3 className="text-xl md:text-3xl font-bold text-white mb-3 group-hover:text-diria-neonGreen transition-colors">{t(service.titleKey as any)}</h3>
-                                <p className="text-gray-200 text-sm md:text-lg leading-relaxed opacity-90 group-hover:opacity-100">{t(service.descKey as any)}</p>
+                                <div className="text-4xl mb-4">{service.icon}</div>
+                                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-diria-neonGreen transition-colors">{t(service.titleKey as any)}</h3>
+                                <p className="text-gray-200 text-sm leading-relaxed opacity-90 group-hover:opacity-100">{t(service.descKey as any)}</p>
                             </div>
                         </motion.div>
                     ))}
