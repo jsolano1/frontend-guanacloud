@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, X, Send } from 'lucide-react';
+import { X, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useContact } from '../../context/ContactContext';
 
