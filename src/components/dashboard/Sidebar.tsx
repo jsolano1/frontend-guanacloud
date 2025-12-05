@@ -1,15 +1,17 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, MessageSquare, Settings, BarChart3, LogOut } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const Sidebar: React.FC = () => {
     const location = useLocation();
+    const { t } = useLanguage();
 
     const links = [
-        { name: 'Console', path: '/console', icon: MessageSquare },
-        { name: 'Metrics', path: '/console/metrics', icon: BarChart3 },
-        { name: 'Admin', path: '/console/admin', icon: LayoutDashboard },
-        { name: 'Settings', path: '/console/settings', icon: Settings },
+        { name: t('sidebar_console'), path: '/console', icon: MessageSquare },
+        { name: t('sidebar_metrics'), path: '/console/metrics', icon: BarChart3 },
+        { name: t('sidebar_admin'), path: '/console/admin', icon: LayoutDashboard },
+        { name: t('sidebar_settings'), path: '/console/settings', icon: Settings },
     ];
 
     return (
@@ -28,8 +30,8 @@ export const Sidebar: React.FC = () => {
                             key={link.path}
                             to={link.path}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                                    ? 'bg-diria-neonGreen/10 text-diria-neonGreen border border-diria-neonGreen/20'
-                                    : 'text-diria-muted hover:bg-white/5 hover:text-white'
+                                ? 'bg-diria-neonGreen/10 text-diria-neonGreen border border-diria-neonGreen/20'
+                                : 'text-diria-muted hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             <Icon size={20} />
@@ -42,7 +44,7 @@ export const Sidebar: React.FC = () => {
             <div className="p-4 border-t border-white/5">
                 <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-400 hover:bg-red-500/10 transition">
                     <LogOut size={20} />
-                    <span className="font-medium">Logout</span>
+                    <span className="font-medium">{t('sidebar_logout')}</span>
                 </button>
             </div>
         </div>

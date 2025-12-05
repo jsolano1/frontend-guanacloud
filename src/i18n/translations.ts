@@ -47,7 +47,17 @@ export const translations = {
         team_title: "Liderazgo Visionario",
         team_bio_jose: "Con 20 años transformando datos en decisiones, José ha liderado equipos de data engineering, analytics y data science en empresas globales como Intel, Movistar, Grupo Cuestamoras, Premier Insurance y Connect Assistant.<br/><br/>Su expertise abarca el espectro completo de la evolución de datos: desde arquitecturas on-premise hasta implementaciones cloud-native en AWS, Azure y GCP. En Telefónica, trabajó en la vanguardia del big data, procesando volúmenes masivos antes de que el término entrara al mainstream tech. Más recientemente, lideró la integración de infraestructuras de datos con IA en 5 países de Latinoamérica, conectando una variedad de sistemas con inteligencia artificial moderna.<br/><br/>Fundó GuanaCloud inspirado por la Blue Zone de Guanacaste: construir tecnología que no solo escala, sino que perdura generaciones.<br/><br/>Más allá del código: Su familia es el motor de cada día. Los fines de semana lo encuentras celebrando (o sufriendo) con sus Boston Celtics 🏀, o pedaleando por las montañas de Costa Rica 🚴‍♂️",
         team_bio_alejandra: "Con más de 10 años transformando operaciones empresariales a través de datos, Alejandra ha liderado iniciativas de gestión, análisis y arquitectura de datos en los sectores de banca y tecnología, donde la precisión no es negociable y la agilidad marca la diferencia.<br/><br/>Su expertise combina lo técnico con lo estratégico: ha dirigido equipos multidisciplinarios, construido plataformas digitales desde cero y automatizado procesos que antes consumían semanas en horas. Su enfoque va más allá de implementar tecnología—se trata de diseñar sistemas que las personas realmente usan, que escalan sin quebrarse, y que convierten la complejidad en claridad operativa.<br/><br/>Cofundó GuanaCloud con una convicción clara: que toda empresa, sin importar su tamaño, merece acceder a tecnología de clase mundial. Herramientas que antes solo tenían las corporaciones, ahora al alcance de equipos que quieren competir en serio.",
-        footer_sustainability: "Comprometidos con la Naturaleza"
+        footer_sustainability: "Comprometidos con la Naturaleza",
+
+        sidebar_console: "Consola",
+        sidebar_metrics: "Métricas",
+        sidebar_admin: "Admin",
+        sidebar_settings: "Configuración",
+        sidebar_logout: "Cerrar Sesión",
+        console_placeholder: "Escribe tu consulta a DirIA...",
+        console_welcome: "Hola, soy DirIA. ¿En qué puedo ayudarte hoy?",
+        console_reply_mock: "Entendido. Estoy procesando tu solicitud con el agente Cima Guaitil...",
+        console_send: "Enviar"
     },
     en: {
         nav_product: "Product",
@@ -100,7 +110,17 @@ export const translations = {
         team_bio_jose: "With 20 years transforming data into decisions, Jose has led data engineering, analytics, and data science teams in global companies such as Intel, Movistar, Grupo Cuestamoras, Premier Insurance, and Connect Assistant.<br/><br/>His expertise covers the full spectrum of data evolution: from on-premise architectures to cloud-native implementations on AWS, Azure, and GCP. At Telefónica, he worked at the forefront of big data, processing massive volumes before the term entered the tech mainstream. More recently, he led the integration of data infrastructures with AI in 5 Latin American countries, connecting a variety of systems with modern artificial intelligence.<br/><br/>He founded GuanaCloud inspired by the Guanacaste Blue Zone: building technology that not only scales but endures for generations.<br/><br/>Beyond the code: His family is his daily engine. On weekends you find him celebrating (or suffering) with his Boston Celtics 🏀, or cycling through the mountains of Costa Rica 🚴‍♂️",
         team_bio_alejandra: "With over 10 years transforming business operations through data, Alejandra has led management, analysis, and data architecture initiatives in the banking and technology sectors, where precision is non-negotiable and agility makes the difference.<br/><br/>Her expertise combines the technical with the strategic: she has directed multidisciplinary teams, built digital platforms from scratch, and automated processes that used to consume weeks into hours. Her approach goes beyond implementing technology—it's about designing systems that people actually use, that scale without breaking, and that turn complexity into operational clarity.<br/><br/>She co-founded GuanaCloud with a clear conviction: that every company, regardless of its size, deserves access to world-class technology. Tools that were once only available to corporations are now within reach of teams that want to compete seriously.",
 
-        footer_sustainability: "Committed to Nature"
+        footer_sustainability: "Committed to Nature",
+
+        sidebar_console: "Console",
+        sidebar_metrics: "Metrics",
+        sidebar_admin: "Admin",
+        sidebar_settings: "Settings",
+        sidebar_logout: "Logout",
+        console_placeholder: "Type your query to DirIA...",
+        console_welcome: "Hello, I am DirIA. How can I help you today?",
+        console_reply_mock: "Understood. I am processing your request with agent Cima Guaitil...",
+        console_send: "Send"
     }
 };
 
