@@ -165,6 +165,87 @@
                 transform: translateY(0);
             }
         }
+
+        /* Agent Modal Styles */
+        .agent-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .agent-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .agent-modal-content {
+            background: #111;
+            /* Fallback/Base */
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            padding: 3rem;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .agent-modal-overlay.active .agent-modal-content {
+            transform: scale(1);
+        }
+
+        /* Custom Scrollbar for Modal */
+        .agent-modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .agent-modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .agent-modal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .agent-modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
     </style>
 </head>
 
@@ -213,7 +294,7 @@
         <!-- Drone AI Background -->
         <div class="absolute inset-0 z-0 overflow-hidden">
             <img src="static/img/hero_drone_ai_diria.png" alt="Cerro Diria AI Network"
-                class="w-full h-full object-cover animate-pan-zoom opacity-60">
+                class="w-full h-full object-cover animate-pan-zoom opacity-50">
             <div class="absolute inset-0 hero-overlay"></div>
         </div>
 
@@ -372,12 +453,13 @@
                 <h2 class="text-3xl md:text-5xl font-heading font-bold text-white mb-4" data-i18n="agents_title">Las
                     Cimas de DirIA</h2>
                 <p class="text-diria-muted max-w-2xl mx-auto" data-i18n="agents_subtitle">Cada agente es una cumbre
-                    especializada. Juntos, forman una montaña de inteligencia.</p>
+                    especializada. Juntos, forman un ecosistema inteligente.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Agent Card 1 -->
-                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden cursor-pointer"
+                    onclick="openAgentModal('support')">
                     <div
                         class="absolute top-0 right-0 w-32 h-32 bg-diria-neonGreen/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-diria-neonGreen/20">
                     </div>
@@ -391,7 +473,8 @@
                 </div>
 
                 <!-- Agent Card 2 -->
-                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden cursor-pointer"
+                    onclick="openAgentModal('knowledge')">
                     <div
                         class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-yellow-500/20">
                     </div>
@@ -405,7 +488,8 @@
                 </div>
 
                 <!-- Agent Card 3 -->
-                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden cursor-pointer"
+                    onclick="openAgentModal('analytics')">
                     <div
                         class="absolute top-0 right-0 w-32 h-32 bg-diria-neonBlue/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-diria-neonBlue/20">
                     </div>
@@ -419,7 +503,8 @@
                 </div>
 
                 <!-- Agent Card 4 -->
-                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden">
+                <div class="bg-diria-card p-8 rounded-3xl card-hover group relative overflow-hidden cursor-pointer"
+                    onclick="openAgentModal('assistant')">
                     <div
                         class="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-red-500/20">
                     </div>
@@ -833,6 +918,178 @@
                 }
             });
         }
+    </script>
+    <!-- Agent Modal -->
+    <div id="agent-modal" class="agent-modal-overlay" onclick="closeAgentModal(event)">
+        <div class="agent-modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeAgentModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div id="agent-modal-body">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const agentData = {
+            support: {
+                title: "Support Agent (L0)",
+                color: "#00ff9d", // diria-neonGreen
+                description: "Agente de primera línea que gestiona consultas de clientes 24/7 sin intervención humana. Entiende intención, analiza sentimientos, busca en tu knowledge base, ejecuta acciones y escala solo cuando es realmente necesario. Reduce costos de soporte en 60% mientras mejora NPS en +40 puntos.",
+                uses: [
+                    "Atención multicanal: chat web, email, WhatsApp, voz",
+                    "Resolución autónoma de consultas recurrentes y troubleshooting",
+                    "Escalamiento inteligente con contexto completo al agente humano"
+                ],
+                services: [
+                    "Respuestas personalizadas consultando historial del cliente",
+                    "Guías paso a paso para resolver problemas técnicos",
+                    "Procesamiento de devoluciones, cambios y cancelaciones",
+                    "Consulta de estado de pedidos y envíos en tiempo real",
+                    "Recolección estructurada de feedback y casos edge"
+                ],
+                departments: "Customer Service | Customer Success | IT Support | Sales Operations | HR Service Desk"
+            },
+            knowledge: {
+                title: "Knowledge Agent",
+                color: "#EAB308", // yellow-500
+                description: "Centraliza políticas, procedimientos, manuales y documentación dispersa en un cerebro conversacional. Tu equipo pregunta en lenguaje natural y recibe la respuesta exacta con fuentes citadas. Se actualiza automáticamente cuando cambia la documentación. Reduce tickets repetitivos en 70% y acelera onboarding de empleados en 80%.",
+                uses: [
+                    "Búsqueda semántica en documentación empresarial completa",
+                    "Onboarding acelerado con respuestas adaptadas al rol del empleado",
+                    "Consistencia en respuestas: todos usan la misma fuente de verdad"
+                ],
+                services: [
+                    "Navegación en manuales de producto, compliance y procedimientos",
+                    "Traducción de jerga técnica a lenguaje que cualquiera entiende",
+                    "Comparación de políticas (ej: \"diferencia entre plan A y plan B\")",
+                    "Detección de preguntas sin respuesta para mejorar documentación",
+                    "Síntesis de información de múltiples documentos en una respuesta"
+                ],
+                departments: "Operations | HR | IT | Legal | Compliance | Training | All Departments"
+            },
+            analytics: {
+                title: "Analytics Agent",
+                color: "#00ccff", // diria-neonBlue
+                description: "Convierte preguntas como '¿cuánto vendimos este mes por región?' en consultas SQL, gráficos y tablas en 10 segundos. No necesitas saber programar ni esperar a que Data te responda. Conecta con Snowflake, BigQuery, PostgreSQL y cualquier data warehouse. Decisiones 5x más rápidas.",
+                uses: [
+                    "Consultas conversacionales a data warehouses en tiempo real",
+                    "Generación automática de dashboards y visualizaciones",
+                    "Análisis predictivo y detección de anomalías en KPIs"
+                ],
+                services: [
+                    "Traducción automática de pregunta → SQL optimizado → resultado",
+                    "Creación de dashboards con explicación narrativa del insight",
+                    "Comparativas históricas: \"este mes vs mismo mes año pasado\"",
+                    "Detección de anomalías en KPIs con contexto explicativo",
+                    "Exportación flexible (Excel, PDF, integración con BI tools)"
+                ],
+                departments: "Finance | Sales | Marketing | Operations | Product | Executive Leadership | Data Teams"
+            },
+            assistant: {
+                title: "Personal Assistant",
+                color: "#F87171", // red-400
+                description: "Asistente ejecutivo personal que gestiona agenda, prioriza tareas, programa reuniones inteligentemente y mantiene el foco en lo crítico. Aprende patrones de trabajo, anticipa necesidades y libera 10+ horas semanales de trabajo administrativo. Integra con calendarios, email y herramientas de productividad.",
+                uses: [
+                    "Gestión inteligente de calendario con priorización automática",
+                    "Scheduling de reuniones considerando preferencias y contexto",
+                    "Recordatorios proactivos con información relevante pre-meeting"
+                ],
+                services: [
+                    "Coordinación de reuniones entre múltiples participantes con time zones",
+                    "Recordatorios contextuales: \"meeting en 15 min, aquí está el brief\"",
+                    "Gestión de to-dos con priorización por impacto y urgencia",
+                    "Resúmenes diarios personalizados de agenda y tareas pendientes",
+                    "Bloqueos inteligentes de tiempo focus basados en patrones de trabajo"
+                ],
+                departments: "Executive Suite | Sales | Business Development | Project Management | Any Role"
+            }
+        };
+
+        function openAgentModal(agentKey) {
+            const agent = agentData[agentKey];
+            if (!agent) return;
+
+            const modalBody = document.getElementById('agent-modal-body');
+            const content = document.querySelector('.agent-modal-content');
+
+            // Set border color dynamically
+            content.style.borderColor = agent.color;
+            content.style.boxShadow = `0 30px 90px ${agent.color}20`; // 20 is hex opacity ~12%
+
+            modalBody.innerHTML = `
+                <h2 class="font-heading font-bold text-3xl mb-6" style="color: ${agent.color}">${agent.title}</h2>
+                
+                <p class="text-lg text-gray-200 leading-relaxed mb-8 border-l-4 pl-4" style="border-color: ${agent.color}40">
+                    ${agent.description}
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                            <span style="color: ${agent.color}">⚡</span> Usos Principales
+                        </h3>
+                        <ul class="space-y-3">
+                            ${agent.uses.map(use => `
+                                <li class="flex items-start gap-3 text-diria-muted">
+                                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color: ${agent.color}"></span>
+                                    <span>${use}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                            <span style="color: ${agent.color}">🛠️</span> Servicios
+                        </h3>
+                        <ul class="space-y-3">
+                            ${agent.services.map(service => `
+                                <li class="flex items-start gap-3 text-diria-muted">
+                                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color: ${agent.color}"></span>
+                                    <span>${service}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 rounded-xl p-6 mb-8 border border-white/5">
+                    <h4 class="text-sm font-bold uppercase tracking-widest mb-2" style="color: ${agent.color}">Departamentos Aplicables</h4>
+                    <p class="text-white font-mono text-sm">${agent.departments}</p>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button class="px-8 py-3 rounded-full font-bold text-black transition transform hover:scale-105 shadow-lg" 
+                            style="background-color: ${agent.color}; box-shadow: 0 0 20px ${agent.color}40;">
+                        Solicitar Demo
+                    </button>
+                </div>
+            `;
+
+            const modal = document.getElementById('agent-modal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeAgentModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+
+            const modal = document.getElementById('agent-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeAgentModal();
+            }
+        });
     </script>
 </body>
 
