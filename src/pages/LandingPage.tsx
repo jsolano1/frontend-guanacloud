@@ -20,9 +20,9 @@ export const LandingPage: React.FC = () => {
                 <Navbar />
                 <main className="relative z-10">
                     <Hero />
+                    <Agents />
                     <Services />
                     <Architecture />
-                    <Agents />
                     <Ecosystem />
                     <Philosophy />
                     <Team />
