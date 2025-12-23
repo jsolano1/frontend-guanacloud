@@ -256,12 +256,14 @@ export const ArchitectureDiagram: React.FC = () => {
     }, [dimensions, isMobile]);
 
     return (
-        <div ref={containerRef} className="w-full h-full relative bg-[#0f172a] overflow-hidden">
+        <div ref={containerRef} className="w-full h-full relative bg-black overflow-hidden">
             {/* Background Grid */}
-            <div className="absolute inset-0 pointer-events-none" style={{
+            <div className="absolute inset-0 pointer-events-none"
+            /*style={{
                 backgroundImage: `radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
                                   radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%)`
-            }}></div>
+            }*/
+            ></div>
 
             <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 

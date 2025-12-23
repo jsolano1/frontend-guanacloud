@@ -16,12 +16,13 @@ export const Hero: React.FC = () => {
                 <motion.img
                     src="/img/hero_drone_ai_diria.png"
                     alt="Cerro Diria AI Network"
-                    className="w-full h-full object-cover opacity-100"
+                    className="w-full h-full object-cover opacity-70"
                     initial={{ scale: 1 }}
                     animate={{ scale: 1.1, x: '-2%', y: '-2%' }}
                     transition={{ duration: 30, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
                 />
-                <div className="absolute inset-0 hero-overlay"></div>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">

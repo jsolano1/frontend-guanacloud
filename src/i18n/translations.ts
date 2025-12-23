@@ -22,7 +22,7 @@ export const translations = {
         service_da_desc: "Transformamos datos crudos en insights accionables. Dashboards intuitivos y storytelling con datos.",
         service_ds_title: "Data Scientist",
         service_ds_desc: "Modelos predictivos y análisis avanzado para resolver problemas complejos y anticipar tendencias.",
-        service_consulting_title: "Auditoría y Estrategia AI",
+        service_consulting_title: "AI Audit & Strategy",
         service_consulting_desc: "¿Listo para la IA? Evaluamos tu infraestructura, datos y procesos. Diseñamos roadmaps claros y gobernanza ética para que tu adopción tecnológica sea segura y rentable.",
 
         presence_label: "Proyectos Desarrollados en",
