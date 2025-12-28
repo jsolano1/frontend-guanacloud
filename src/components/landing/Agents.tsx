@@ -1,13 +1,17 @@
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { Bot, BrainCircuit, BarChart3, CalendarClock, ArrowUpRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AGENT_DATA, type Agent } from './AgentsData';
+import { useContact } from '../../context/ContactContext';
+
 
 export const Agents: React.FC = () => {
     const { t } = useLanguage();
-
+    const { openContact } = useContact();
     const agents = [
         {
-            id: 'guaitil',
+            id: 'support',
             icon: Bot,
             title: 'Support Agent (L0)',
             nickname: 'Cima Guaitil',
@@ -17,17 +21,17 @@ export const Agents: React.FC = () => {
             bgGradient: 'from-emerald-500/10 to-transparent'
         },
         {
-            id: 'nicoya',
+            id: 'knowledge',
             icon: BrainCircuit,
             title: 'Knowledge Agent',
             nickname: 'Cima Nicoya',
             descKey: 'agent_nicoya_desc',
-            borderColor: 'group-hover:border-yellow-400',
-            iconColor: 'text-yellow-400',
-            bgGradient: 'from-yellow-500/10 to-transparent'
+            borderColor: 'group-hover:border-[#FFBF00]',
+            iconColor: 'text-[#FFBF00]',
+            bgGradient: 'from-[#FFBF00]/10 to-transparent'
         },
         {
-            id: 'santacruz',
+            id: 'analytics',
             icon: BarChart3,
             title: 'Analytics Agent',
             nickname: 'Cima Santa Cruz',
@@ -37,16 +41,36 @@ export const Agents: React.FC = () => {
             bgGradient: 'from-cyan-500/10 to-transparent'
         },
         {
-            id: 'nandayure',
+            id: 'assistant',
             icon: CalendarClock,
             title: 'Personal Assistant',
             nickname: 'Cima Nandayure',
             descKey: 'agent_nandayure_desc',
-            borderColor: 'group-hover:border-rose-400',
-            iconColor: 'text-rose-400',
-            bgGradient: 'from-rose-500/10 to-transparent'
+            borderColor: 'group-hover:border-[#FF1654]',
+            iconColor: 'text-[#FF1654]',
+            bgGradient: 'from-[#FF1654]/10 to-transparent'
         }
     ];
+
+    const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+
+    const openModal = (key: string) => {
+        setSelectedAgent(AGENT_DATA[key]);
+        document.body.style.overflow = 'hidden'; // Bloquea el scroll
+    };
+
+    const closeModal = () => {
+        setSelectedAgent(null);
+        document.body.style.overflow = ''; // Libera el scroll
+    };
+
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') closeModal();
+        };
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, []);
 
     return (
         <section id="product" className="py-24 relative bg-[#050505]">
@@ -82,9 +106,8 @@ export const Agents: React.FC = () => {
                                         <p className="text-gray-400 leading-relaxed mb-6 flex-grow group-hover:text-gray-300">
                                             {t(agent.descKey as any)}
                                         </p>
-
                                         <div className="flex items-center text-sm font-medium text-white opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                                            <span>Explorar capacidad</span>
+                                            <button onClick={() => openModal(agent.id)} > Explorar Agente </button>
                                             <ArrowUpRight size={16} className="ml-2" />
                                         </div>
                                     </div>
@@ -94,6 +117,103 @@ export const Agents: React.FC = () => {
                     })}
                 </div>
             </div>
+
+            {selectedAgent && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={closeModal}>
+                    <div
+                        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#0a0a0a] border rounded-3xl shadow-2xl"
+                        style={{ borderColor: `${selectedAgent.color}40` }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* --- HEADER CON BOTÓN Y CIERRE --- */}
+                        <div className="sticky top-0 z-20 bg-[#0a0a0a]/80 backdrop-blur-md p-6 border-b border-white/5 flex justify-between items-center">
+                            <div className="flex items-center gap-4">
+
+                                {/* LLAMADA AL ICONO DINÁMICO */}
+                                {selectedAgent.icon && (
+                                    <div className="p-2.5 rounded-xl bg-white/5 border border-white/10" style={{ color: selectedAgent.color }}>
+                                        {/* Creamos una constante con Mayúscula para que React la reconozca */}
+                                        {(() => {
+                                            const AgentIcon = selectedAgent.icon;
+                                            return <AgentIcon size={24} strokeWidth={1.5} />;
+                                        })()}
+                                    </div>
+                                )}
+                                <h2 className="font-bold text-2xl tracking-tight" style={{ color: selectedAgent.color }}>
+                                    {selectedAgent.title}
+                                </h2>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <button className="hidden md:block px-6 py-2 rounded-full font-bold text-sm text-black transition hover:scale-105"
+                                    style={{ backgroundColor: selectedAgent.color }}>
+                                    Solicitar Demo
+                                </button>
+                                <button onClick={closeModal} className="text-gray-400 hover:text-white text-3xl">&times;</button>
+                            </div>
+                        </div>
+
+                        {/* --- CONTENIDO --- */}
+                        <div className="p-6 md:p-8">
+                            {/* Descripción más compacta */}
+                            <p className="text-base text-gray-300 leading-snug mb-8 border-l-2 pl-4 italic" style={{ borderColor: `${selectedAgent.color}40` }}>
+                                {selectedAgent.description}
+                            </p>
+
+                            <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+                                {/* USOS */}
+                                <div>
+                                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                                        Usos Principales
+                                    </h3>
+                                    <ul className="space-y-2"> {/* Interlineado reducido */}
+                                        {selectedAgent.uses.map((use, i) => (
+                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                                                <span className="mt-1.5 w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: selectedAgent.color }}></span>
+                                                <span className="leading-tight">{use}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* SERVICIOS */}
+                                <div>
+                                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                                        Servicios
+                                    </h3>
+                                    <ul className="space-y-2">
+                                        {selectedAgent.services.map((service, i) => (
+                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                                                <span className="mt-1.5 w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: selectedAgent.color }}></span>
+                                                <span className="leading-tight">{service}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* DEPARTAMENTOS (Versión compacta) */}
+                            <div className="mt-10 pt-6 border-t border-white/5">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2" style={{ color: selectedAgent.color }}>
+                                    Departamentos Aplicables
+                                </p>
+                                <p className="text-gray-500 font-mono text-xs">{selectedAgent.departments}</p>
+                            </div>
+
+                            {/* Botón visible solo en móviles al final (opcional) */}
+                            <div className="md:hidden mt-8">
+                                <button onClick={openContact}
+                                    className="w-full py-4 rounded-xl font-bold text-black" style={{ backgroundColor: selectedAgent.color }}>
+                                    Solicitar Demo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
+
     );
 };
+
+

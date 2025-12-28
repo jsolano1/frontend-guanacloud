@@ -22,11 +22,11 @@ export const Navbar: React.FC = () => {
         { name: t('nav_product'), href: '/#product' },
         { name: t('nav_services'), href: '/#services' },
         { name: t('nav_architecture'), href: '/#architecture' },
-        { name: t('nav_about'), href: '/#about' },
+        { name: t('nav_about'), href: '/philosophy' },
     ];
 
     return (
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-nav h-24' : 'h-28 bg-transparent'}`}>
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-nav h-24' : 'h-28 bg-black/80'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
                 <div className="flex justify-between items-center h-full">
                     {/* Logo */}
@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
                         <img
                             src="/img/guana_cloud_square.png"
                             alt="Guana Cloud"
-                            className="h-16 md:h-20 w-auto transition-transform duration-300 group-hover:scale-105 filter drop-shadow-lg"
+                            className="h-28 md:h-28 w-auto transition-transform duration-300 group-hover:scale-105 filter drop-shadow-lg"
                         />
                     </Link>
 
@@ -46,6 +46,16 @@ export const Navbar: React.FC = () => {
                             </a>
                         ))}
 
+                        <Link
+                            to="/console"
+                            className="hidden md:block px-6 py-2 rounded-full font-bold text-sm text-black transition hover:scale-105 text-center"
+                            style={{ backgroundColor: '#00ff9d' }} // Aquí usamos el color neonGreen directamente
+                        >
+                            {t('nav_login')}
+                        </Link>
+                        {/* <a href="#demo" className="bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue text-white px-6 py-2 rounded-full text-sm font-bold hover:shadow-[0_0_20px_rgba(0,255,157,0.5)] transition-all duration-300 transform hover:scale-105">
+                            {t('nav_demo')}
+                        </a>*/}
                         <button
                             onClick={toggleLanguage}
                             className="text-sm font-bold text-diria-neonBlue hover:text-white transition border border-diria-neonBlue/30 px-3 py-1 rounded-full flex items-center gap-2"
@@ -57,13 +67,6 @@ export const Navbar: React.FC = () => {
                                 <><span>🇪🇸</span> ES</>
                             )}
                         </button>
-
-                        <Link to="/console" className="text-sm font-semibold text-diria-neonBlue hover:text-white transition">
-                            {t('nav_login')}
-                        </Link>
-                        <a href="#demo" className="bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue text-black px-6 py-2 rounded-full text-sm font-bold hover:shadow-[0_0_20px_rgba(0,255,157,0.5)] transition-all duration-300 transform hover:scale-105">
-                            {t('nav_demo')}
-                        </a>
                     </div>
 
                     {/* Mobile Menu Button */}

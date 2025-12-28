@@ -15,8 +15,8 @@ export const Footer: React.FC = () => {
                     {/* Brand */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            {/* CAMBIO: Logo aún más grande (h-16) */}
-                            <img src="/img/guana_logo_dark.png" alt="Logo" className="h-16 w-auto" />
+                            {/* CAMBIO: Logo aún más grande (h-32) */}
+                            <img src="/img/guana_logo_dark.png" alt="Logo" className="h-32 w-auto" />
                             <span className="font-heading font-bold text-2xl text-white">Guana Cloud</span>
                         </div>
                         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-900/20 border border-green-500/30 w-fit">

@@ -5,7 +5,7 @@ import { ArrowRight, MapPin, Clock } from 'lucide-react';
 
 export const CareersPage: React.FC = () => {
     return (
-        <div className="min-h-screen bg-diria-darker text-white">
+        <div className="min-h-screen bg-black text-white">
             <Navbar />
             <div className="relative pt-32 pb-20 px-6">
                 <div className="max-w-7xl mx-auto text-center">

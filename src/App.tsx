@@ -6,6 +6,7 @@ import { MetricsPage } from './pages/MetricsPage';
 import { PrivacyPolicy } from './pages/legal/PrivacyPolicy';
 import { Terms } from './pages/legal/Terms';
 import { CareersPage } from './pages/CareersPage';
+import { PhilosophyPage } from './pages/PhilosophyPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/legal/privacy" element={<PrivacyPolicy />} />
       <Route path="/legal/terms" element={<Terms />} />
       <Route path="/careers" element={<CareersPage />} />
+      <Route path="/philosophy" element={<PhilosophyPage />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
