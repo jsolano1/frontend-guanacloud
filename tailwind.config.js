@@ -29,6 +29,7 @@ export default {
                 'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                 'glow': 'glow 2s ease-in-out infinite alternate',
                 'pan-zoom': 'panZoom 30s linear infinite alternate',
+                'gradient-x': { '0%, 100%': { 'background-position': 'left center' }, '50%': { 'background-position': 'right center' } }
             },
             keyframes: {
                 float: {
@@ -42,9 +43,22 @@ export default {
                 panZoom: {
                     '0%': { transform: 'scale(1) translate(0, 0)' },
                     '100%': { transform: 'scale(1.1) translate(-2%, -2%)' }
-                }
+                },
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-20px)' },
+                },
+                glow: {
+                    'from': { boxShadow: '0 0 10px -10px rgba(0, 255, 157, 0)' },
+                    'to': { boxShadow: '0 0 20px 5px rgba(0, 255, 157, 0.3)' }
+                },
+                panZoom: {
+                    '0%': { transform: 'scale(1) translate(0, 0)' },
+                    '100%': { transform: 'scale(1.1) translate(-2%, -2%)' }
+                },
             }
         },
     },
+
     plugins: [],
 }

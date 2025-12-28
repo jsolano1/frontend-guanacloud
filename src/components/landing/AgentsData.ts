@@ -33,7 +33,7 @@ export const AGENT_DATA: Record<string, Agent> = {
     knowledge: {
         icon: BrainCircuit,
         title: "Knowledge Agent",
-        color: "#EAB308",
+        color: "#FFBF00",
         description: "Centraliza políticas, procedimientos, manuales y documentación dispersa en un cerebro conversacional. Tu equipo pregunta en lenguaje natural y recibe la respuesta exacta con fuentes citadas.",
         uses: [
             "Búsqueda semántica en documentación empresarial completa",
@@ -71,7 +71,7 @@ export const AGENT_DATA: Record<string, Agent> = {
     assistant: {
         icon: CalendarClock,
         title: "Personal Assistant",
-        color: "#F87171",
+        color: "#ff1654",
         description: "Asistente ejecutivo personal que gestiona agenda, prioriza tareas, programa reuniones inteligentemente y mantiene el foco en lo crítico. Aprende patrones de trabajo y anticipa necesidades.",
         uses: [
             "Gestión inteligente de calendario con priorización automática",

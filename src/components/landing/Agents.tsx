@@ -26,9 +26,9 @@ export const Agents: React.FC = () => {
             title: 'Knowledge Agent',
             nickname: 'Cima Nicoya',
             descKey: 'agent_nicoya_desc',
-            borderColor: 'group-hover:border-yellow-400',
-            iconColor: 'text-yellow-400',
-            bgGradient: 'from-yellow-500/10 to-transparent'
+            borderColor: 'group-hover:border-[#FFBF00]',
+            iconColor: 'text-[#FFBF00]',
+            bgGradient: 'from-[#FFBF00]/10 to-transparent'
         },
         {
             id: 'analytics',
@@ -46,9 +46,9 @@ export const Agents: React.FC = () => {
             title: 'Personal Assistant',
             nickname: 'Cima Nandayure',
             descKey: 'agent_nandayure_desc',
-            borderColor: 'group-hover:border-rose-400',
-            iconColor: 'text-rose-400',
-            bgGradient: 'from-rose-500/10 to-transparent'
+            borderColor: 'group-hover:border-[#FF1654]',
+            iconColor: 'text-[#FF1654]',
+            bgGradient: 'from-[#FF1654]/10 to-transparent'
         }
     ];
 

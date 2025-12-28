@@ -22,7 +22,7 @@ export const Navbar: React.FC = () => {
         { name: t('nav_product'), href: '/#product' },
         { name: t('nav_services'), href: '/#services' },
         { name: t('nav_architecture'), href: '/#architecture' },
-        { name: t('nav_about'), href: '/#about' },
+        { name: t('nav_about'), href: '/philosophy' },
     ];
 
     return (

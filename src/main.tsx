@@ -4,13 +4,16 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import { LanguageProvider } from './context/LanguageContext';
+import { ContactProvider } from './context/ContactContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <LanguageProvider>
-        <App />
-      </LanguageProvider>
-    </BrowserRouter>
+    <LanguageProvider>
+      <ContactProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ContactProvider>
+    </LanguageProvider>
   </React.StrictMode>,
 );

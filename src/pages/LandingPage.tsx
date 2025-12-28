@@ -6,7 +6,6 @@ import { Architecture } from '../components/landing/Architecture';
 import { Agents } from '../components/landing/Agents';
 import { Ecosystem } from '../components/landing/Ecosystem';
 import { Philosophy } from '../components/landing/Philosophy';
-import { Team } from '../components/landing/Team';
 import { Footer } from '../components/layout/Footer';
 import { ParticlesBackground } from '../components/layout/ParticlesBackground';
 import { ContactProvider } from '../context/ContactContext'; // Importar
@@ -25,7 +24,6 @@ export const LandingPage: React.FC = () => {
                     <Architecture />
                     <Ecosystem />
                     <Philosophy />
-                    <Team />
                 </main>
                 <div className="relative z-20">
                     <Footer />
