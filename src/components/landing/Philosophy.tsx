@@ -11,18 +11,33 @@ export const Philosophy: React.FC = () => {
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-diria-neonBlue/5 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+
+                    {/* ========== HEADER ========== */}
+                    <div className="text-center mb-20">
+                        <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-black/40 backdrop-blur-xl transition-all duration-500 group cursor-default">
+                            <span className="text-white text-sm font-mono uppercase tracking-[0.2em] group-hover:tracking-[0.25em] transition-all duration-300">
+                                {t('philosophy_badge')}
+                            </span>
+                        </div>
+
+                        <h2 className="text-3xl md:text-5xl font-black mb-6">
+                            <span className="inline-block text-white">
+                                {t('philosophy_title')}
+                            </span>{' '}
+                            <br />
+                            <span className="relative inline-block">
+                                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen via-emerald-400 to-cyan-400 animate-gradient">
+                                    {t('philosophy_title_1')}
+                                </span>
+                            </span>
+                        </h2>
+                    </div>
+                </div>
 
                 {/* Contenedor Principal con Glassmorphism sutil */}
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-16">
-                        <span className="text-diria-neonGreen font-mono text-sm tracking-widest uppercase mb-4 block drop-shadow-[0_0_8px_rgba(0,255,157,0.4)]">
-                            De la Provincia Más Sabia del Planeta
-                        </span>
-
-                        <h2
-                            className="text-4xl md:text-6xl font-heading font-bold text-white mb-10 leading-[1.1]"
-                            dangerouslySetInnerHTML={{ __html: t('about_origin_title').replace('\n', '<br/>') }}
-                        />
 
                         {/* Cuerpo de texto con mejor ritmo visual */}
                         <div className="text-lg md:text-xl text-gray-400 font-light space-y-8 leading-relaxed mb-16">
@@ -40,11 +55,11 @@ export const Philosophy: React.FC = () => {
                                 href="/philosophy"
                                 className="relative px-10 py-5 rounded-full bg-[#00ff9d] text-black font-black uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105 overflow-visible"
                             >
-                                {/* EFECTO DE PULSO NEÓN */}
-                                <span className="absolute inset-0 rounded-full bg-[#00ff9d] animate-ping opacity-7 group-hover/btn:opacity-80 pointer-events-none" />
+                                {/* EFECTO HALO DE RESPIRACIÓN */}
+                                <div className="absolute inset-0 rounded-full bg-diria-neonBlue/100 animate-pulse-slow blur-md pointer-events-none" />
 
-                                {/* RESPLANDOR BASE (GLOW) */}
-                                <div className="absolute inset-0 rounded-full shadow-[0_0_30px_rgba(0,255,157,0.6)] group-hover/btn:shadow-[0_0_50px_rgba(0,255,157,0.8)] transition-all duration-500" />
+                                {/* GLOW DE HOVER */}
+                                <div className="absolute inset-0 rounded-full bg-diria-neonGreen opacity-0 blur-xl group-hover:opacity-60 group-hover:blur-2xl transition-all duration-700 ease-in-out -z-10" />
 
                                 <span className="relative flex items-center gap-3">
                                     Nuestra Filosofía

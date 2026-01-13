@@ -171,6 +171,24 @@ export const PhilosophyPage: React.FC = () => {
 
             {/* SECCIÓN 2: PhilosophyTabs */}
             <section className="relative py-8 bg-diria-darker">
+                <div className="text-center mb-20">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-black/40 backdrop-blur-xl transition-all duration-500 group cursor-default">
+                        <span className="text-white text-sm font-mono uppercase tracking-[0.2em] group-hover:tracking-[0.25em] transition-all duration-300">
+                            {t('team_badge')}
+                        </span>
+                    </div>
+
+                    <h2 className="text-3xl md:text-5xl font-black mb-6">
+                        <span className="inline-block text-white">
+                            {t('team_title')}
+                        </span>{' '}
+                        <span className="relative inline-block">
+                            <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen via-emerald-400 to-cyan-400 animate-gradient">
+                                {t('team_title_1')}
+                            </span>
+                        </span>
+                    </h2>
+                </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                     {/* NAVEGACIÓN ESTÁTICA - FONDO OSCURO Y BORDES NEÓN */}
@@ -241,7 +259,7 @@ export const PhilosophyPage: React.FC = () => {
                                         <div className="max-w-5xl mx-auto">
                                             {/* Header con Glow sutil en el texto */}
                                             <div className="text-center mb-16">
-                                                <h2 className="text-4xl font-heading font-bold text-white mb-6 tracking-tight">
+                                                <h2 className="text-2xl font-heading font-bold text-white mb-6 tracking-tight">
                                                     {tab.title}
                                                 </h2>
                                                 <p
@@ -308,16 +326,33 @@ export const PhilosophyPage: React.FC = () => {
             <section className="py-16 relative overflow-hidden bg-diria-darker">
                 {/* Fondo decorativo sutil */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_#00ff9d05_0%,_transparent_70%)] pointer-events-none" />
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    {/* ========== HEADER ========== */}
                     <div className="text-center mb-20">
-                        <span className="text-diria-neonGreen font-mono text-sm tracking-widest uppercase mb-4 block">Liderazgo Visionario</span>
-                        <h2 className="text-4xl md:text-5xl font-heading font-bold text-white mb-8">Los Guardianes de la Visión</h2>
-                        <div className="w- 24 h-1 bg-gradient-to-r from-diria-neonGreen to-diria-neonBlue mx-auto mb-8 rounded-full" />
-                        <p className="max-w-2xl mx-auto text-gray-400 text-lg font-light leading-relaxed">
-                            Uniendo la experiencia corporativa global con la sabiduría ancestral local para construir tecnología con propósito y legado.
+                        <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-black/40 backdrop-blur-xl transition-all duration-500 group cursor-default">
+                            <span className="text-white text-sm font-mono uppercase tracking-[0.2em] group-hover:tracking-[0.25em] transition-all duration-300">
+                                {t('team_badge')}
+                            </span>
+                        </div>
+
+                        <h2 className="text-3xl md:text-5xl font-black mb-6">
+                            <span className="inline-block text-white">
+                                {t('team_title')}
+                            </span>{' '}
+                            <span className="relative inline-block">
+                                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-diria-neonGreen via-emerald-400 to-cyan-400 animate-gradient">
+                                    {t('team_title_1')}
+                                </span>
+                            </span>
+                        </h2>
+
+                        <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                            {t('team_subtitle')}
                         </p>
                     </div>
+                </div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
                     <div className="grid md:grid-cols-2 gap-12 lg:gap-24 items-start">
                         {/* Jose Solano */}
