@@ -17,7 +17,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     };
 
     const t = (key: TranslationKey): string => {
-        return translations[language][key] || key;
+        // Accedemos de forma segura indicando que el objeto de idioma 
+        // contiene llaves de tipo TranslationKey
+        const currentLangMap = translations[language] as Record<TranslationKey, string>;
+        return currentLangMap[key] || key;
     };
 
     return (

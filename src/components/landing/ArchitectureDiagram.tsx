@@ -1,248 +1,155 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-interface NodeConfig {
+// --- Tipos y Constantes ---
+interface NodeData {
     id: string;
     label: string;
     sub: string;
-    icon?: string;
-    image?: string;
+    icon: string;
     x: number;
     y: number;
-    mx: number;
-    my: number;
-    type: 'user' | 'core' | 'agent' | 'ai' | 'infra' | 'tool';
-    status: 'active' | 'dev' | 'plan';
-    class?: string;
+    type: string;
 }
 
 interface Connection {
     from: string;
     to: string;
     color: string;
+    label?: string;
+    dual?: boolean;
     dashed?: boolean;
 }
 
-const NODES: NodeConfig[] = [
-    { id: 'app', label: 'Mobile App', sub: 'iOS / Android', icon: '📱', x: 0.1, y: 0.25, mx: 0.2, my: 0.1, type: 'user', status: 'active' },
-    { id: 'wa', label: 'WhatsApp/GChat', sub: 'Business API', icon: '💬', x: 0.1, y: 0.5, mx: 0.5, my: 0.1, type: 'user', status: 'active' },
-    { id: 'web', label: 'APIs', sub: 'Integraciones', icon: '💻', x: 0.1, y: 0.75, mx: 0.8, my: 0.1, type: 'user', status: 'active' },
+const NODES: NodeData[] = [
+    // --- NIVEL 1: INTELIGENCIA (Top) ---
+    { id: 'LLM', label: 'LLM Reasoner', sub: 'Thought Loop', icon: '✨', x: 0.5, y: 0.1, type: 'LLM' },
+    { id: 'firestore', label: 'Agents Memory', sub: 'State Checkpointer', icon: '🔥', x: 0.8, y: 0.15, type: 'checkpointer' },
 
-    {
-        id: 'gateway',
-        label: 'API Gateway',
-        sub: 'DirIA Core',
-        icon: '🛡️',
-        image: '/img/logo-guanacloud-arbol.png',
-        x: 0.28, y: 0.5,
-        mx: 0.3, my: 0.25,
-        type: 'core', status: 'active', class: 'is-core'
-    },
-    {
-        id: 'langgraph',
-        label: 'Orquestador',
-        sub: 'LangGraph',
-        icon: '🧠',
-        x: 0.42, y: 0.5,
-        mx: 0.7, my: 0.25,
-        type: 'core', status: 'active', class: 'is-core'
-    },
+    // --- NIVEL 2: ENTRADAS Y NÚCLEO (Upper Middle) ---
+    { id: 'gchat', label: 'Chat', sub: 'Endpoint: text', icon: '💬', x: 0.15, y: 0.35, type: 'ingress-chat' },
+    { id: 'hub', label: 'DirIA Core', sub: 'Orchestrator', icon: '🧠', x: 0.5, y: 0.45, type: 'hub' },
+    { id: 'audio', label: 'Audio', sub: 'Endpoint: speak', icon: '🎙️', x: 0.15, y: 0.55, type: 'ingress-audio' },
 
-    { id: 'ag_vision', label: 'Vision', sub: 'Daños Vehiculares', icon: '📸', x: 0.6, y: 0.15, mx: 0.2, my: 0.42, type: 'agent', status: 'dev' },
-    { id: 'ag_claims', label: 'Claims', sub: 'Reglas de Negocio', icon: '🚗', x: 0.6, y: 0.32, mx: 0.5, my: 0.42, type: 'agent', status: 'active' },
-    { id: 'ag_auditor', label: 'Auditor', sub: 'Compliance & QA', icon: '⚖️', x: 0.6, y: 0.5, mx: 0.8, my: 0.42, type: 'agent', status: 'dev' },
-    { id: 'ag_support', label: 'Support', sub: 'Helpdesk / KB', icon: '🎧', x: 0.6, y: 0.68, mx: 0.35, my: 0.55, type: 'agent', status: 'active' },
-    { id: 'ag_home', label: 'Home', sub: 'Hogar & Pólizas', icon: '🏠', x: 0.6, y: 0.85, mx: 0.65, my: 0.55, type: 'agent', status: 'plan', class: 'is-future' },
+    // --- NIVEL 3: CAPACIDADES / AGENTES (Lower Middle) ---
+    { id: 'Knowledge Agent', label: 'Knowledge Agent', sub: 'Vector Search', icon: '📚', x: 0.25, y: 0.75, type: 'capability' },
+    { id: 'Support Agent', label: 'Support Agent', sub: 'Helpdesk Logic', icon: '🎫', x: 0.5, y: 0.75, type: 'capability' },
+    { id: 'Analytics Agent', label: 'Analytics Agent', sub: 'Query Analyst', icon: '📊', x: 0.75, y: 0.75, type: 'capability' },
 
-    { id: 'vertex', label: 'Vertex AI', sub: 'Gemini 2.5 Flash/Pro', icon: '✨', x: 0.85, y: 0.12, mx: 0.2, my: 0.75, type: 'ai', status: 'active' },
-    { id: 'firestore', label: 'Firestore', sub: 'Memoria', icon: '🔥', x: 0.85, y: 0.24, mx: 0.5, my: 0.75, type: 'infra', status: 'active' },
-    { id: 'bq', label: 'BigQuery', sub: 'Analytics', icon: '📊', x: 0.85, y: 0.36, mx: 0.8, my: 0.75, type: 'infra', status: 'active' },
-    { id: 'looker', label: 'Looker', sub: 'Dashboards', icon: '📈', x: 0.85, y: 0.48, mx: 0.2, my: 0.88, type: 'infra', status: 'active' },
-
-    { id: 'github', label: 'GitHub', sub: 'CI/CD', icon: '🐙', x: 0.85, y: 0.62, mx: 0.4, my: 0.88, type: 'tool', status: 'active' },
-    { id: 'asana', label: 'Asana', sub: 'Tasks', icon: '✅', x: 0.85, y: 0.74, mx: 0.6, my: 0.88, type: 'tool', status: 'active' },
-    { id: 'reminders', label: 'Reminders', sub: 'Alertas', icon: '⏰', x: 0.85, y: 0.86, mx: 0.8, my: 0.88, type: 'tool', status: 'active' },
-    { id: 'gmail', label: 'Email/Chat', sub: 'Notify', icon: '📩', x: 0.95, y: 0.80, mx: 0.5, my: 0.96, type: 'tool', status: 'active' },
+    // --- NIVEL 4: DATOS E INTEGRACIÓN (Bottom) ---
+    { id: 'asana', label: 'Asana', sub: 'Task Sync', icon: '✅', x: 0.35, y: 0.92, type: 'external' },
+    { id: 'postgres', label: 'Database', sub: 'Logs & Identity', icon: '🐘', x: 0.65, y: 0.92, type: 'data' },
+    { id: 'bigquery', label: 'DWH', sub: 'Business DWH', icon: '☁️', x: 0.9, y: 0.85, type: 'data' }
 ];
-
 const CONNECTIONS: Connection[] = [
-    { from: 'app', to: 'gateway', color: '#38bdf8' },
-    { from: 'wa', to: 'gateway', color: '#38bdf8' },
-    { from: 'web', to: 'gateway', color: '#38bdf8' },
-    { from: 'gateway', to: 'langgraph', color: '#818cf8' },
-    { from: 'langgraph', to: 'ag_vision', color: '#fff', dashed: true },
-    { from: 'langgraph', to: 'ag_claims', color: '#fff' },
-    { from: 'langgraph', to: 'ag_auditor', color: '#fff', dashed: true },
-    { from: 'langgraph', to: 'ag_support', color: '#fff' },
-    { from: 'langgraph', to: 'ag_home', color: '#64748b', dashed: true },
-    { from: 'ag_vision', to: 'vertex', color: '#f472b6' },
-    { from: 'ag_claims', to: 'firestore', color: '#fbbf24' },
-    { from: 'ag_claims', to: 'vertex', color: '#f472b6' },
-    { from: 'ag_auditor', to: 'bq', color: '#34d399' },
-    { from: 'ag_auditor', to: 'looker', color: '#34d399' },
-    { from: 'ag_auditor', to: 'vertex', color: '#f472b6' },
-    { from: 'ag_support', to: 'github', color: '#a78bfa' },
-    { from: 'ag_support', to: 'asana', color: '#a78bfa' },
-    { from: 'ag_support', to: 'reminders', color: '#a78bfa' },
-    { from: 'ag_support', to: 'gmail', color: '#a78bfa' },
-    { from: 'ag_support', to: 'looker', color: '#34d399' },
-    { from: 'bq', to: 'looker', color: '#fbbf24', dashed: true },
-    { from: 'langgraph', to: 'firestore', color: '#fbbf24' }
+    { from: 'gchat', to: 'hub', color: '#38bdf8', label: 'Inbound Event' },
+    { from: 'audio', to: 'hub', color: '#f59e0b', label: 'Audio Stream' },
+    { from: 'hub', to: 'LLM', color: '#f472b6', dual: true, label: 'Reasoning' },
+    { from: 'hub', to: 'firestore', color: '#a78bfa', dual: true, dashed: true, label: 'State Sync' },
+    { from: 'hub', to: 'Knowledge Agent', color: '#10b981', label: 'RAG Query' },
+    { from: 'hub', to: 'Support Agent', color: '#10b981', label: 'Task Routing' },
+    { from: 'hub', to: 'Analytics Agent', color: '#10b981', label: 'Data Request' },
+    { from: 'Support Agent', to: 'asana', color: '#818cf8', dashed: true, label: 'Create Task' },
+    { from: 'Support Agent', to: 'postgres', color: '#fbbf24', label: 'Log Identity' },
+    { from: 'Analytics Agent', to: 'bigquery', color: '#fbbf24', label: 'SQL Query' },
+    { from: 'Knowledge Agent', to: 'postgres', color: '#fbbf24', label: 'Vector Search' }
 ];
 
-export const ArchitectureDiagram: React.FC = () => {
+// --- Componente Principal ---
+// ... (mismos tipos NODES y CONNECTIONS)
+
+const ArchitectureDiagram: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-    const [isMobile, setIsMobile] = useState(false);
-
-    // Particle System
-    const particles = useRef<any[]>([]);
+    const [hoveredNode, setHoveredNode] = React.useState<string | null>(null);
+    const nodeMapRef = useRef<{ [key: string]: { x: number; y: number; color: string } }>({});
 
     useEffect(() => {
-        const handleResize = () => {
-            if (containerRef.current) {
-                const { clientWidth, clientHeight } = containerRef.current;
-                setDimensions({ width: clientWidth, height: clientHeight });
-                setIsMobile(clientWidth < 768);
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-        handleResize();
-
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    useEffect(() => {
-        if (!canvasRef.current || dimensions.width === 0) return;
-
         const canvas = canvasRef.current;
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        canvas.width = dimensions.width;
-        canvas.height = dimensions.height;
+        let animationFrameId: number;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
 
         class Particle {
-            source: NodeConfig | undefined;
-            target: NodeConfig | undefined;
-            color: string = '#fff';
-            progress: number = 0;
-            speed: number = 0;
+            from: { x: number; y: number } = { x: 0, y: 0 };
+            to: { x: number; y: number } = { x: 0, y: 0 };
+            color = "#fff";
+            t = 0;
+            speed = 0;
+            connection: Connection;
 
             constructor() {
+                const conn = CONNECTIONS[Math.floor(Math.random() * CONNECTIONS.length)];
+                this.connection = conn;
                 this.reset();
             }
 
             reset() {
-                const route = CONNECTIONS[Math.floor(Math.random() * CONNECTIONS.length)];
-                this.source = NODES.find(n => n.id === route.from);
-                this.target = NODES.find(n => n.id === route.to);
-                this.color = route.color;
-                this.progress = 0;
-                this.speed = 0.0015 + Math.random() * 0.0015;
-
-                if (!this.source || !this.target) this.reset();
+                this.from = nodeMapRef.current[this.connection.from];
+                this.to = nodeMapRef.current[this.connection.to];
+                this.color = this.connection.color;
+                this.t = 0;
+                // Velocidad variable: el LLM es más rápido (procesamiento)
+                const baseSpeed = this.connection.to === 'LLM' ? 0.005 : 0.002;
+                this.speed = baseSpeed + Math.random() * 0.002;
             }
 
             update() {
-                this.progress += this.speed;
-                if (this.progress >= 1) {
-                    this.reset();
-                }
+                this.t += this.speed;
+                if (this.t >= 1) this.reset();
             }
 
-            draw(ctx: CanvasRenderingContext2D) {
-                if (!this.source || !this.target) return;
+            draw(context: CanvasRenderingContext2D) {
+                if (!this.from || !this.to) return;
+                const cx = this.from.x + (this.to.x - this.from.x) * this.t;
+                const cy = this.from.y + (this.to.y - this.from.y) * this.t;
 
-                const sx = isMobile ? this.source.mx * dimensions.width : this.source.x * dimensions.width;
-                const sy = isMobile ? this.source.my * dimensions.height : this.source.y * dimensions.height;
-                const tx = isMobile ? this.target.mx * dimensions.width : this.target.x * dimensions.width;
-                const ty = isMobile ? this.target.my * dimensions.height : this.target.y * dimensions.height;
-
-                let cp1x, cp1y, cp2x, cp2y;
-
-                if (isMobile) {
-                    cp1x = sx;
-                    cp1y = sy + (ty - sy) * 0.5;
-                    cp2x = tx;
-                    cp2y = sy + (ty - sy) * 0.5;
-                } else {
-                    cp1x = sx + (tx - sx) * 0.5;
-                    cp1y = sy;
-                    cp2x = sx + (tx - sx) * 0.5;
-                    cp2y = ty;
-                }
-
-                const t = this.progress;
-                const cx = Math.pow(1 - t, 3) * sx + 3 * Math.pow(1 - t, 2) * t * cp1x + 3 * (1 - t) * Math.pow(t, 2) * cp2x + Math.pow(t, 3) * tx;
-                const cy = Math.pow(1 - t, 3) * sy + 3 * Math.pow(1 - t, 2) * t * cp1y + 3 * (1 - t) * Math.pow(t, 2) * cp2y + Math.pow(t, 3) * ty;
-
-                ctx.beginPath();
-                ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                context.beginPath();
+                context.arc(cx, cy, 2.5, 0, Math.PI * 2);
+                context.fillStyle = this.color;
+                context.shadowBlur = 15;
+                context.shadowColor = this.color;
+                context.fill();
             }
         }
 
-        // Init particles if empty
-        if (particles.current.length === 0) {
-            for (let i = 0; i < 60; i++) {
-                particles.current.push(new Particle());
-            }
-        }
+        let particles: Particle[] = Array.from({ length: 60 }, () => new Particle());
 
-        let animationFrameId: number;
+        const setup = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            NODES.forEach(n => {
+                nodeMapRef.current[n.id] = { x: n.x * width, y: n.y * height, color: '#fff' };
+            });
+        };
 
         const animate = () => {
-            ctx.clearRect(0, 0, dimensions.width, dimensions.height);
+            ctx.clearRect(0, 0, width, height);
 
-            // Draw Connections
-            CONNECTIONS.forEach(conn => {
-                const n1 = NODES.find(n => n.id === conn.from);
-                const n2 = NODES.find(n => n.id === conn.to);
+            CONNECTIONS.forEach(c => {
+                const f = nodeMapRef.current[c.from];
+                const t = nodeMapRef.current[c.to];
+                if (!f || !t) return;
 
-                if (n1 && n2) {
-                    const x1 = isMobile ? n1.mx * dimensions.width : n1.x * dimensions.width;
-                    const y1 = isMobile ? n1.my * dimensions.height : n1.y * dimensions.height;
-                    const x2 = isMobile ? n2.mx * dimensions.width : n2.x * dimensions.width;
-                    const y2 = isMobile ? n2.my * dimensions.height : n2.y * dimensions.height;
+                const isRelated = hoveredNode === c.from || hoveredNode === c.to;
 
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-
-                    let cp1x, cp1y, cp2x, cp2y;
-
-                    if (isMobile) {
-                        cp1x = x1;
-                        cp1y = y1 + (y2 - y1) * 0.5;
-                        cp2x = x2;
-                        cp2y = y1 + (y2 - y1) * 0.5;
-                    } else {
-                        cp1x = x1 + (x2 - x1) * 0.5;
-                        cp1y = y1;
-                        cp2x = x1 + (x2 - x1) * 0.5;
-                        cp2y = y2;
-                    }
-
-                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
-
-                    ctx.strokeStyle = conn.color;
-                    ctx.lineWidth = 1.5;
-                    ctx.globalAlpha = 0.15;
-                    if (conn.dashed) ctx.setLineDash([5, 5]);
-                    else ctx.setLineDash([]);
-
-                    ctx.stroke();
-                    ctx.globalAlpha = 1.0;
-                }
+                ctx.beginPath();
+                ctx.moveTo(f.x, f.y);
+                ctx.lineTo(t.x, t.y);
+                ctx.lineWidth = isRelated ? 2 : 1;
+                ctx.strokeStyle = c.color;
+                // Opacidad dinámica basada en el hover
+                ctx.globalAlpha = isRelated ? 0.6 : 0.1;
+                ctx.setLineDash(c.dashed ? [5, 5] : []);
+                ctx.stroke();
             });
 
-            // Draw Particles
-            particles.current.forEach(p => {
+            ctx.globalAlpha = 1;
+            particles.forEach(p => {
                 p.update();
                 p.draw(ctx);
             });
@@ -250,75 +157,100 @@ export const ArchitectureDiagram: React.FC = () => {
             animationFrameId = requestAnimationFrame(animate);
         };
 
+        setup();
         animate();
+        window.addEventListener('resize', setup);
+        return () => {
+            window.removeEventListener('resize', setup);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, [hoveredNode]);
 
-        return () => cancelAnimationFrame(animationFrameId);
-    }, [dimensions, isMobile]);
+
+    const LegendItem = ({ color, label }: { color: string; label: string }) => (
+        <div className="flex items-center gap-2 text-[10px] tracking-wider uppercase font-medium text-slate-400">
+            <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]" style={{ backgroundColor: color }} />
+            {label}
+        </div>
+    );
 
     return (
-        <div ref={containerRef} className="w-full h-full relative bg-black overflow-hidden">
-            {/* Background Grid */}
-            <div className="absolute inset-0 pointer-events-none"
-            /*style={{
-                backgroundImage: `radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
-                                  radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%)`
-            }*/
-            ></div>
+        <div className="relative w-full h-full bg-[#030303] overflow-hidden font-sans">
 
+            {/* 1. TÍTULO Y LEYENDA (UI FIJA) */}
+            <div className="absolute top-10 left-10 z-[100]">
+                <h2 className="text-diria-neonGreen font-mono text-xs tracking-[0.4em] uppercase opacity-50">System Architecture</h2>
+                <h1 className="text-white text-2xl font-black italic uppercase">Neural Network v3</h1>
+            </div>
+
+            {/* 2. CAPA DE FONDO (CANVAS PARA PARTÍCULAS) */}
             <canvas ref={canvasRef} className="absolute inset-0 z-0" />
 
-            {/* Nodes Layer */}
+            {/* 3. CAPA DE NODOS (ELEMENTOS HTML) */}
             <div className="absolute inset-0 z-10 pointer-events-none">
-                {NODES.map(node => {
-                    const left = isMobile ? node.mx * 100 + '%' : node.x * 100 + '%';
-                    const top = isMobile ? node.my * 100 + '%' : node.y * 100 + '%';
+                {NODES.map((node) => (
+                    <div
+                        key={node.id}
+                        onMouseEnter={() => setHoveredNode(node.id)}
+                        onMouseLeave={() => setHoveredNode(null)}
+                        className={`absolute flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-500 pointer-events-auto group
+                        ${node.type === 'hub' ? 'w-44 h-44 rounded-full bg-indigo-500/5 border-indigo-400/40 shadow-[0_0_50px_rgba(129,140,248,0.1)]' : 'w-36 bg-white/[0.03] border-white/10'}
+                        ${hoveredNode === node.id ? 'scale-110 border-white/40 bg-white/10' : ''}
+                    `}
+                        style={{ left: `${node.x * 100}%`, top: `${node.y * 100}%`, transform: 'translate(-50%, -50%)' }}
+                    >
+                        <span className="text-3xl mb-2 group-hover:scale-125 transition-transform duration-300">{node.icon}</span>
+                        <span className="text-[12px] font-bold text-white uppercase tracking-tighter">{node.label}</span>
+                        <span className="text-[8px] text-diria-neonGreen/60 font-mono mt-1 uppercase tracking-widest">{node.sub}</span>
+                    </div>
+                ))}
+
+                {/* <--- AQUÍ DEBES PEGAR EL CÓDIGO DE LAS ETIQUETAS DINÁMICAS ---> */}
+                {CONNECTIONS.map((conn, idx) => {
+                    const fromNode = NODES.find(n => n.id === conn.from);
+                    const toNode = NODES.find(n => n.id === conn.to);
+                    if (!fromNode || !toNode) return null;
+
+                    const isVisible = hoveredNode === conn.from || hoveredNode === conn.to;
+                    const midX = (fromNode.x + toNode.x) / 2;
+                    const midY = (fromNode.y + toNode.y) / 2;
 
                     return (
                         <div
-                            key={node.id}
-                            className={`absolute transform -translate-x-1/2 -translate-y-1/2 p-2 rounded-xl border border-white/10 flex flex-col items-center text-center transition-all duration-300 pointer-events-auto hover:scale-110 hover:border-diria-neonBlue hover:shadow-[0_10px_30px_rgba(56,189,248,0.3)] hover:z-50
-                                ${node.class === 'is-core' ? 'bg-diria-core/15 border-diria-core w-36 p-3' : 'bg-slate-800/70 w-32 backdrop-blur-sm'}
-                                ${node.class === 'is-future' ? 'border-dashed opacity-70' : ''}
-                            `}
-                            style={{ left, top }}
+                            key={`label-${idx}`}
+                            className={`absolute pointer-events-none transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+                                }`}
+                            style={{
+                                left: `${midX * 100}%`,
+                                top: `${midY * 100}%`,
+                                transform: 'translate(-50%, -50%)',
+                                zIndex: 30 // Asegura que esté sobre todo
+                            }}
                         >
-                            {/* Status Indicator */}
-                            <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full border-2 border-[#0f172a]
-                                ${node.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : ''}
-                                ${node.status === 'dev' ? 'bg-amber-500 animate-pulse' : ''}
-                                ${node.status === 'plan' ? 'bg-slate-500 border-white' : ''}
-                            `}></div>
-
-                            {node.image ? (
-                                <img src={node.image} alt={node.label} className="w-9 h-9 rounded-full object-cover mb-1 border-2 border-white bg-white" />
-                            ) : (
-                                <div className="text-xl mb-1">{node.icon}</div>
-                            )}
-
-                            <div className="text-[11px] font-bold text-white leading-tight">{node.label}</div>
-                            {!isMobile && <div className="text-[9px] text-slate-400 mt-0.5">{node.sub}</div>}
+                            <div className="relative group">
+                                <div className="absolute inset-0 blur-md opacity-20" style={{ backgroundColor: conn.color }} />
+                                <span
+                                    className="relative text-[8px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-md bg-black/90 border border-white/10 shadow-2xl backdrop-blur-md whitespace-nowrap"
+                                    style={{ color: conn.color }}
+                                >
+                                    {conn.label || "Data Flow"}
+                                </span>
+                            </div>
                         </div>
                     );
                 })}
             </div>
 
-            {/* Legend */}
-            {!isMobile && (
-                <div className="absolute bottom-8 left-8 bg-slate-900/80 border border-white/10 p-4 rounded-xl backdrop-blur-md z-20 text-xs grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div> Producción
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div> En Desarrollo
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <div className="w-2 h-2 rounded-full bg-slate-500 border border-white"></div> Plan Futuro
-                    </div>
-                    <div className="col-span-2 pt-2 border-t border-white/10 text-slate-500">
-                        Flujos de datos en tiempo real
-                    </div>
-                </div>
-            )}
+            {/* 4. LEYENDA (OPCIONAL SI YA TIENES LAS ETIQUETAS, PERO RECOMENDABLE) */}
+            <div className="absolute bottom-10 left-10 grid grid-cols-2 gap-x-6 gap-y-3 bg-black/60 backdrop-blur-xl p-5 rounded-2xl border border-white/10 z-[100]">
+                <LegendItem color="#38bdf8" label="GChat / Inbound" />
+                <LegendItem color="#f472b6" label="LLM / Reasoning" />
+                <LegendItem color="#10b981" label="Agent Capabilities" />
+                <LegendItem color="#fbbf24" label="Database / Storage" />
+                {/* ... etc */}
+            </div>
         </div>
     );
 };
+
+export default ArchitectureDiagram;

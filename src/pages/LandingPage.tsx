@@ -4,8 +4,9 @@ import { Hero } from '../components/landing/Hero';
 import { Services } from '../components/landing/Services';
 import { Architecture } from '../components/landing/Architecture';
 import { Agents } from '../components/landing/Agents';
-import { Ecosystem } from '../components/landing/Ecosystem';
+import Ecosystem from "../components/landing/Ecosystem";
 import { Philosophy } from '../components/landing/Philosophy';
+import Contact from '../components/landing/Contact';
 import { Footer } from '../components/layout/Footer';
 import { ParticlesBackground } from '../components/layout/ParticlesBackground';
 import { ContactProvider } from '../context/ContactContext'; // Importar
@@ -19,11 +20,12 @@ export const LandingPage: React.FC = () => {
                 <Navbar />
                 <main className="relative z-10">
                     <Hero />
+                    <Ecosystem />
+                    <Architecture />
                     <Agents />
                     <Services />
-                    <Architecture />
-                    <Ecosystem />
                     <Philosophy />
+                    <Contact />
                 </main>
                 <div className="relative z-20">
                     <Footer />
