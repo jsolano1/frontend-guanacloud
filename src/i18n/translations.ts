@@ -134,4 +134,23 @@ export const translations = {
 };
 
 export type Language = 'es' | 'en';
-export type TranslationKey = keyof typeof translations.es;
+export type TranslationKey = 'nav_product'
+    | 'services_badge'
+    | 'nav_services'
+    | 'nav_architecture'
+    | 'nav_about'
+    | 'nav_login'
+    | 'nav_demo'
+    | 'contact_cta'
+    | 'hero_title_1'
+    | 'hero_title_2'
+    | 'hero_subtitle'
+    | 'hero_cta_demo'
+    | 'hero_cta_console'
+    | 'hero_cta_contact'
+    | 'hero_cta_docs'
+    | 'hero_cta_tech'
+    | 'hero_cta_video'
+    | 'hero_cta_whatsapp'
+    | 'hero_cta_youtube'
+    | 'hero_cta_gh'
