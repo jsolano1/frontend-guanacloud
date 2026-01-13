@@ -17,13 +17,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     };
 
     const t = (key: TranslationKey): string => {
-        // Accedemos al objeto del idioma actual
-        const currentTranslations = translations[language];
-
-        // Usamos Type Casting para asegurar que 'key' es una llave válida de ese objeto
-        const text = (currentTranslations as Record<TranslationKey, string>)[key];
-
-        return text || key;
+        // Accedemos de forma segura indicando que el objeto de idioma 
+        // contiene llaves de tipo TranslationKey
+        const currentLangMap = translations[language] as Record<TranslationKey, string>;
+        return currentLangMap[key] || key;
     };
 
     return (

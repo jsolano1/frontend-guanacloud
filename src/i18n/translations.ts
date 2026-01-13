@@ -1,3 +1,7 @@
+
+export type Language = 'es' | 'en';
+
+// 1. Definimos la estructura base (puedes usar el objeto 'es' como referencia)
 export const translations = {
     es: {
         nav_product: "Producto",
@@ -26,7 +30,6 @@ export const translations = {
         service_ds_desc: "Dashboards intuitivos y modelos predictivos. Análisis avanzado para resolver problemas complejos y anticipar tendencias.",
         service_consulting_title: "AI Audit & Strategy",
         service_consulting_desc: "¿Listo para la IA? Evaluamos tu infraestructura, datos y procesos. Diseñamos roadmaps claros y gobernanza ética para que tu adopción tecnológica sea segura y rentable.",
-
         presence_label: "Proyectos Desarrollados en",
         arch_badge: "DirIA · Arquitectura Multi-Agente",
         arch_title: "DirIA: Producto & Ecosistema",
@@ -35,7 +38,8 @@ export const translations = {
         agents_badge: "DirIA · Arquitectura Multi-Agente",
         agents_title: "El Futuro no es un Agente.",
         agents_title_1: "Son Ecosistemas.",
-        agents_subtitle: "Mientras otros construyen chatbots, nosotros orquestamos redes de especialistas. Cada agente, un experto. Todos conectados por DirIA.", agent_guaitil_desc: "Tu helpdesk level 0 siempre vigilante. Resolución automática de tickets con precisión artesanal.",
+        agents_subtitle: "Mientras otros construyen chatbots, nosotros orquestamos redes de especialistas. Cada agente, un experto. Todos conectados por DirIA.",
+        agent_guaitil_desc: "Tu helpdesk level 0 siempre vigilante. Resolución automática de tickets con precisión artesanal.",
         agent_nicoya_desc: "Base de conocimiento que no olvida. Aprende de cada interacción y mantiene la sabiduría.",
         agent_santacruz_desc: "Consultas DWH y real-time insights. Transforma preguntas en SQL y dashboards.",
         agent_nandayure_desc: "Asistente con calendario y alertas inteligentes. Tu copiloto ejecutivo.",
@@ -55,10 +59,9 @@ export const translations = {
         team_title: "Los Guardianes de la",
         team_title_1: "Visión",
         team_subtitle: "Uniendo la experiencia corporativa global con la sabiduría ancestral local para construir tecnología con propósito y legado.",
-        team_bio_jose: "Con 20 años transformando datos en decisiones, José ha liderado equipos de data engineering, analytics y data science en empresas globales como Intel, Movistar, Grupo Cuestamoras, Premier Insurance y Connect Assistant.<br/><br/>Su expertise abarca el espectro completo de la evolución de datos: desde arquitecturas on-premise hasta implementaciones cloud-native en AWS, Azure y GCP. En Telefónica, trabajó en la vanguardia del big data, procesando volúmenes masivos antes de que el término entrara al mainstream tech. Más recientemente, lideró la integración de infraestructuras de datos con IA en 5 países de Latinoamérica, conectando una variedad de sistemas con inteligencia artificial moderna.<br/><br/>Fundó GuanaCloud inspirado por la Blue Zone de Guanacaste: construir tecnología que no solo escala, sino que perdura generaciones.<br/><br/>Más allá del código: Su familia es el motor de cada día. Los fines de semana lo encuentras celebrando (o sufriendo) con sus Boston Celtics 🏀, o pedaleando por las montañas de Costa Rica 🚴‍♂️",
-        team_bio_alejandra: "Con más de 10 años transformando operaciones empresariales a través de datos, Alejandra ha liderado iniciativas de gestión, análisis y arquitectura de datos en los sectores de banca y tecnología, donde la precisión no es negociable y la agilidad marca la diferencia.<br/><br/>Su expertise combina lo técnico con lo estratégico: ha dirigido equipos multidisciplinarios, construido plataformas digitales desde cero y automatizado procesos que antes consumían semanas en horas. Su enfoque va más allá de implementar tecnología—se trata de diseñar sistemas que las personas realmente usan, que escalan sin quebrarse, y que convierten la complejidad en claridad operativa.<br/><br/>Cofundó GuanaCloud con una convicción clara: que toda empresa, sin importar su tamaño, merece acceder a tecnología de clase mundial. Herramientas que antes solo tenían las corporaciones, ahora al alcance de equipos que quieren competir en serio.",
+        team_bio_jose: "Con 20 años transformando datos en decisiones...",
+        team_bio_alejandra: "Con más de 10 años transformando operaciones...",
         footer_sustainability: "Comprometidos con la Naturaleza",
-
         sidebar_console: "Consola",
         sidebar_metrics: "Métricas",
         sidebar_admin: "Admin",
@@ -82,10 +85,12 @@ export const translations = {
         hero_subtitle: "Where ancient Guanacaste wisdom meets Artificial Intelligence. A living ecosystem that protects and sustains your business.",
         hero_cta_demo: "View Demo",
         hero_cta_console: "Access Console",
+        services_badge: "Engineering Services", // Agregado
         services_title: "Guana Cloud Services",
+        services_title_1: "Engineering Vitality", // Agregado
         services_subtitle: "Beyond DirIA, we empower your digital transformation with world-class expertise.",
         service_de_title: "Data Engineering",
-        service_de_desc: "Robust and scalable architectures. Modern data pipelines that fuel your business intelligence. We build the solid foundation your AI needs.",
+        service_de_desc: "Robust and scalable architectures. Modern data pipelines that fuel your business intelligence.",
         service_ml_title: "Machine Learning",
         service_ml_desc: "AI and ML implementation in production. MLOps and intelligent automation for critical processes.",
         service_da_title: "Data Analyst",
@@ -93,34 +98,39 @@ export const translations = {
         service_ds_title: "Data Scientist",
         service_ds_desc: "Predictive models and advanced analysis to solve complex problems and anticipate trends.",
         service_consulting_title: "AI Audit & Strategy",
-        service_consulting_desc: "Ready for AI? We assess your infrastructure, data, and processes. We design clear roadmaps and ethical governance to make your tech adoption secure and profitable.",
-
+        service_consulting_desc: "Ready for AI? We assess your infrastructure, data, and processes.",
         presence_label: "Projects Developed In",
+        arch_badge: "DirIA · Multi-Agent Architecture", // Agregado
         arch_title: "DirIA: Product & Ecosystem",
+        arch_title_1: "DirIA · Multi-Agent Architecture", // Agregado
         arch_subtitle: "A multi-agent platform capable of solving from simple tasks to complex orchestrations.",
-
-        agents_title: "Specialized Intelligent Agents",
+        agents_badge: "DirIA · Multi-Agent Architecture", // Agregado
+        agents_title: "The Future is not an Agent.", // Agregado
+        agents_title_1: "It's Ecosystems.", // Agregado
         agents_subtitle: "A network of digital experts working in harmony to empower your business.",
-        agent_guaitil_desc: "Your always-vigilant level 0 helpdesk. Automatic ticket resolution with artisanal precision.",
-        agent_nicoya_desc: "Knowledge base that never forgets. Learns from every interaction and maintains wisdom.",
-        agent_santacruz_desc: "DWH queries and real-time insights. Transforms questions into SQL and dashboards.",
-        agent_nandayure_desc: "Assistant with calendar and intelligent alerts. Your executive copilot.",
-
-        about_origin_p1: "In the heart of Guanacaste, <strong>Cerro Diriá</strong> has witnessed life for millennia. For the Chorotegas, \"Diriá\" meant more than \"mountain\" — it represented elevation, perspective, and vision from the heights.",
-        about_origin_p2: "Here, in one of the planet's five <strong>Blue Zones</strong>, nature has perfected systems of collaboration and resilience. GuanaCloud was born here because we understood something fundamental: the smartest systems are not monolithic, they are networks of collaborating specialists.",
+        agent_guaitil_desc: "Your always-vigilant level 0 helpdesk.",
+        agent_nicoya_desc: "Knowledge base that never forgets.",
+        agent_santacruz_desc: "DWH queries and real-time insights.",
+        agent_nandayure_desc: "Assistant with calendar and intelligent alerts.",
+        about_origin_p1: "In the heart of Guanacaste, <strong>Cerro Diriá</strong> has witnessed life for millennia...",
+        about_origin_p2: "Here, in one of the planet's five <strong>Blue Zones</strong>...",
+        philosophy_badge: "GuanaCloud Philosophy", // Agregado
+        philosophy_title: "From the Wisest Province on the Planet", // Agregado
+        philosophy_title_1: "Ancient Wisdom, Future Technology", // Agregado
         pillar_nature_title: "The Tropical Dry Forest",
-        pillar_nature_desc: "An ecosystem that survives 6 months without rain through interconnected root networks.",
+        pillar_nature_desc: "An ecosystem that survives 6 months without rain.",
         pillar_heritage_title: "The Chorotega Network",
-        pillar_heritage_desc: "1,500 years before Cloud Computing, the Chorotegas invented distributed architecture.",
+        pillar_heritage_desc: "1,500 years before Cloud Computing...",
         pillar_cloud_title: "Scaling Wisdom",
-        pillar_cloud_desc: "Cloud allows distributed systems to operate at planetary scale with the elegance of a tropical forest.",
+        pillar_cloud_desc: "Cloud allows distributed systems to operate at planetary scale.",
         ecosystem_title: "The GuanaCloud Ecosystem",
-        team_title: "Visionary Leadership",
-        team_bio_jose: "With 20 years transforming data into decisions, Jose has led data engineering, analytics, and data science teams in global companies such as Intel, Movistar, Grupo Cuestamoras, Premier Insurance, and Connect Assistant.<br/><br/>His expertise covers the full spectrum of data evolution: from on-premise architectures to cloud-native implementations on AWS, Azure, and GCP. At Telefónica, he worked at the forefront of big data, processing massive volumes before the term entered the tech mainstream. More recently, he led the integration of data infrastructures with AI in 5 Latin American countries, connecting a variety of systems with modern artificial intelligence.<br/><br/>He founded GuanaCloud inspired by the Guanacaste Blue Zone: building technology that not only scales but endures for generations.<br/><br/>Beyond the code: His family is his daily engine. On weekends you find him celebrating (or suffering) with his Boston Celtics 🏀, or cycling through the mountains of Costa Rica 🚴‍♂️",
-        team_bio_alejandra: "With over 10 years transforming business operations through data, Alejandra has led management, analysis, and data architecture initiatives in the banking and technology sectors, where precision is non-negotiable and agility makes the difference.<br/><br/>Her expertise combines the technical with the strategic: she has directed multidisciplinary teams, built digital platforms from scratch, and automated processes that used to consume weeks into hours. Her approach goes beyond implementing technology—it's about designing systems that people actually use, that scale without breaking, and that turn complexity into operational clarity.<br/><br/>She co-founded GuanaCloud with a clear conviction: that every company, regardless of its size, deserves access to world-class technology. Tools that were once only available to corporations are now within reach of teams that want to compete seriously.",
-
+        team_badge: "Visionary Leadership", // Agregado
+        team_title: "The Guardians of the",
+        team_title_1: "Vision", // Agregado
+        team_subtitle: "Joining global corporate experience with local ancient wisdom.",
+        team_bio_jose: "With 20 years transforming data into decisions...",
+        team_bio_ale: "With over 10 years transforming business operations...",
         footer_sustainability: "Committed to Nature",
-
         sidebar_console: "Console",
         sidebar_metrics: "Metrics",
         sidebar_admin: "Admin",
@@ -128,29 +138,11 @@ export const translations = {
         sidebar_logout: "Logout",
         console_placeholder: "Type your query to DirIA...",
         console_welcome: "Hello, I am DirIA. How can I help you today?",
-        console_reply_mock: "Understood. I am processing your request with agent Cima Guaitil...",
+        console_reply_mock: "Understood. I am processing your request...",
         console_send: "Send"
     }
-};
+} as const; // Importante: usas 'as const' para que TS infiera las llaves literales
 
-export type Language = 'es' | 'en';
-export type TranslationKey = 'nav_product'
-    | 'services_badge'
-    | 'nav_services'
-    | 'nav_architecture'
-    | 'nav_about'
-    | 'nav_login'
-    | 'nav_demo'
-    | 'contact_cta'
-    | 'hero_title_1'
-    | 'hero_title_2'
-    | 'hero_subtitle'
-    | 'hero_cta_demo'
-    | 'hero_cta_console'
-    | 'hero_cta_contact'
-    | 'hero_cta_docs'
-    | 'hero_cta_tech'
-    | 'hero_cta_video'
-    | 'hero_cta_whatsapp'
-    | 'hero_cta_youtube'
-    | 'hero_cta_gh'
+// 2. Definimos los tipos basados en el objeto real
+type TranslationStructure = typeof translations.es;
+export type TranslationKey = keyof TranslationStructure;
