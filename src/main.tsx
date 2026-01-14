@@ -8,12 +8,13 @@ import { ContactProvider } from './context/ContactContext';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <LanguageProvider>
-      <ContactProvider>
-        <BrowserRouter>
+    <ContactProvider>
+      <BrowserRouter>
+        <LanguageProvider>
           <App />
-        </BrowserRouter>
-      </ContactProvider>
-    </LanguageProvider>
+        </LanguageProvider>
+      </BrowserRouter>
+    </ContactProvider>
   </React.StrictMode>,
 );
+

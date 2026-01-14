@@ -22,7 +22,7 @@ export default {
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
-                heading: ['Montserrat', 'sans-serif'],
+                heading: ['Noto Sans', 'sans-serif'],
             },
             animation: {
                 'float': 'float 6s ease-in-out infinite',
