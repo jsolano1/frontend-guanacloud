@@ -9,18 +9,18 @@ import { useLanguage } from '../../context/LanguageContext';
 export const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { lang } = useParams(); // Obtenemos el idioma actual de la URL
+    const { lang } = useParams();
     const { t } = useLanguage();
 
     const toggleLanguage = () => {
         const newLang = lang === 'es' ? 'en' : 'es';
-
-        // Obtenemos la ruta actual sin el código de idioma
-        // Ejemplo: si estamos en /es/servicios, extraemos /servicios
         const currentPath = location.pathname.split('/').slice(2).join('/');
-
-        // Navegamos a la nueva URL: /en/servicios
         navigate(`/${newLang}/${currentPath}`, { replace: true });
+    };
+
+    const getPath = (path: string) => {
+        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+        return `/${lang}/${cleanPath}`;
     };
     const { openContact } = useContact();
     const [isScrolled, setIsScrolled] = useState(false);
@@ -40,7 +40,6 @@ export const Navbar: React.FC = () => {
         { name: t('nav_services'), href: '/#services' },
         { name: t('nav_architecture'), href: '/#architecture' },
         { name: t('nav_about'), href: '/philosophy' },
-        { name: t('nav_login'), href: '/login' },
     ];
 
     return (
@@ -59,13 +58,13 @@ export const Navbar: React.FC = () => {
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-8 items-center">
                         {navLinks.map((link) => (
-                            <a key={link.name} href={link.href} className="text-sm font-medium text-diria-muted hover:text-white transition">
+                            <a key={link.name} href={getPath(link.href)} className="text-sm font-medium text-diria-muted hover:text-white transition">
                                 {link.name}
                             </a>
                         ))}
 
                         <Link
-                            to="/login"
+                            to={getPath('login')}
                             className="hidden md:block px-6 py-2 rounded-full font-bold text-sm text-black transition hover:scale-105 text-center"
                             style={{ backgroundColor: '#00ff9d' }} // Aquí usamos el color neonGreen directamente
                         >

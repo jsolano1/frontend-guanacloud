@@ -3,18 +3,20 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import { useContact } from '../../context/ContactContext';
 import { ArrowRight, Mail } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
     const { t } = useLanguage();
     const { openContact } = useContact();
-
+    const { lang } = useParams();
+    const l = (path: string) => `/${lang}/${path}`;
     return (
         <section className="relative min-h-screen flex items-center justify-center pt-12 overflow-hidden">
 
             {/* BACKGROUND IMAGE & LAYERS */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.img
-                    src="/img/hero_drone_ai_diria.png"
+                    src={`/img/hero_drone_ai_diria.png`}
                     alt="Cerro Diria AI Network"
                     className="w-full h-full object-cover opacity-90"
                     initial={{ scale: 1 }}
@@ -97,7 +99,7 @@ export const Hero: React.FC = () => {
                 >
                     {/* BOTÓN EXPLORAR */}
                     <a
-                        href="/#ecosystem"
+                        href={l(`#ecosystem`)}
                         className="group relative px-10 py-5 rounded-full bg-diria-neonGreen text-black font-black uppercase tracking-widest text-sm transition-all duration-500 hover:scale-105 overflow-visible"
                     >
                         {/* EFECTO HALO DE RESPIRACIÓN */}

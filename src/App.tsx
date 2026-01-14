@@ -11,15 +11,34 @@ import Login from './pages/Login';
 function App() {
   return (
     <Routes>
-      <Route path="/:lang/*" element={<LandingPage />} />
+      {/* 1. REDIRECCIÓN INICIAL: Si entran a la raíz, enviarlos a /es */}
+      <Route path="/" element={<Navigate to="/es" replace />} />
+
+      {/* 2. RUTAS LOCALIZADAS: Todo lo que lleva /es/ o /en/ */}
+      <Route path="/:lang">
+        {/* Página de inicio (Landing) */}
+        <Route index element={<LandingPage />} />
+
+        {/* Páginas principales */}
+        <Route path="login" element={<Login />} />
+        <Route path="careers" element={<CareersPage />} />
+        <Route path="philosophy" element={<PhilosophyPage />} />
+
+        {/* Rutas Legales */}
+        <Route path="legal">
+          <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<Terms />} />
+        </Route>
+
+        {/* Consola / Admin (Si quieres que mantengan el idioma en el panel) */}
+        <Route path="console">
+          <Route path="admin" element={<AdminPage />} />
+          <Route path="metrics" element={<MetricsPage />} />
+        </Route>
+      </Route>
+
+      {/* 3. CAPTURA DE ERRORES: Si escriben algo mal, enviarlos a /es */}
       <Route path="*" element={<Navigate to="/es" replace />} />
-      <Route path="/console/admin" element={<AdminPage />} />
-      <Route path="/console/metrics" element={<MetricsPage />} />
-      <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-      <Route path="/legal/terms" element={<Terms />} />
-      <Route path="/careers" element={<CareersPage />} />
-      <Route path="/philosophy" element={<PhilosophyPage />} />
-      <Route path="/login" element={<Login />} />
     </Routes>
   );
 }
