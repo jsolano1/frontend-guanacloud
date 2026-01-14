@@ -11,7 +11,7 @@ export const Navbar: React.FC = () => {
     const location = useLocation();
     const { lang } = useParams();
     const { t } = useLanguage();
-
+    const l = (path: string) => `/${lang}/${path}`;
     const toggleLanguage = () => {
         const newLang = lang === 'es' ? 'en' : 'es';
         const currentPath = location.pathname.split('/').slice(2).join('/');
@@ -133,7 +133,7 @@ export const Navbar: React.FC = () => {
                     >
                         {t('contact_cta')}
                     </button>
-                    <Link to="/login" className="bg-diria-neonGreen text-black px-6 py-3 rounded-xl text-center font-bold">
+                    <Link to={l('login')} className="bg-diria-neonGreen text-black px-6 py-3 rounded-xl text-center font-bold">
                         {t('nav_login')}
                     </Link>
                 </div>
