@@ -35,11 +35,11 @@ export const Navbar: React.FC = () => {
     }, []);
 
     const navLinks = [
-        { name: t('nav_ecosystem'), href: '/#ecosystem' },
-        { name: t('nav_agents'), href: '/#agents' },
-        { name: t('nav_services'), href: '/#services' },
-        { name: t('nav_architecture'), href: '/#architecture' },
-        { name: t('nav_about'), href: '/philosophy' },
+        { name: t('nav_ecosystem'), href: l('#ecosystem') },
+        { name: t('nav_agents'), href: l('#agents') },
+        { name: t('nav_services'), href: l('#services') },
+        { name: t('nav_architecture'), href: l('#architecture') },
+        { name: t('nav_about'), href: l('philosophy') },
     ];
 
     return (
