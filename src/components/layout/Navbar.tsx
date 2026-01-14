@@ -19,7 +19,8 @@ export const Navbar: React.FC = () => {
     }, []);
 
     const navLinks = [
-        { name: t('nav_product'), href: '/#product' },
+        { name: t('nav_ecosystem'), href: '/#ecosystem' },
+        { name: t('nav_agents'), href: '/#agents' },
         { name: t('nav_services'), href: '/#services' },
         { name: t('nav_architecture'), href: '/#architecture' },
         { name: t('nav_about'), href: '/philosophy' },

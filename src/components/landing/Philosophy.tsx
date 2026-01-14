@@ -5,7 +5,29 @@ export const Philosophy: React.FC = () => {
 
 
     return (
-        <section id="about" className="py-16 relative overflow-hidden bg-diria-darker">
+        <section id="about" className="py-40 relative overflow-hidden bg-diria-darker">
+
+            {/* ANIMATED BACKGROUND GLOWS */}
+            <div className="absolute inset-0">
+                {/* Main glow orbs */}
+                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-diria-neonGreen/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
+                <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-emerald-400/1 rounded-full blur-[140px] animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-400/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
+
+                {/* Floating particles */}
+                {[...Array(30)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-diria-neonGreen/40 rounded-full"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+                            animationDelay: `${Math.random() * 3}s`
+                        }}
+                    />
+                ))}
+            </div>
             {/* Decoración de fondo para conectar con la "Sabiduría" */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-diria-neonGreen/5 blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-diria-neonBlue/5 blur-[120px] rounded-full pointer-events-none" />
@@ -75,7 +97,7 @@ export const Philosophy: React.FC = () => {
                     <div className="flex justify-center items-center gap-4 opacity-30">
                         <div className="h-px w-12 bg-white/20" />
                         <span className="font-mono text-[10px] text-white tracking-[0.5em] uppercase">
-                            Nicoya Blue Zone • 10.1477° N, 85.4411° W
+                            Nicoya Blue Zone • 10.1494189° N, 85.4925602° W
                         </span>
                         <div className="h-px w-12 bg-white/20" />
                     </div>
@@ -84,3 +106,5 @@ export const Philosophy: React.FC = () => {
         </section>
     );
 };
+
+
