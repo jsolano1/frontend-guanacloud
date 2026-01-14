@@ -1,25 +1,32 @@
 import { motion } from 'framer-motion';
+import { useContact } from '../../context/ContactContext';
+import { Mail } from 'lucide-react';
 
 export default function ClosingMountains() {
+    const { openContact } = useContact();
     return (
-        <section className="relative min-h-[70vh] bg-[#030303] overflow-hidden flex flex-col items-center justify-end pb-20">
+        <section className="relative min-h-[80vh] bg-[#030303] overflow-hidden flex flex-col items-center justify-end pb-20">
+            {/* ANIMATED BACKGROUND GLOWS */}
+            <div className="absolute inset-0">
+                {/* Main glow orbs */}
+                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-diria-neonGreen/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
+                <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-emerald-400/1 rounded-full blur-[140px] animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-400/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
 
-            {/* BACKGROUND PARTICLES - ADN ambiental */}
-            {[...Array(80)].map((_, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute w-[2px] h-[2px] bg-diria-neonGreen/30 rounded-full animate-float-slow opacity-0"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.3 }}
-                    transition={{ delay: Math.random() * 2, duration: 2 }}
-                    style={{
-                        left: `${Math.random() * 100}%`,
-                        bottom: `${Math.random() * 10}%`, // Start closer to the bottom
-                        animationDelay: `${Math.random() * 8}s`,
-                        animationDuration: `${10 + Math.random() * 8}s`
-                    }}
-                />
-            ))}
+                {/* Floating particles */}
+                {[...Array(30)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-diria-neonGreen/40 rounded-full"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+                            animationDelay: `${Math.random() * 3}s`
+                        }}
+                    />
+                ))}
+            </div>
 
             {/* SVG DE MONTAÑAS MINIMALISTAS */}
             <div className="absolute bottom-0 left-0 w-full h-[60%] z-10">
@@ -160,18 +167,58 @@ export default function ClosingMountains() {
                 </svg>
             </div>
 
-            {/* TEXTO DE CIERRE EN LAS CIMAS */}
-            <div className="absolute w-full h-[60%] flex items-start justify-center pt-10 pointer-events-none z-20">
-                <motion.p
-                    className="text-white text-2xl md:text-5xl font-heading font-black max-w-4xl text-center leading-tight drop-shadow-lg"
-                    initial={{ opacity: 0, y: 50 }}
+            {/* TEXTO DE CIERRE Y BOTÓN */}
+            <div className="absolute inset-x-0 top-0 h-[60%] flex flex-col items-center justify-center z-20 pointer-events-none">
+
+                {/* 1. Título con Glow de Texto */}
+                <motion.h2
+                    className="text-white text-2xl md:text-5xl font-heading font-black max-w-5xl text-center leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] mb-4"
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 3, duration: 1.5, ease: "easeOut" }}
+                    transition={{ delay: 0.5, duration: 1.2 }}
                     viewport={{ once: true }}
                 >
-                    {/* Texto dinámico que "descansa" sobre las cimas */}
-                    "La visión no está en la cima. Es el camino lo que la revela."
+                    Perspectiva desde todas las alturas
+                </motion.h2>
+
+                {/* 2. Párrafo con margen controlado */}
+                <motion.p
+                    className="text-gray-300 text-sm md:text-lg font-light max-w-2xl text-center leading-relaxed px-6 opacity-70 mb-10"
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7, duration: 1.2 }}
+                    viewport={{ once: true }}
+                >
+                    No solo construimos software, cultivamos un ecosistema donde tu negocio puede florecer con la
+                    <span className="text-white/80 font-medium ml-1">solidez de un árbol milenario</span>.
                 </motion.p>
+
+                {/* 3. BOTÓN CON GLOW INTENSO Y ELEVADO */}
+                <motion.div
+                    className="pointer-events-auto relative"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1, duration: 0.8 }}
+                    viewport={{ once: true }}
+                >
+                    {/* Aura de Luz (Glow de fondo) */}
+                    <div className="absolute inset-0 bg-diria-neonGreen/40 blur-[50px] rounded-full animate-pulse" />
+                    <div className="absolute inset-0 bg-diria-neonGreen/20 blur-[20px] rounded-full" />
+
+                    <button
+                        onClick={openContact}
+                        className="group relative px-10 py-4 rounded-full font-black text-sm uppercase tracking-[0.3em] border-2 border-diria-neonGreen bg-black text-white transition-all duration-500 flex items-center justify-center gap-4 overflow-hidden shadow-[0_0_30px_rgba(0,255,157,0.4)] hover:shadow-[0_0_60px_rgba(0,255,157,0.7)] hover:bg-diria-neonGreen hover:text-black"
+                    >
+                        {/* Efecto Shimmer (Brillo pasando) */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_2s_infinite]" />
+
+                        <Mail size={18} className="relative z-10" />
+                        <span className="relative z-10">Contactar</span>
+
+                        {/* Resplandor extra en hover */}
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
+                    </button>
+                </motion.div>
             </div>
 
             {/* Animación de las partículas flotantes */}
@@ -182,6 +229,14 @@ export default function ClosingMountains() {
           50% { transform: translateY(-30px); opacity: 0.6; } /* Ascenso más prolongado */
         }
         .animate-float-slow { animation: float-slow ease-in-out infinite; }
+
+        @keyframes shimmer {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        .group-hover\:animate-shimmer {
+            animation: shimmer 1.5s infinite;
+        }
       ` }} />
         </section>
     );

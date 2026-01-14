@@ -49,13 +49,13 @@ export const Services: React.FC = () => {
             titleKey: 'service_consulting_title',
             descKey: 'service_consulting_desc',
             img: '/img/service_ai.png',
-            color: '#00ff9d',
-            gradient: 'from-diria-neonGreen/20 to-emerald-500/20'
+            color: '#FF1654',
+            gradient: 'from-#FF1654/20 to-red-500/20'
         }
     ];
 
     return (
-        <section id="services" className="py-32 bg-gradient-to-b from-black via-[#050505] to-black relative overflow-hidden">
+        <section id="services" className="py-20 bg-gradient-to-b from-black via-[#050505] to-black relative overflow-hidden">
 
             {/* Background Effects */}
             <div className="absolute inset-0 opacity-30">
@@ -145,20 +145,6 @@ export const Services: React.FC = () => {
 
                             {/* Content */}
                             <div className="relative h-full p-12 flex flex-col justify-between max-w-3xl">
-
-                                {/* Badge */}
-                                <div className="inline-flex items-center gap-2 self-start">
-                                    <div
-                                        className="px-4 py-2 rounded-full border backdrop-blur-md text-xs font-mono uppercase tracking-wider"
-                                        style={{
-                                            borderColor: `${services[0].color}30`,
-                                            backgroundColor: `${services[0].color}10`,
-                                            color: services[0].color
-                                        }}
-                                    >
-                                        Servicio Principal
-                                    </div>
-                                </div>
 
                                 {/* Text */}
                                 <div className="transform transition-transform duration-500 group-hover:-translate-y-2">

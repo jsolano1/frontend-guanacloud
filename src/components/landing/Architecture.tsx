@@ -6,7 +6,7 @@ export const Architecture: React.FC = () => {
     const { t } = useLanguage();
 
     return (
-        <section id="architecture" className="py-12 bg-diria-darker/80 relative">
+        <section id="architecture" className="py-6 bg-diria-darker/80 relative">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
                 {/* ========== HEADER ========== */}
