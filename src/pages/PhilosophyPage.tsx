@@ -264,7 +264,7 @@ export const PhilosophyPage: React.FC = () => {
             </section>
 
             {/* SECCIÓN 2: PhilosophyTabs */}
-            <section className="relative py-20 bg-diria-darker">
+            <section className="relative py-20 bg-diria-darker overflow-hidden">
                 <div className="text-center mb-20">
                     <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-black/40 backdrop-blur-xl transition-all duration-500 group cursor-default">
                         <span className="text-white text-sm font-mono uppercase tracking-[0.2em] group-hover:tracking-[0.25em] transition-all duration-300">
@@ -283,75 +283,74 @@ export const PhilosophyPage: React.FC = () => {
                         </span>
                     </h2>
                 </div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-3 lg:px-8">
 
-                    {/* NAVEGACIÓN ESTÁTICA - FONDO OSCURO Y BORDES NEÓN */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* NAVEGACIÓN ESTÁTICA - AHORA CON SCROLL EN MOBILE */}
                     <div className="w-full flex justify-center mb-20 relative">
-                        {/* Aura ambiental de fondo (Glow Effect sutil) */}
                         <div className="absolute inset-0 blur-[100px] bg-gradient-to-r from-transparent via-[#FF1654]/10 to-transparent pointer-events-none" />
 
-                        <nav
-                            className="inline-flex items-center p-1.5 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10"
-                            role="tablist"
-                        >
-                            {tabs.map((tab) => {
-                                const isActive = activeTab === tab.id;
-                                const tabColor = tab.color || '#FF1654';
+                        {/* Contenedor con scroll para mobile */}
+                        <div className="flex overflow-x-auto no-scrollbar max-w-full px-4">
+                            <nav
+                                className="inline-flex items-center p-1.5 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 shrink-0"
+                                role="tablist"
+                            >
+                                {tabs.map((tab) => {
+                                    const isActive = activeTab === tab.id;
+                                    const tabColor = tab.color || '#FF1654';
 
-                                return (
-                                    <button
-                                        key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
-                                        style={{
-                                            boxShadow: isActive ? `0 0 20px ${tabColor}33, inset 0 2px 4px ${tabColor}44` : 'none',
-                                            borderColor: isActive ? tabColor : 'transparent',
-                                        }}
-                                        className={`
-                        px-6 py-2.5 rounded-full border transition-all duration-500 font-bold 
-                        flex items-center gap-2 text-xs md:text-sm whitespace-nowrap group relative overflow-hidden
-                        ${isActive ? 'bg-[#111] scale-105' : 'bg-transparent hover:bg-white/5'}
-                    `}
-                                    >
-                                        {/* Brillo de barrido (Hover effect) */}
-                                        {!isActive && (
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
-                                        )}
-
-                                        {/* Icono con glow dinámico */}
-                                        <span
+                                    return (
+                                        <button
+                                            key={tab.id}
+                                            onClick={() => setActiveTab(tab.id)}
                                             style={{
-                                                color: tabColor,
-                                                filter: isActive ? `drop-shadow(0 0 8px ${tabColor})` : 'none'
+                                                boxShadow: isActive ? `0 0 20px ${tabColor}33, inset 0 2px 4px ${tabColor}44` : 'none',
+                                                borderColor: isActive ? tabColor : 'transparent',
                                             }}
-                                            className="transition-all duration-300"
+                                            className={`
+                                    px-6 py-2.5 rounded-full border transition-all duration-500 font-bold 
+                                    flex items-center gap-2 text-xs md:text-sm whitespace-nowrap group relative overflow-hidden
+                                    ${isActive ? 'bg-[#111] scale-105' : 'bg-transparent hover:bg-white/5'}
+                                `}
                                         >
-                                            {tab.icon}
-                                        </span>
+                                            {!isActive && (
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+                                            )}
 
-                                        <span style={{ color: isActive ? 'white' : '#9ca3af' }}>
-                                            {tab.label}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </nav>
+                                            <span
+                                                style={{
+                                                    color: tabColor,
+                                                    filter: isActive ? `drop-shadow(0 0 8px ${tabColor})` : 'none'
+                                                }}
+                                                className="transition-all duration-300"
+                                            >
+                                                {tab.icon}
+                                            </span>
+
+                                            <span style={{ color: isActive ? 'white' : '#9ca3af' }}>
+                                                {tab.label}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </nav>
+                        </div>
                     </div>
 
-                    {/* CONTENIDO */}
+                    {/* CONTENIDO (Tu lógica de AnimatePresence se mantiene igual) */}
                     <div className="min-h-[600px] relative">
                         <AnimatePresence mode="wait">
                             {tabs.map((tab) => (
                                 activeTab === tab.id && (
                                     <motion.div
                                         key={tab.id}
-                                        initial={{ opacity: 0, y: 15 }} // Micro-interacción de entrada
+                                        initial={{ opacity: 0, y: 15 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -15 }}
                                         transition={{ duration: 0.4, ease: "easeOut" }}
                                         className="w-full"
                                     >
                                         <div className="max-w-5xl mx-auto">
-                                            {/* Header con Glow sutil en el texto */}
                                             <div className="text-center mb-16">
                                                 <p
                                                     className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed border-l-4 pl-6 italic transition-colors duration-500"
@@ -361,18 +360,16 @@ export const PhilosophyPage: React.FC = () => {
                                                 </p>
                                             </div>
 
-                                            {/* Grid de Tarjetas con Glassmorphism Avanzado */}
-                                            <div className="grid md:grid-cols-2 gap-8 mb-16">
+                                            {/* GRID: Corregido para 1 col en móvil y 2 en desktop */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 px-2">
                                                 {tab.items.map((item, idx) => (
                                                     <motion.div
                                                         key={idx}
-                                                        whileHover={{ y: -8 }} // Feedback visual inmediato
+                                                        whileHover={{ y: -8 }}
                                                         className="p-8 rounded-3xl relative overflow-hidden group transition-all duration-500"
                                                     >
-                                                        {/* Fondo Glassmorphism con gradiente dinámico */}
                                                         <div className="absolute inset-0 bg-[#111]/80 backdrop-blur-xl border border-white/10 group-hover:border-white/20 transition-colors duration-500" />
 
-                                                        {/* Resplandor de fondo dinámico (Glow Effect) */}
                                                         <div
                                                             className="absolute -inset-24 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none"
                                                             style={{
@@ -382,12 +379,11 @@ export const PhilosophyPage: React.FC = () => {
                                                         />
 
                                                         <div className="relative z-10">
-                                                            {/* Icon Container con Inner Glow */}
                                                             <div
                                                                 className="mb-6 p-4 rounded-2xl bg-white/5 w-fit transition-all duration-500 group-hover:scale-110 shadow-2xl"
                                                                 style={{
                                                                     color: tab.color,
-                                                                    boxShadow: `0 0 20px ${tab.color}22` // Glow Effect sutil
+                                                                    boxShadow: `0 0 20px ${tab.color}22`
                                                                 }}
                                                             >
                                                                 {item.icon}
@@ -411,6 +407,12 @@ export const PhilosophyPage: React.FC = () => {
                         </AnimatePresence>
                     </div>
                 </div>
+
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    `}} />
             </section>
 
             {/* SECCIÓN 4: PhilosophyClosing */}

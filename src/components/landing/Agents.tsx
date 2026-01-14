@@ -3,11 +3,9 @@ import { useLanguage } from '../../context/LanguageContext';
 import { Bot, BrainCircuit, BarChart3, CalendarClock, ArrowUpRight, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AGENT_DATA, type Agent } from './AgentsData';
-import { useContact } from '../../context/ContactContext';
 
 export const Agents: React.FC = () => {
     const { t } = useLanguage();
-    const { openContact } = useContact();
 
     const agents = [
         {
@@ -184,15 +182,21 @@ export const Agents: React.FC = () => {
                                         {/* CTA Button */}
                                         <button
                                             onClick={() => openModal(agent.id)}
-                                            className="relative flex items-center justify-between px-6 py-3 rounded-xl border backdrop-blur-md font-medium transition-all duration-300 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 overflow-hidden hover:brightness-110"
+                                            className={`
+                mt-auto w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-500
+                /* MOBILE: Sólido y visible */
+                bg-white/10 text-white border border-white/10
+                /* DESKTOP: Se oculta y aparece con el color del agente */
+                md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0
+            `}
                                             style={{
+                                                // En hover de desktop usamos el color del agente
                                                 borderColor: `${agent.color}40`,
                                                 backgroundColor: `${agent.color}10`,
                                                 color: agent.color
                                             }}
                                         >
-                                            <span className="relative z-10">Explorar Agente</span>
-                                            <ArrowUpRight size={18} className="relative z-10 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                            Explorar Agente
                                         </button>
 
                                         {/* Decorative dots */}
@@ -232,52 +236,47 @@ export const Agents: React.FC = () => {
             {/* ========== MODAL ========== */}
             {selectedAgent && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
+                    className="fixed inset-0 z-[10000] flex items-start md:items-center justify-center p-4 md:p-6 bg-black/95 backdrop-blur-2xl overflow-hidden"
                     onClick={closeModal}
                 >
-                    {/* Glow orb */}
+                    {/* Glow ambiental */}
                     <div
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[120px] opacity-30 animate-pulse"
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full blur-[120px] opacity-20 pointer-events-none"
                         style={{ backgroundColor: selectedAgent.color }}
                     />
 
+                    {/* CONTENEDOR - Añadido mt-20 en mobile para bajarlo del Navbar */}
                     <div
-                        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
+                        className="relative w-full max-w-4xl mt-20 md:mt-0 max-h-[75vh] md:max-h-[90vh] overflow-hidden rounded-[2rem] border backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.9)] flex flex-col"
                         style={{
                             borderColor: `${selectedAgent.color}40`,
-                            backgroundColor: 'rgba(10, 10, 10, 0.95)'
+                            backgroundColor: 'rgba(10, 10, 10, 0.98)'
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
+                        {/* Header Sticky */}
+                        <div className="sticky top-0 z-50 p-6 border-b flex justify-between items-center"
+                            style={{ borderColor: `${selectedAgent.color}20`, backgroundColor: 'rgba(10, 10, 10, 0.95)' }}>
 
-                        {/* Modal Header */}
-                        <div
-                            className="sticky top-0 z-20 backdrop-blur-xl p-6 border-b flex justify-between items-center"
-                            style={{
-                                borderColor: `${selectedAgent.color}20`,
-                                backgroundColor: 'rgba(10, 10, 10, 0.9)'
-                            }}
-                        >
-                            <div className="flex items-center gap-4">
-
-                                {/* Icon */}
+                            <div className="flex items-center gap-3 md:gap-4">
+                                {/* Icono del Agente */}
                                 {selectedAgent.icon && (
                                     <div
-                                        className="relative p-3 rounded-xl border backdrop-blur-md"
+                                        className="relative p-2.5 md:p-3 rounded-xl border backdrop-blur-md"
                                         style={{
                                             borderColor: `${selectedAgent.color}40`,
                                             backgroundColor: `${selectedAgent.color}10`
                                         }}
                                     >
                                         <div
-                                            className="absolute inset-0 rounded-xl blur-lg opacity-50"
+                                            className="absolute inset-0 rounded-xl blur-md opacity-30"
                                             style={{ backgroundColor: selectedAgent.color }}
                                         />
                                         {(() => {
                                             const AgentIcon = selectedAgent.icon;
                                             return (
                                                 <AgentIcon
-                                                    size={24}
+                                                    size={22}
                                                     strokeWidth={1.5}
                                                     style={{ color: selectedAgent.color }}
                                                     className="relative z-10"
@@ -286,86 +285,79 @@ export const Agents: React.FC = () => {
                                         })()}
                                     </div>
                                 )}
-
-                                {/* Title */}
-                                <h2
-                                    className="font-bold text-2xl tracking-tight"
-                                    style={{ color: selectedAgent.color }}
-                                >
+                                <h2 className="font-black text-xl md:text-2xl tracking-tighter uppercase" style={{ color: selectedAgent.color }}>
                                     {selectedAgent.title}
                                 </h2>
                             </div>
 
-                            <div className="flex items-center gap-4">
-
-                                {/* Demo Button */}
+                            <div className="flex items-center gap-3">
+                                {/* Botón Demo con Texto Persuasivo */}
                                 <button
-                                    onClick={openContact}
-                                    className="hidden md:flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm text-black border-2 transition-all duration-300 hover:scale-105 hover:shadow-lg group"
-                                    style={{
-                                        backgroundColor: selectedAgent.color,
-                                        borderColor: selectedAgent.color
+                                    onClick={() => {
+                                        const subject = encodeURIComponent(`Solicitud de Implementación: ${selectedAgent.title}`);
+                                        const body = encodeURIComponent(
+                                            `Hola equipo de Guana Cloud,\n\nHe estado analizando el potencial de su agente "${selectedAgent.title}" y estoy muy interesado en entender cómo esta tecnología puede optimizar nuestra infraestructura actual.\n\nMe gustaría agendar una breve sesión para discutir:\n1. Integración con nuestros sistemas.\n2. Escalabilidad del agente en nuestro flujo de trabajo.\n3. Modelos de implementación.\n\nQuedo atento a su disponibilidad.\n\nSaludos,\n[Nombre / Empresa]`
+                                        );
+                                        window.location.href = `mailto:info@guanacloud.com?subject=${subject}&body=${body}`;
                                     }}
+                                    className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest text-black transition-all hover:scale-105 active:scale-95"
+                                    style={{ backgroundColor: selectedAgent.color }}
                                 >
-                                    <span>Solicitar Demo</span>
-                                    <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    Solicitar Demo
+                                    <ArrowUpRight size={14} />
                                 </button>
 
-                                {/* Close Button */}
-                                <button
-                                    onClick={closeModal}
-                                    className="w-10 h-10 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex items-center justify-center text-2xl"
-                                >
+                                <button onClick={closeModal} className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-white flex items-center justify-center">
                                     <X size={20} />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Modal Content */}
-                        <div className="p-6 md:p-8">
-
-                            {/* Description */}
+                        {/* CONTENIDO SCROLLABLE */}
+                        <div className="overflow-y-auto p-6 md:p-10 custom-scrollbar">
+                            {/* Descripción */}
                             <p
-                                className="text-base text-gray-300 leading-snug mb-8 border-l-2 pl-4 italic"
-                                style={{ borderColor: `${selectedAgent.color}40` }}
+                                className="text-base md:text-lg text-gray-300 leading-relaxed mb-10 border-l-2 pl-6 italic"
+                                style={{ borderColor: `${selectedAgent.color}60` }}
                             >
                                 {selectedAgent.description}
                             </p>
 
                             {/* Grid Content */}
-                            <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
-
-                                {/* Uses */}
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white mb-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                                {/* Usos Principales */}
+                                <div className="space-y-4">
+                                    <h3 className="text-white text-[10px] font-black uppercase tracking-[0.2em] opacity-50 flex items-center gap-2">
+                                        <span className="w-4 h-[1px]" style={{ backgroundColor: selectedAgent.color }} />
                                         Usos Principales
                                     </h3>
-                                    <ul className="space-y-2">
+                                    <ul className="space-y-3">
                                         {selectedAgent.uses.map((use, i) => (
-                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                                            <li key={i} className="flex items-start gap-3 text-sm text-gray-400 group">
                                                 <span
-                                                    className="mt-1.5 w-1 h-1 rounded-full flex-shrink-0"
+                                                    className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,255,157,0.5)]"
                                                     style={{ backgroundColor: selectedAgent.color }}
                                                 />
-                                                <span className="leading-tight">{use}</span>
+                                                <span className="leading-snug group-hover:text-gray-200 transition-colors">{use}</span>
                                             </li>
                                         ))}
                                     </ul>
                                 </div>
 
-                                {/* Services */}
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white mb-3">
+                                {/* Servicios */}
+                                <div className="space-y-4">
+                                    <h3 className="text-white text-[10px] font-black uppercase tracking-[0.2em] opacity-50 flex items-center gap-2">
+                                        <span className="w-4 h-[1px]" style={{ backgroundColor: selectedAgent.color }} />
                                         Servicios
                                     </h3>
-                                    <ul className="space-y-2">
+                                    <ul className="space-y-3">
                                         {selectedAgent.services.map((service, i) => (
-                                            <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
+                                            <li key={i} className="flex items-start gap-3 text-sm text-gray-400 group">
                                                 <span
-                                                    className="mt-1.5 w-1 h-1 rounded-full flex-shrink-0"
+                                                    className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
                                                     style={{ backgroundColor: selectedAgent.color }}
                                                 />
-                                                <span className="leading-tight">{service}</span>
+                                                <span className="leading-snug group-hover:text-gray-200 transition-colors">{service}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -373,23 +365,29 @@ export const Agents: React.FC = () => {
                             </div>
 
                             {/* Departments */}
-                            <div className="mt-10 pt-6 border-t border-white/5">
-                                <p
-                                    className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2"
-                                    style={{ color: selectedAgent.color }}
-                                >
-                                    Departamentos Aplicables
-                                </p>
-                                <p className="text-gray-500 font-mono text-xs">
-                                    {selectedAgent.departments}
-                                </p>
+                            <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <p
+                                        className="text-[10px] font-black uppercase tracking-[0.3em] mb-2"
+                                        style={{ color: selectedAgent.color }}
+                                    >
+                                        Departamentos Aplicables
+                                    </p>
+                                    <p className="text-gray-500 font-mono text-[11px] uppercase tracking-wider">
+                                        {selectedAgent.departments}
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* Mobile CTA */}
-                            <div className="md:hidden mt-8">
+                            {/* Mobile Demo CTA */}
+                            <div className="md:hidden mt-6 pb-4">
                                 <button
-                                    onClick={openContact}
-                                    className="w-full py-4 rounded-xl font-bold text-black"
+                                    onClick={() => {
+                                        const subject = encodeURIComponent(`Interés en Agente: ${selectedAgent.title}`);
+                                        const body = encodeURIComponent(`Hola Guana Cloud, me interesa implementar ${selectedAgent.title}. ¿Podemos agendar una demo?`);
+                                        window.location.href = `mailto:info@guanacloud.com?subject=${subject}&body=${body}`;
+                                    }}
+                                    className="w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-black"
                                     style={{ backgroundColor: selectedAgent.color }}
                                 >
                                     Solicitar Demo
@@ -399,6 +397,40 @@ export const Agents: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { 
+        background: rgba(255,255,255,0.1); 
+        border-radius: 10px; 
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    @media (max-width: 768px) {
+
+  /* Forzamos que la tarjeta siempre tenga el borde iluminado */
+  .agent-card {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  /* Hacemos que el botón "Explorar" sea siempre visible en mobile */
+  .explore-button {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    background-color: var(--agent-color) !important;
+    color: black !important;
+  }
+
+  /* El icono del agente siempre con brillo */
+  .agent-icon-container {
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 20px var(--agent-glow-color) !important;
+  }
+}
+
+`}} />
 
             {/* Animations */}
             <style dangerouslySetInnerHTML={{

@@ -156,13 +156,13 @@ export const Services: React.FC = () => {
                                                 backgroundColor: `${services[0].color}10`
                                             }}
                                         >
-                                            <Database size={32} strokeWidth={1.5} style={{ color: services[0].color }} />
+                                            <Database size={24} strokeWidth={1.5} style={{ color: services[0].color }} />
                                         </div>
-                                        <h3 className="text-4xl font-bold text-white">
+                                        <h3 className="text-2xl font-bold text-white">
                                             {t(services[0].titleKey as any)}
                                         </h3>
                                     </div>
-                                    <p className="text-xl text-gray-300 leading-relaxed group-hover:text-white transition-colors">
+                                    <p className="text-lg text-gray-300 leading-relaxed group-hover:text-white transition-colors">
                                         {t(services[0].descKey as any)}
                                     </p>
                                 </div>

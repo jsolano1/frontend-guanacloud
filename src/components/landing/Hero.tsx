@@ -3,18 +3,20 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import { useContact } from '../../context/ContactContext';
 import { ArrowRight, Mail } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
     const { t } = useLanguage();
     const { openContact } = useContact();
-
+    const { lang } = useParams();
+    const l = (path: string) => `/${lang}/${path}`;
     return (
         <section className="relative min-h-screen flex items-center justify-center pt-12 overflow-hidden">
 
             {/* BACKGROUND IMAGE & LAYERS */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <motion.img
-                    src="/img/hero_drone_ai_diria.png"
+                    src={`/img/hero_drone_ai_diria.png`}
                     alt="Cerro Diria AI Network"
                     className="w-full h-full object-cover opacity-90"
                     initial={{ scale: 1 }}
@@ -65,29 +67,29 @@ export const Hero: React.FC = () => {
                 <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-5xl md:text-8xl font-heading font-extrabold text-white tracking-tight mb-8 leading-tight"
+                    transition={{ delay: 0.2, duration: 0.8 }}
+                    className="text-4xl md:text-7xl font-heading font-black text-white tracking-tighter mb-6 leading-[1.1]"
                 >
-                    <span className="inline-block transition-transform duration-300">
+                    <span className="block mb-2 opacity-90 font-light italic">
                         {t('hero_title_1')}
                     </span>
-                    <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-diria-neonBlue via-diria-neonGreen to-diria-neonBlue animate-gradient">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-diria-neonBlue via-diria-neonGreen to-diria-neonBlue animate-gradient-x">
                         {t('hero_title_2')}
                     </span>
                 </motion.h1>
 
-                {/* SUBTITLE */}
+                {/* SUBTITLE - Balanceado con ancho máximo mayor */}
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="mt-6 max-w-2xl mx-auto"
+                    transition={{ delay: 0.4, duration: 0.8 }}
+                    className="mt-8 max-w-3xl mx-auto px-4"
                 >
-                    <p className="text-xl text-gray-300 font-light leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: t('hero_subtitle') }} />
+                    <p className="text-lg md:text-xl text-gray-400 font-light leading-relaxed tracking-wide">
+                        {/* Usamos un span para resaltar la parte técnica sin saturar */}
+                        <span dangerouslySetInnerHTML={{ __html: t('hero_subtitle') }} />
+                    </p>
                 </motion.div>
-
                 {/* MAIN CTA BUTTONS */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -97,7 +99,7 @@ export const Hero: React.FC = () => {
                 >
                     {/* BOTÓN EXPLORAR */}
                     <a
-                        href="/#ecosystem"
+                        href={l(`#ecosystem`)}
                         className="group relative px-10 py-5 rounded-full bg-diria-neonGreen text-black font-black uppercase tracking-widest text-sm transition-all duration-500 hover:scale-105 overflow-visible"
                     >
                         {/* EFECTO HALO DE RESPIRACIÓN */}
