@@ -110,7 +110,7 @@ export const Hero: React.FC = () => {
 
                         {/* CONTENIDO */}
                         <span className="relative z-10 flex items-center gap-3">
-                            Explorar
+                            {t('explore_cta')}
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
                         </span>
                     </a>
@@ -121,7 +121,7 @@ export const Hero: React.FC = () => {
                         className="group relative px-10 py-5 rounded-full font-bold text-sm uppercase tracking-widest border border-white/20 bg-white/5 backdrop-blur-xl text-white hover:border-diria-neonGreen/50 transition-all duration-300 flex items-center justify-center gap-3"
                     >
                         <Mail size={18} className="text-gray-400 group-hover:text-diria-neonGreen transition-colors" />
-                        <span>Contactar</span>
+                        <span>{t('contact_cta')}</span>
                         <div className="absolute bottom-2 left-6 right-6 h-[1px] bg-diria-neonGreen scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                     </button>
                 </motion.div>
