@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
 import { useContact } from '../../context/ContactContext';
 import { Mail } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function ClosingMountains() {
     const { openContact } = useContact();
+    const { t } = useLanguage();
     return (
         <section className="relative min-h-[80vh] bg-[#030303] overflow-hidden flex flex-col items-center justify-end pb-20">
             {/* ANIMATED BACKGROUND GLOWS */}
@@ -213,7 +215,7 @@ export default function ClosingMountains() {
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_2s_infinite]" />
 
                         <Mail size={18} className="relative z-10" />
-                        <span className="relative z-10">Contactar</span>
+                        <span className="relative z-10">{t('contact_cta')}</span>
 
                         {/* Resplandor extra en hover */}
                         <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />

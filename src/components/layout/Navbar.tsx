@@ -35,11 +35,11 @@ export const Navbar: React.FC = () => {
     }, []);
 
     const navLinks = [
-        { name: t('nav_ecosystem'), href: l('#ecosystem') },
-        { name: t('nav_agents'), href: l('#agents') },
-        { name: t('nav_services'), href: l('#services') },
-        { name: t('nav_architecture'), href: l('#architecture') },
-        { name: t('nav_about'), href: l('philosophy') },
+        { name: t('nav_ecosystem'), href: '#ecosystem' },
+        { name: t('nav_agents'), href: '#agents' },
+        { name: t('nav_services'), href: '#services' },
+        { name: t('nav_architecture'), href: '#architecture' },
+        { name: t('nav_about'), href: 'philosophy' },
     ];
 
     return (
@@ -58,7 +58,9 @@ export const Navbar: React.FC = () => {
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-8 items-center">
                         {navLinks.map((link) => (
-                            <a key={link.name} href={getPath(link.href)} className="text-sm font-medium text-diria-muted hover:text-white transition">
+                            <a key={link.name}
+                                href={getPath(link.href)}
+                                className="text-sm font-medium text-diria-muted hover:text-white transition">
                                 {link.name}
                             </a>
                         ))}
